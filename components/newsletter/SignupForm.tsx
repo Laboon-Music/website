@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import { Button, Checkbox, FormError, Honeypot, Input, TextLink } from "@/components/ui";
+import { CheckBadge } from "@/components/account/AccountBits";
 import { useUi } from "@/components/i18n/LocaleProvider";
 import type { HOME_CONTENT } from "@/content/fr/home";
 import { useProtectedForm } from "@/hooks/useProtectedForm";
@@ -47,11 +48,17 @@ export default function SignupForm({
 
   if (form.status === "success") {
     return (
-      <div id={id} role="status" className="max-w-[26rem] text-center">
-        <p className="font-title text-xl font-extrabold tracking-[-0.03em]">
+      // Same top spacing as the form it replaces (.signup), so it never sticks to the text above.
+      <div
+        id={id}
+        role="status"
+        className="mt-[clamp(32px,5.5vh,48px)] grid max-w-[26rem] justify-items-center gap-5 text-center"
+      >
+        <CheckBadge />
+        <p className="font-title text-2xl leading-tight font-extrabold tracking-[-0.03em]">
           {T.successTitle}
         </p>
-        <p className="mt-3 leading-normal">{T.successText}</p>
+        <p className="text-base leading-relaxed">{T.successText}</p>
       </div>
     );
   }
