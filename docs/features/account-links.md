@@ -37,9 +37,9 @@ The API contract is `docs/openapi.yaml` and `docs/contract/README.md` in the API
 
 - `NEXT_PUBLIC_API_URL` — base URL **with `/v1`**: prod `https://api.laboon-app.com/v1`,
   staging `https://api-staging.laboon-app.com/v1`.
-- `NEXT_PUBLIC_API_STAGING_KEY` — **staging only**: the staging API is closed to the public (Cloudflare blocks
+- `NEXT_PUBLIC_API_STAGING_HEADER` — **staging only**: the staging API is closed to the public (Cloudflare blocks
   requests without the `X-Laboon-Staging` header, see the infra repo `docs/cloudflare.md`). When set, the site sends
-  that header. Leave it empty in production. The value ships in the browser bundle: it keeps robots and the
+  that header. Leave it empty in production. The name avoids KEY / SECRET / TOKEN on purpose: Vercel refuses `NEXT_PUBLIC_` variables that look like secrets. The value ships in the browser bundle: it keeps robots and the
   curious out, it is not a secret.
 - The site's origins (prod, staging, Vercel previews if needed) must be in the API's
   **`CORS_ORIGINS`**, and the API's `EMAIL_LINKS_BASE_URL` must be the site of that environment.
