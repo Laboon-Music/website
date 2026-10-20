@@ -15,7 +15,8 @@ export async function generateMetadata({ params }: LangParams): Promise<Metadata
 export default function Page() {
   return (
     <PageShell>
-      <section className="rise mx-auto w-full max-w-[560px]">
+      {/* min-h: the view replaces a short "loading" line, without this the footer jumps (layout shift). */}
+      <section className="rise mx-auto min-h-[40rem] w-full max-w-[560px]">
         <ConfirmEmailView />
       </section>
     </PageShell>

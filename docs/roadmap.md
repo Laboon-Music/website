@@ -16,8 +16,7 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 
 ## Technical follow-ups
 
-- [ ] **Content-Security-Policy** header (needs an allowlist for
-      `challenges.cloudflare.com` and Vercel Analytics; test on staging first).
+- [ ] **Enforce the Content-Security-Policy** (sent as report-only today): see [security.md](features/security.md).
 - [ ] **Rate limiting** on `/api/subscribe` and `/api/contact` (e.g. Vercel
       Firewall rule or Upstash) if spam gets past the anti-bot layers.
 - [ ] **E2E tests** (Playwright) for the two forms at mobile and desktop

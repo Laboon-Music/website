@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Sora } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
+import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import { LocaleProvider } from "@/components/i18n/LocaleProvider";
 import { BackToTop } from "@/components/layout/BackToTop";
 import { getContent } from "@/content";
@@ -86,7 +86,7 @@ export default async function RootLayout({
           <BackToTop />
         </LocaleProvider>
         {/* Vercel Web Analytics: cookieless, anonymous, aggregated. See docs/features/analytics.md */}
-        <Analytics />
+        <SiteAnalytics />
       </body>
     </html>
   );

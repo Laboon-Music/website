@@ -27,6 +27,11 @@ beforeEach(() => {
 });
 
 describe("POST /api/subscribe — validation", () => {
+  it("rejects an absurdly long e-mail address", async () => {
+    const res = await post({ ...valid, email: `${"a".repeat(300)}@example.com` });
+    expect(res.status).toBe(400);
+  });
+
   it("rejects a non-JSON body", async () => {
     const res = await post("oops");
     expect(res.status).toBe(400);
