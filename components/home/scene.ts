@@ -383,7 +383,10 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     const dt = Math.min((now - t0) / 1000, 0.05);
     t0 = now;
     clock += dt;
+    // Every layout read first, every style write after: reading a rect once styles have
+    // changed forces the browser to recompute the layout ("forced reflow") on every frame.
     const st = targets();
+    const sr = steps.getBoundingClientRect();
     const k = reduce ? 1 : 1 - Math.pow(0.0009, dt); // frame-rate independent smoothing
     S.ax = lerp(S.ax, T.ax, k);
     S.ay = lerp(S.ay, T.ay, k);
@@ -461,7 +464,6 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     //  - "arrived": the section covers most of the screen
     //  - lit as soon as the scroll really slows down (< 2 px/frame for 0.12 s) or after 0.8 s
     //  - switched off only once clearly left (hysteresis: no flicker at the edges)
-    const sr = steps.getBoundingClientRect();
     const arrived = sr.top < vh * 0.2 && sr.bottom > vh * 0.8;
     const gone = sr.top > vh * 0.5 || sr.bottom < vh * 0.5;
     if (beamOn) {
@@ -487,9 +489,10 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     if (si !== stepIdx) {
       stepIdx = si;
       // the beam pulses at each new step
+      // Restarts the pulse animation: remove the class now, add it back on the next frame
+      // (no forced reflow).
       steps.classList.remove("is-pulse");
-      void steps.offsetWidth;
-      steps.classList.add("is-pulse");
+      requestAnimationFrame(() => steps.classList.add("is-pulse"));
       clearTimeout(pulseT);
       pulseT = window.setTimeout(() => steps.classList.remove("is-pulse"), 700);
       stepTexts.forEach((el, q) => el.classList.toggle("is-active", q === si));
