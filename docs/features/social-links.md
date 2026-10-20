@@ -1,6 +1,6 @@
 # Social links
 
-Pill links (text, no icon) to Laboon's social accounts.
+Pill buttons (icon + name) to Laboon's social accounts.
 
 - Component: `components/social/SocialLinks.tsx` (`size="md" | "lg"`).
 - Shown in: site footer, `/contact`, `/inscription-confirmee`.
@@ -15,3 +15,5 @@ Add an entry to `SOCIALS` in `lib/site.ts` (name, handle, URL); it also feeds th
 ## Tests
 
 `components/social/SocialLinks.test.tsx`.
+
+In e-mails the networks are round blue buttons with a white icon (PNG in `public/brand/email/<name>.png`, one per network, named in lower case): see [emails.md](emails.md).
