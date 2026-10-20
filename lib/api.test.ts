@@ -31,13 +31,13 @@ describe("apiPost", () => {
 
     await (
       await loadApi("https://api.example.com/v1", "s3cret")
-    )("/x", {});
+    )("/x", {}, "fr");
     const withKey = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(withKey[1].headers).toMatchObject({ "X-Laboon-Staging": "s3cret" });
 
     await (
       await loadApi("https://api.example.com/v1")
-    )("/x", {});
+    )("/x", {}, "fr");
     const without = fetchMock.mock.calls[1] as unknown as [string, RequestInit];
     expect(without[1].headers).not.toHaveProperty("X-Laboon-Staging");
   });
