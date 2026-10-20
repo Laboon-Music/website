@@ -145,3 +145,16 @@ changes the stack, the architecture or a convention.
 - **Password rules follow the API** (12 characters, uppercase, digit, special character).
 - **Exception to "every public form is anti-bot protected server-side"**: these forms call the
   API from the browser, protected by its rate limits (see account-links.md).
+
+## 2026-10-20 — English version
+
+- **French stays the default without a prefix, English under `/en`**: no existing address changes
+  (app links, e-mails, search engines). Everything lives in `app/[lang]`; `proxy.ts` rewrites.
+- **No automatic redirection by browser language**: the visitor chooses with the footer link
+  (avoids surprising people and search-engine duplicates); `hreflang` tells Google the pairs.
+- **No i18n library**: dictionaries are plain typed objects (`content/<lang>/`), the English ones are typed
+  on the French ones, so a missing translation does not compile (+ a parity test). Server code uses
+  `getContent(locale)`, client code `useUi()`.
+- **Same legal slugs in both languages** (they are shared with the app).
+- **Brevo**: one confirmation template per language (`BREVO_DOI_TEMPLATE_ID_EN`, French fallback) and a
+  `LANGUAGE` attribute.

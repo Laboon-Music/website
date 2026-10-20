@@ -4,7 +4,7 @@ import "./globals.css";
 
 // Last-resort error page, used when the root layout itself fails. It replaces
 // the whole document, so it renders its own <html> and stays dependency-free
-// (system fonts: the brand fonts are loaded by the root layout, which failed).
+// (system fonts, no dictionary: the language is unknown here, so both are shown).
 // See docs/features/error-pages.md.
 export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
   return (
@@ -17,8 +17,11 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
           <p className="mt-4 text-muted">
             Le site a rencontré un problème. Réessaie dans un instant.
           </p>
+          <p lang="en" className="mt-4 text-muted">
+            The site ran into a problem. Please try again in a moment.
+          </p>
           <button type="button" onClick={reset} className="btn btn--reverted mt-8 px-10">
-            Réessayer
+            Réessayer / Try again
           </button>
         </main>
       </body>

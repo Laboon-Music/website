@@ -21,7 +21,8 @@
 ```
 app/                         Routes (App Router). Pages are thin: they compose components.
 ├── layout.tsx               Root layout: <html lang="fr">, SEO metadata, viewport, Analytics
-├── page.tsx                 Landing page (texts in content/home.ts)
+├── [lang]/                  Every page, per language (fr = no prefix, en = /en); see features/i18n.md
+│   ├── page.tsx             Landing page (texts in content/<lang>/home.ts)
 ├── contact/                 Contact page
 ├── inscription-confirmee/   Double opt-in landing page (+ signup_confirmed event)
 ├── reset-password/          Password reset page (Laboon API)

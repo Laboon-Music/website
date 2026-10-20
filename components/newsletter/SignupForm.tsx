@@ -3,17 +3,22 @@
 import { useId, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import { Button, Checkbox, FormError, Honeypot, Input, TextLink } from "@/components/ui";
-import { HOME_CONTENT } from "@/content/home";
+import { useUi } from "@/components/i18n/LocaleProvider";
+import type { HOME_CONTENT } from "@/content/fr/home";
 import { useProtectedForm } from "@/hooks/useProtectedForm";
 import { trackEvent } from "@/lib/analytics";
-import { NO_LIST_ERROR } from "@/lib/newsletter";
-
-const T = HOME_CONTENT.signup;
 
 // Newsletter signup (launch and/or beta lists), drawn for the blue areas of the
 // home page (white texts). `id` is used by the home page to focus the e-mail
 // field from the header button. See docs/features/newsletter-signup.md.
-export default function SignupForm({ id }: { id?: string }) {
+export default function SignupForm({
+  id,
+  texts: T,
+}: {
+  id?: string;
+  texts: typeof HOME_CONTENT.signup;
+}) {
+  const ui = useUi();
   const [email, setEmail] = useState("");
   const [wantsLaunch, setWantsLaunch] = useState(true);
   const [wantsBeta, setWantsBeta] = useState(false);
@@ -25,7 +30,7 @@ export default function SignupForm({ id }: { id?: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!wantsLaunch && !wantsBeta) return form.fail(NO_LIST_ERROR);
+    if (!wantsLaunch && !wantsBeta) return form.fail(ui.errors.noList);
     if (await form.submit({ email, wantsLaunch, wantsBeta })) {
       trackEvent("signup_submitted", { launch: wantsLaunch, beta: wantsBeta });
       setEmail("");

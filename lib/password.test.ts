@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  apiErrorMessage,
-  GENERIC_ACCOUNT_ERROR,
+  apiErrorKey,
   isStrongPassword,
   MIN_PASSWORD_LENGTH,
   PASSWORD_RULES,
-  validateNewPassword,
+  passwordProblem,
 } from "./password";
 
 const STRONG = "Un-bon-mot-2-passe";
@@ -40,29 +39,26 @@ describe("password rules (mirror of the API policy)", () => {
   });
 });
 
-describe("validateNewPassword", () => {
+describe("passwordProblem", () => {
   it("accepts a strong matching password", () => {
-    expect(validateNewPassword(STRONG, STRONG)).toBeNull();
+    expect(passwordProblem(STRONG, STRONG)).toBeNull();
   });
 
-  it("refuses a weak password", () => {
-    expect(validateNewPassword("faible", "faible")).toMatch(/4 conditions/);
-  });
-
-  it("refuses mismatching passwords", () => {
-    expect(validateNewPassword(STRONG, `${STRONG}x`)).toMatch(/ne correspondent pas/);
+  it("flags a weak password first, then a mismatch", () => {
+    expect(passwordProblem("faible", "faible")).toBe("invalidRules");
+    expect(passwordProblem(STRONG, `${STRONG}x`)).toBe("mismatch");
   });
 });
 
-describe("apiErrorMessage", () => {
-  it("translates the stable API codes to French", () => {
-    expect(apiErrorMessage("weak_password")).toMatch(/conditions/);
-    expect(apiErrorMessage("rate_limited")).toMatch(/Trop de tentatives/);
-    expect(apiErrorMessage("network")).toMatch(/connexion/);
+describe("apiErrorKey", () => {
+  it("maps the stable API codes to dictionary keys", () => {
+    expect(apiErrorKey("weak_password")).toBe("weakPassword");
+    expect(apiErrorKey("rate_limited")).toBe("rateLimited");
+    expect(apiErrorKey("network")).toBe("apiNetwork");
   });
 
-  it("never shows an unknown code or message", () => {
-    expect(apiErrorMessage("whatever")).toBe(GENERIC_ACCOUNT_ERROR);
-    expect(apiErrorMessage("")).toBe(GENERIC_ACCOUNT_ERROR);
+  it("never exposes an unknown code or message", () => {
+    expect(apiErrorKey("whatever")).toBe("accountGeneric");
+    expect(apiErrorKey("")).toBe("accountGeneric");
   });
 });

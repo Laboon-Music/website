@@ -1,17 +1,22 @@
 import type { MetadataRoute } from "next";
+import { LOCALES, localePath } from "./i18n.ts";
 
 // Canonical production URL (laboon-app.com redirects to www).
 export const SITE_URL = "https://www.laboon-app.com";
 export const PROD_HOSTS = ["www.laboon-app.com", "laboon-app.com"];
 
-/** Paths never worth indexing, even in production. */
-const NOINDEX_PATHS = [
-  "/api/",
+/** Pages never worth indexing, even in production (in every language). */
+const NOINDEX_PAGES = [
   "/legal/",
   "/faq/embed",
+  "/contact/embed",
   "/reset-password",
   "/confirm-email",
   "/inscription-confirmee",
+];
+const NOINDEX_PATHS = [
+  "/api/",
+  ...NOINDEX_PAGES.flatMap((page) => LOCALES.map((locale) => localePath(locale, page))),
 ];
 
 export function isProductionHost(host: string | null | undefined): boolean {

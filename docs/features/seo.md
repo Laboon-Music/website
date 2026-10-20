@@ -2,14 +2,14 @@
 
 ## Metadata
 
-`app/layout.tsx` defines the default title, description, keywords, Open Graph
+`app/[lang]/layout.tsx` defines the default title, description, keywords, Open Graph
 (`fr_FR`) and Twitter card, with `metadataBase = SITE_URL`. Pages override
 `title` (and `description` when useful).
 
 ## Share image (Open Graph)
 
-`app/opengraph-image.tsx` generates a 1200×630 PNG at build time from the
-brand colours and the hero texts (`content/home.ts`) — used by Facebook,
+`app/[lang]/opengraph-image.tsx` generates a 1200×630 PNG at build time from the
+brand colours and the hero texts (`content/<lang>/home.ts`) — used by Facebook,
 Instagram, WhatsApp, X… It is a text-only placeholder until brand assets
 (logo) exist; replace it with a designed visual then.
 

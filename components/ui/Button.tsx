@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { ComponentProps } from "react";
+import { LocalizedLink } from "@/components/i18n/LocalizedLink";
 import { cx } from "@/lib/cx";
 
 // Design system — buttons. `Button` for actions, `ButtonLink` for navigation
@@ -45,8 +45,11 @@ export function ButtonLink({
   fullWidth,
   className,
   ...props
-}: ComponentProps<typeof Link> & StyleProps) {
+}: ComponentProps<typeof LocalizedLink> & StyleProps) {
   return (
-    <Link className={cx(buttonClass({ variant, fullWidth }), className)} {...props} />
+    <LocalizedLink
+      className={cx(buttonClass({ variant, fullWidth }), className)}
+      {...props}
+    />
   );
 }

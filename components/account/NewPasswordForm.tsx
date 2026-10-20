@@ -3,8 +3,15 @@
 import { useId, useState } from "react";
 import { Button, FormError, PasswordInput } from "@/components/ui";
 import { cx } from "@/lib/cx";
+import { useLocale, useUi } from "@/components/i18n/LocaleProvider";
 import { apiPost } from "@/lib/api";
-import { apiErrorMessage, PASSWORD_RULES, validateNewPassword } from "@/lib/password";
+import { fmt } from "@/lib/i18n";
+import {
+  apiErrorKey,
+  MIN_PASSWORD_LENGTH,
+  PASSWORD_RULES,
+  passwordProblem,
+} from "@/lib/password";
 
 const LABEL = "pl-1 text-[15px] font-semibold";
 
@@ -30,6 +37,8 @@ export function NewPasswordForm({
   onDone: () => void;
   onInvalidCode: () => void;
 }) {
+  const locale = useLocale();
+  const ui = useUi();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -41,23 +50,23 @@ export function NewPasswordForm({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const validationError = validateNewPassword(password, confirm);
-    setError(validationError);
-    if (validationError) return;
+    const problem = passwordProblem(password, confirm);
+    setError(problem ? ui.password[problem] : null);
+    if (problem) return;
 
     setSubmitting(true);
-    const result = await apiPost(endpoint, { code, [field]: password });
+    const result = await apiPost(endpoint, { code, [field]: password }, locale);
     setSubmitting(false);
     if (result.ok) return onDone();
     if (result.code === "invalid_code") return onInvalidCode();
-    setError(apiErrorMessage(result.code));
+    setError(ui.errors[apiErrorKey(result.code)]);
   }
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-5">
       <div className="grid gap-2">
         <label htmlFor={passwordId} className={LABEL}>
-          Nouveau mot de passe
+          {ui.password.newLabel}
         </label>
         <PasswordInput
           id={passwordId}
@@ -79,8 +88,8 @@ export function NewPasswordForm({
                     ok ? "border-success bg-success" : "border-[#c9ccff]",
                   )}
                 />
-                {rule.label}
-                <span className="sr-only">{ok ? " (respecté)" : ""}</span>
+                {fmt(ui.password.rules[rule.id], { min: MIN_PASSWORD_LENGTH })}
+                <span className="sr-only">{ok ? ui.password.ruleMet : ""}</span>
               </li>
             );
           })}
@@ -88,7 +97,7 @@ export function NewPasswordForm({
       </div>
       <div className="grid gap-2">
         <label htmlFor={confirmId} className={LABEL}>
-          Confirmer le mot de passe
+          {ui.password.confirmLabel}
         </label>
         <PasswordInput
           id={confirmId}
@@ -101,7 +110,7 @@ export function NewPasswordForm({
       <div className="mt-2 grid justify-items-center gap-4">
         <FormError>{error}</FormError>
         <Button type="submit" disabled={submitting} fullWidth className="px-9 sm:w-auto">
-          {submitting ? "Envoi…" : submitLabel}
+          {submitting ? ui.sending : submitLabel}
         </Button>
       </div>
     </form>

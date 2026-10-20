@@ -35,6 +35,7 @@ Full list with comments: [`.env.example`](../.env.example).
 | `BREVO_API_KEY`                                           | signup, contact         | [brevo.md](integrations/brevo.md)                                          |
 | `BREVO_LIST_ID_LAUNCH` / `BREVO_LIST_ID_BETA`             | signup                  | prod `5`/`6`, staging `7`/`8`                                              |
 | `BREVO_DOI_TEMPLATE_ID`                                   | signup                  | `1`                                                                        |
+| `BREVO_DOI_TEMPLATE_ID_EN`                                | signup (English)        | optional: English confirmation template (else the French one)              |
 | `CONTACT_TO_EMAIL`                                        | contact                 | inbox receiving messages                                                   |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | anti-bot                | _Production_ environment only                                              |
 | `NEXT_PUBLIC_API_URL`                                     | account links           | Laboon API base URL with `/v1` (+ site origin in the API's `CORS_ORIGINS`) |

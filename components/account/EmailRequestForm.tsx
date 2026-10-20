@@ -3,8 +3,9 @@
 import { useId, useState } from "react";
 import { CheckBadge } from "./AccountBits";
 import { Button, FormError, Input } from "@/components/ui";
+import { useLocale, useUi } from "@/components/i18n/LocaleProvider";
 import { apiPost } from "@/lib/api";
-import { apiErrorMessage } from "@/lib/password";
+import { apiErrorKey } from "@/lib/password";
 
 /**
  * Asks the API to e-mail a link (password reset, new confirmation link). The
@@ -22,6 +23,8 @@ export function EmailRequestForm({
   sentTitle: string;
   sentText: string;
 }) {
+  const locale = useLocale();
+  const ui = useUi();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -33,10 +36,10 @@ export function EmailRequestForm({
     e.preventDefault();
     setError(null);
     setStatus("loading");
-    const result = await apiPost(endpoint, { email: email.trim() });
+    const result = await apiPost(endpoint, { email: email.trim() }, locale);
     if (result.ok) return setStatus("sent");
     setStatus("idle");
-    setError(apiErrorMessage(result.code));
+    setError(ui.errors[apiErrorKey(result.code)]);
   }
 
   if (status === "sent") {
@@ -55,7 +58,7 @@ export function EmailRequestForm({
     <form onSubmit={onSubmit} noValidate className="grid gap-5">
       <div className="grid gap-2">
         <label htmlFor={emailId} className="pl-1 text-[15px] font-semibold">
-          E-mail du compte
+          {ui.account.emailLabel}
         </label>
         <Input
           id={emailId}
@@ -64,7 +67,7 @@ export function EmailRequestForm({
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="prenom@mail.com"
+          placeholder={ui.account.emailPlaceholder}
           autoComplete="email"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
@@ -78,7 +81,7 @@ export function EmailRequestForm({
           fullWidth
           className="px-9 sm:w-auto"
         >
-          {status === "loading" ? "Envoi…" : submitLabel}
+          {status === "loading" ? ui.sending : submitLabel}
         </Button>
       </div>
     </form>

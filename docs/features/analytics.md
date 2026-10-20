@@ -1,7 +1,7 @@
 # Analytics & conversion events
 
 **Vercel Web Analytics** (`<Analytics />` from `@vercel/analytics/next` in
-`app/layout.tsx`).
+`app/[lang]/layout.tsx`).
 
 - Cookieless, anonymous, aggregated → no consent banner required.
 - Dashboard: Vercel → project → _Analytics_ (enable it per project).

@@ -19,6 +19,24 @@ beforeEach(() => {
   vi.stubEnv("TURNSTILE_SECRET_KEY", "");
 });
 
+describe("POST /api/contact — English", () => {
+  it("answers in English when the form was in English", async () => {
+    const res = await post({ ...valid, locale: "en", message: "short" });
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({
+      error: "Your message is a bit short (at least 10 characters).",
+    });
+  });
+
+  it("tells the team which language the visitor wrote from", async () => {
+    vi.stubEnv("BREVO_API_KEY", "key");
+    vi.stubEnv("CONTACT_TO_EMAIL", "team@laboon.test");
+    const fetchMock = mockFetch(201);
+    await post({ ...valid, locale: "en" });
+    expect(sentJson(fetchMock).textContent).toContain("Langue : en");
+  });
+});
+
 describe("POST /api/contact — validation", () => {
   it.each([
     [{ name: "  " }, "Indique ton nom."],

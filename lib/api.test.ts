@@ -9,19 +9,19 @@ async function loadApi(apiUrl: string | undefined, apiStagingKey?: string) {
 afterEach(() => vi.doUnmock("@/lib/env"));
 
 describe("apiPost", () => {
-  it("POSTs JSON to the configured API, in French, without caching", async () => {
+  it("POSTs JSON to the configured API, in the language of the page, without caching", async () => {
     const fetchMock = vi.fn(async () => new Response(null, { status: 202 }));
     vi.stubGlobal("fetch", fetchMock);
     const apiPost = await loadApi("https://api.example.com/v1/");
 
-    const result = await apiPost("/auth/password/reset", { email: "a@b.co" });
+    const result = await apiPost("/auth/password/reset", { email: "a@b.co" }, "en");
 
     expect(result).toEqual({ ok: true });
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe("https://api.example.com/v1/auth/password/reset");
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body as string)).toEqual({ email: "a@b.co" });
-    expect(init.headers).toMatchObject({ "Accept-Language": "fr" });
+    expect(init.headers).toMatchObject({ "Accept-Language": "en" });
     expect(init.cache).toBe("no-store");
   });
 
@@ -31,13 +31,13 @@ describe("apiPost", () => {
 
     await (
       await loadApi("https://api.example.com/v1", "s3cret")
-    )("/x", {});
+    )("/x", {}, "fr");
     const withKey = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(withKey[1].headers).toMatchObject({ "X-Laboon-Staging": "s3cret" });
 
     await (
       await loadApi("https://api.example.com/v1")
-    )("/x", {});
+    )("/x", {}, "fr");
     const without = fetchMock.mock.calls[1] as unknown as [string, RequestInit];
     expect(without[1].headers).not.toHaveProperty("X-Laboon-Staging");
   });
@@ -50,7 +50,7 @@ describe("apiPost", () => {
       ),
     );
     const apiPost = await loadApi("https://api.example.com/v1");
-    expect(await apiPost("/auth/confirm", { code: "x", password: "y" })).toEqual({
+    expect(await apiPost("/auth/confirm", { code: "x", password: "y" }, "fr")).toEqual({
       ok: false,
       code: "invalid_code",
       status: 400,
@@ -63,20 +63,27 @@ describe("apiPost", () => {
       vi.fn(async () => new Response("oops", { status: 500 })),
     );
     const apiPost = await loadApi("https://api.example.com/v1");
-    expect(await apiPost("/x", {})).toEqual({ ok: false, code: "unknown", status: 500 });
+    expect(await apiPost("/x", {}, "fr")).toEqual({
+      ok: false,
+      code: "unknown",
+      status: 500,
+    });
   });
 
   it("reports a network failure", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     const apiPost = await loadApi("https://api.example.com/v1");
-    expect(await apiPost("/x", {})).toMatchObject({ ok: false, code: "network" });
+    expect(await apiPost("/x", {}, "fr")).toMatchObject({ ok: false, code: "network" });
   });
 
   it("fails loudly, without calling anything, when the API is not configured", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     const apiPost = await loadApi(undefined);
-    expect(await apiPost("/x", {})).toMatchObject({ ok: false, code: "not_configured" });
+    expect(await apiPost("/x", {}, "fr")).toMatchObject({
+      ok: false,
+      code: "not_configured",
+    });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

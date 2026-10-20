@@ -1,19 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { FaqSection } from "@/components/faq/FaqSection";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useUi } from "@/components/i18n/LocaleProvider";
 import { SiteFooter, SiteHeader, Wordmark } from "@/components/layout";
 import SignupForm from "@/components/newsletter/SignupForm";
-import { HOME_CONTENT } from "@/content/home";
+import type { HOME_CONTENT } from "@/content/fr/home";
 import { cx } from "@/lib/cx";
 import { startHomeScene, type SceneHandle } from "./scene";
 import "./home.css";
-
-const { nav, hero, manifesto, values, steps, finalCta, motion } = HOME_CONTENT;
-
-/** Words of the manifesto: filled one by one on scroll (read as one sentence). */
-const MANIFESTO_WORDS = manifesto.text.split(/\s+/);
 
 // Spans (in screens of scroll) of the pinned sections.
 const SPAN_MANIFESTO = 3.2;
@@ -31,8 +26,19 @@ function focusEmail(formId: string) {
 }
 
 // The home page: an animated, scroll-driven story (see scene.ts) ending on the
-// signup form and the FAQ. Texts: content/home.ts and content/faq.ts.
-export default function HomeScene() {
+// signup form and the FAQ. Texts: content/<lang>/home.ts and faq.ts.
+export default function HomeScene({
+  content,
+  faq,
+}: {
+  content: typeof HOME_CONTENT;
+  /** The FAQ section, rendered by the page (server) and shown after the closing form. */
+  faq: ReactNode;
+}) {
+  const { nav, hero, manifesto, values, steps, finalCta, motion, signup } = content;
+  const ui = useUi();
+  // Words of the manifesto: filled one by one on scroll (read as one sentence).
+  const manifestoWords = manifesto.text.split(/\s+/);
   const rootRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<SceneHandle | null>(null);
   // Visitor's own "pause animations" switch (WCAG 2.2.2), on top of the OS setting.
@@ -77,7 +83,7 @@ export default function HomeScene() {
         href="#contenu"
         className="sr-only z-70 rounded-full bg-white px-5 py-2.5 font-semibold text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
       >
-        Aller au contenu
+        {ui.skipLink}
       </a>
 
       {/* Decor: backdrop, growing disc, wave field and the opening wordmark. */}
@@ -130,7 +136,7 @@ export default function HomeScene() {
               />
               <h1 id="hero-title">{hero.title}</h1>
               <p className="hero__lede">{hero.subtitle}</p>
-              <SignupForm id="inscription" />
+              <SignupForm id="inscription" texts={signup} />
             </div>
           </div>
         </section>
@@ -144,12 +150,12 @@ export default function HomeScene() {
         >
           <div className="stage">
             <h2 className="manifesto__line display" aria-label={manifesto.text}>
-              {MANIFESTO_WORDS.map((word, i) => (
+              {manifestoWords.map((word, i) => (
                 <span key={i}>
                   <span data-scene="word" className="w" aria-hidden="true">
                     {word}
                   </span>
-                  {i < MANIFESTO_WORDS.length - 1 && " "}
+                  {i < manifestoWords.length - 1 && " "}
                 </span>
               ))}
             </h2>
@@ -262,12 +268,12 @@ export default function HomeScene() {
               {finalCta.title}
             </h2>
             <p className="home-close__lede">{finalCta.text}</p>
-            <SignupForm id="inscription-fin" />
+            <SignupForm id="inscription-fin" texts={signup} />
           </div>
         </section>
 
         {/* 6 · FAQ */}
-        <FaqSection />
+        {faq}
       </main>
 
       <SiteFooter>

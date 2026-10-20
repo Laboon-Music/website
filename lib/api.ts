@@ -6,6 +6,7 @@
 // NEXT_PUBLIC_API_STAGING_KEY is set. See docs/features/account-links.md.
 
 import { publicEnv } from "@/lib/env";
+import type { Locale } from "@/lib/i18n";
 
 export type ApiResult =
   | { ok: true }
@@ -17,20 +18,22 @@ export type ApiResult =
     };
 
 /**
- * POSTs JSON to `<NEXT_PUBLIC_API_URL><path>`. The response body is never read
+ * POSTs JSON to `<NEXT_PUBLIC_API_URL><path>`. `locale` is sent as `Accept-Language`:
+ * the API writes its e-mails in that language. The response body is never read
  * on success: the endpoints answer with a session the website does not keep.
  * Never logs the body (it holds passwords and one-time codes).
  */
 export async function apiPost(
   path: string,
   body: Record<string, string>,
+  locale: Locale,
 ): Promise<ApiResult> {
   const base = publicEnv.apiUrl?.replace(/\/+$/, "");
   if (!base) return { ok: false, code: "not_configured", status: 0 };
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "Accept-Language": "fr",
+    "Accept-Language": locale,
   };
   // Staging only (the value ships in the bundle: it keeps robots and the curious out, it is not a secret).
   if (publicEnv.apiStagingKey) headers["X-Laboon-Staging"] = publicEnv.apiStagingKey;

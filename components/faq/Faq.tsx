@@ -1,10 +1,10 @@
 import { Disclosure, Lede, PageTitle } from "@/components/ui";
-import { FAQ_CONTENT } from "@/content/faq";
+import type { FAQ_CONTENT } from "@/content/fr/faq";
 import { RichText } from "./RichText";
 
-export const FAQ_TITLE = "Questions fréquentes — Laboon";
-
-type Group = (typeof FAQ_CONTENT.groups)[number];
+/** FAQ texts of one language (same shape in every language). */
+export type FaqContent = typeof FAQ_CONTENT;
+type Group = FaqContent["groups"][number];
 
 /** One category: a small label and its questions. `as` sets the heading level. */
 export function FaqGroup({
@@ -37,14 +37,14 @@ export function FaqGroup({
  * `/faq/embed` (`embed`: links stay on bare pages). On the website the FAQ is
  * the home page section (`FaqSection`); `/faq` redirects there.
  */
-export function Faq({ embed }: { embed?: boolean }) {
+export function Faq({ content, embed }: { content: FaqContent; embed?: boolean }) {
   return (
     <article className="space-y-10">
       <header>
-        <PageTitle>{FAQ_CONTENT.title}</PageTitle>
-        <Lede>{FAQ_CONTENT.subtitle}</Lede>
+        <PageTitle>{content.title}</PageTitle>
+        <Lede>{content.subtitle}</Lede>
       </header>
-      {FAQ_CONTENT.groups.map((group) => (
+      {content.groups.map((group) => (
         <FaqGroup key={group.title} group={group} as="h2" embed={embed} />
       ))}
     </article>

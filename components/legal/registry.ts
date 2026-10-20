@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { DEFAULT_LOCALE, normalizeLocale, type Locale } from "@/lib/i18n";
 import Cgu from "./content/fr/Cgu";
 import CguEn from "./content/en/Cgu";
 import Cgv from "./content/fr/Cgv";
@@ -20,8 +21,8 @@ import MentionsLegalesEn from "./content/en/MentionsLegales";
  * and register it in `LEGAL_CONTENT`. Missing translations fall back to
  * `DEFAULT_LOCALE`.
  */
-export type Locale = "fr" | "en";
-export const DEFAULT_LOCALE: Locale = "fr";
+// The languages and the fallback are those of the site (lib/i18n.ts).
+export { DEFAULT_LOCALE, normalizeLocale, type Locale };
 
 export type LegalSlug = "cgu" | "cgv" | "charte" | "confidentialite" | "mentions-legales";
 
@@ -61,11 +62,6 @@ export const LEGAL_SLUGS = Object.keys(FR) as LegalSlug[];
 
 export function isLegalSlug(value: string): value is LegalSlug {
   return (LEGAL_SLUGS as string[]).includes(value);
-}
-
-/** Coerce an arbitrary `?lang` value to a locale we actually serve. */
-export function normalizeLocale(value?: string | null): Locale {
-  return value && LEGAL_CONTENT[value as Locale] ? (value as Locale) : DEFAULT_LOCALE;
 }
 
 /**

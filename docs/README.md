@@ -27,6 +27,7 @@ link association files).
 
 | Feature                                             | Route(s)                                                                            | Doc                                                   |
 | --------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Languages (French / English)                        | all pages                                                                           | [i18n.md](features/i18n.md)                           |
 | Home scene (animated landing)                       | `/`                                                                                 | [home-scene.md](features/home-scene.md)               |
 | Newsletter signup (launch / beta, double opt-in)    | `/`, `/api/subscribe`, `/inscription-confirmee`                                     | [newsletter-signup.md](features/newsletter-signup.md) |
 | FAQ (+ app WebView embed)                           | `/faq`, `/faq/embed`                                                                | [faq.md](features/faq.md)                             |

@@ -1,13 +1,8 @@
+import { UI as FR } from "@/content/fr/ui";
+import { UI as EN } from "@/content/en/ui";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HUMAN, mockFetch, silenceConsole } from "@/tests/helpers";
-import {
-  checkAntibot,
-  isTooFast,
-  MIN_FILL_MS,
-  TOO_FAST_ERROR,
-  TURNSTILE_ERROR,
-  verifyTurnstile,
-} from "./antibot";
+import { checkAntibot, isTooFast, MIN_FILL_MS, verifyTurnstile } from "./antibot";
 
 const request = () =>
   new Request("http://localhost/api/x", {
@@ -87,13 +82,18 @@ describe("checkAntibot", () => {
   it("returns a visible error when too fast", async () => {
     const res = await checkAntibot({ ...HUMAN, elapsedMs: 200 }, request());
     expect(res?.status).toBe(400);
-    expect(await res?.json()).toEqual({ error: TOO_FAST_ERROR });
+    expect(await res?.json()).toEqual({ error: FR.errors.tooFast });
+  });
+
+  it("writes its errors in the language of the request", async () => {
+    const res = await checkAntibot({ ...HUMAN, elapsedMs: 200, locale: "en" }, request());
+    expect(await res?.json()).toEqual({ error: EN.errors.tooFast });
   });
 
   it("returns a visible error when Turnstile fails", async () => {
     vi.stubEnv("TURNSTILE_SECRET_KEY", "secret");
     const res = await checkAntibot(HUMAN, request());
     expect(res?.status).toBe(400);
-    expect(await res?.json()).toEqual({ error: TURNSTILE_ERROR });
+    expect(await res?.json()).toEqual({ error: FR.errors.turnstile });
   });
 });

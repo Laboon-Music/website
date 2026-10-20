@@ -1,12 +1,12 @@
 # E-mail templates
 
 Branded HTML e-mails (blue header with the wordmark, card, social links),
-readable in **light and dark mode** and on **phones**. French, informal "tu".
+readable in **light and dark mode** and on **phones**. French (informal "tu") and English, one file per language.
 
-| Template       | File                            | Used for                                                                  |
-| -------------- | ------------------------------- | ------------------------------------------------------------------------- |
-| Double opt-in  | `emails/dist/double-optin.html` | Brevo template **ID 1** (signup confirmation), button `{{ doubleoptin }}` |
-| Campaign frame | `emails/dist/campaign.html`     | Newsletters (launch, beta invitation): edit title and text in Brevo       |
+| Template       | File                                            | Used for                                                                                  |
+| -------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Double opt-in  | `emails/dist/double-optin.fr.html` / `.en.html` | Brevo confirmation template (`BREVO_DOI_TEMPLATE_ID` / `_EN`), button `{{ doubleoptin }}` |
+| Campaign frame | `emails/dist/campaign.fr.html` / `.en.html`     | Newsletters (launch, beta invitation): edit title and text in Brevo                       |
 
 ## Code
 
@@ -30,8 +30,8 @@ readable in **light and dark mode** and on **phones**. French, informal "tu".
 ## Put it in Brevo
 
 1. Brevo → _Campaigns → Templates_ → open template **ID 1** → _Edit_ → choose the **HTML code**
-   editor → replace everything with the content of `emails/dist/double-optin.html` → save.
-2. For a campaign: create a template from `campaign.html` and edit the text in the HTML.
+   editor → replace everything with the content of `emails/dist/double-optin.fr.html` → save.
+2. For a campaign: create a template from `campaign.fr.html` (or `.en.html`) and edit the text in the HTML.
 3. Send a **test e-mail** to yourself and check Gmail (web + app) and Apple Mail, light and dark.
 
 ## Tests

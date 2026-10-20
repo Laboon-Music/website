@@ -2,6 +2,10 @@
 // an entry to SOCIALS in lib/site.ts and its icon below (the list also feeds the
 // footer, the FAQ, structured data and the e-mails). See docs/features/social-links.md.
 
+"use client";
+
+import { useUi } from "@/components/i18n/LocaleProvider";
+import { fmt } from "@/lib/i18n";
 import { SOCIALS } from "@/lib/site";
 
 export { SOCIALS };
@@ -21,6 +25,7 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function SocialLinks() {
+  const ui = useUi();
   return (
     <ul className="flex flex-wrap items-center justify-center gap-3">
       {SOCIALS.map((s) => (
@@ -29,7 +34,7 @@ export default function SocialLinks() {
             href={s.href}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Laboon sur ${s.name} (nouvel onglet)`}
+            aria-label={`${fmt(ui.social.on, { name: s.name })} (${ui.newTab})`}
             className="inline-flex h-11 items-center gap-2.5 rounded-full border-2 border-white pr-[18px] pl-3.5 text-[15px] font-semibold transition-colors duration-300 hover:bg-white hover:text-ink focus-visible:bg-white focus-visible:text-ink"
           >
             <svg
