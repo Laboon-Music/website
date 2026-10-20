@@ -19,7 +19,9 @@ describe("sitemap", () => {
   it("never lists non-indexable pages", () => {
     expect(
       urls.some((u) =>
-        /\/(api|legal|faq\/embed|reset-password|inscription-confirmee)/.test(u),
+        /\/(api|legal|faq\/embed|reset-password|confirm-email|inscription-confirmee)/.test(
+          u,
+        ),
       ),
     ).toBe(false);
   });

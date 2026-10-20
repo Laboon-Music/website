@@ -9,8 +9,7 @@ export const ENV_NAMES = [
   "CONTACT_TO_EMAIL",
   "TURNSTILE_SECRET_KEY",
   "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+  "NEXT_PUBLIC_API_URL",
   "SENTRY_DSN",
 ] as const;
 
@@ -23,8 +22,7 @@ export type EnvName = (typeof ENV_NAMES)[number];
  */
 export const publicEnv = {
   turnstileSiteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || undefined,
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || undefined,
-  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || undefined,
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || undefined,
 };
 
 /** Server-side read: trimmed value, or undefined when unset or blank. */
@@ -53,7 +51,7 @@ export const FEATURE_ENV: Record<string, readonly EnvName[]> = {
   ],
   "contact form": ["BREVO_API_KEY", "CONTACT_TO_EMAIL"],
   "Turnstile anti-bot": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "TURNSTILE_SECRET_KEY"],
-  "password reset": ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+  "account links (password reset, e-mail confirmation)": ["NEXT_PUBLIC_API_URL"],
   "error monitoring": ["SENTRY_DSN"],
 };
 

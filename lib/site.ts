@@ -10,6 +10,7 @@ const NOINDEX_PATHS = [
   "/legal/",
   "/faq/embed",
   "/reset-password",
+  "/confirm-email",
   "/inscription-confirmee",
 ];
 

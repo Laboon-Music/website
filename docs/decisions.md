@@ -126,11 +126,22 @@ changes the stack, the architecture or a convention.
   (`components/home/scene.ts` + tested maths in `lib/scene-math.ts`).
 - **Mockup forms were simulated**: replaced by our real forms (API, double
   opt-in, anti-bot). Password: only the look of the mockup is applied to
-  `/reset-password` (Supabase flow kept, 12 characters minimum); no web
-  "forgot password" page (it would reveal which e-mails have an account).
+  `/reset-password`. See the last entry for the switch to the Laboon API.
 - **Accessibility fixes over the mockup**: skip link, content visible without
   JavaScript (intro hide has an 8 s failsafe), keyboard Tab ends the intro,
   "pause animations" button (WCAG 2.2.2), FAQ structured data generated from
   `content/faq.ts`.
 - Kept from our site (absent in the mockup): FAQ group "Lancement et
   disponibilité", Facebook link, embed pages for the app, 404/error pages.
+
+## 2026-10-20 — Account links move from Supabase to the Laboon API
+
+- **Supabase removed from the website** (dependency, `lib/supabase.ts`, env vars): the new
+  Laboon API ([Laboon-Music/api](https://github.com/Laboon-Music/api)) e-mails
+  `/reset-password?code=…` and `/confirm-email?code=…`; the site sends the code and the
+  password to it. One-time code in the query string instead of tokens in the URL fragment.
+- **`/reset-password` without a code is now the "forgot password" page** (the API answers the
+  same for every address, so nothing leaks), and **`/confirm-email` is new**.
+- **Password rules follow the API** (12 characters, uppercase, digit, special character).
+- **Exception to "every public form is anti-bot protected server-side"**: these forms call the
+  API from the browser, protected by its rate limits (see account-links.md).

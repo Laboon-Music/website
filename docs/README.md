@@ -25,26 +25,26 @@ link association files).
 
 ## Features
 
-| Feature                                          | Route(s)                                                                            | Doc                                                   |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Home scene (animated landing)                    | `/`                                                                                 | [home-scene.md](features/home-scene.md)               |
-| Newsletter signup (launch / beta, double opt-in) | `/`, `/api/subscribe`, `/inscription-confirmee`                                     | [newsletter-signup.md](features/newsletter-signup.md) |
-| FAQ (+ app WebView embed)                        | `/faq`, `/faq/embed`                                                                | [faq.md](features/faq.md)                             |
-| Contact form (+ app WebView embed)               | `/contact`, `/contact/embed`, `/api/contact`                                        | [contact-form.md](features/contact-form.md)           |
-| Anti-bot protection                              | both forms                                                                          | [antibot.md](features/antibot.md)                     |
-| Social links (Instagram, Facebook)               | footer, contact, confirmation                                                       | [social-links.md](features/social-links.md)           |
-| Legal documents (+ app WebView embed)            | `/cgu`, `/cgv`, `/charte`, `/confidentialite`, `/mentions-legales`, `/legal/[slug]` | [legal-documents.md](features/legal-documents.md)     |
-| Password reset (app fallback)                    | `/reset-password`                                                                   | [reset-password.md](features/reset-password.md)       |
-| Deep links (iOS / Android)                       | `/.well-known/*`                                                                    | [deep-links.md](features/deep-links.md)               |
-| SEO (robots, sitemap, metadata)                  | `/robots.txt`, `/sitemap.xml`                                                       | [seo.md](features/seo.md)                             |
-| Analytics & conversion events                    | all pages                                                                           | [analytics.md](features/analytics.md)                 |
-| Monitoring & alerting (Sentry)                   | server                                                                              | [monitoring.md](features/monitoring.md)               |
-| Error pages (404 / 500)                          | any                                                                                 | [error-pages.md](features/error-pages.md)             |
+| Feature                                             | Route(s)                                                                            | Doc                                                   |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Home scene (animated landing)                       | `/`                                                                                 | [home-scene.md](features/home-scene.md)               |
+| Newsletter signup (launch / beta, double opt-in)    | `/`, `/api/subscribe`, `/inscription-confirmee`                                     | [newsletter-signup.md](features/newsletter-signup.md) |
+| FAQ (+ app WebView embed)                           | `/faq`, `/faq/embed`                                                                | [faq.md](features/faq.md)                             |
+| Contact form (+ app WebView embed)                  | `/contact`, `/contact/embed`, `/api/contact`                                        | [contact-form.md](features/contact-form.md)           |
+| Anti-bot protection                                 | both forms                                                                          | [antibot.md](features/antibot.md)                     |
+| Social links (Instagram, Facebook)                  | footer, contact, confirmation                                                       | [social-links.md](features/social-links.md)           |
+| Legal documents (+ app WebView embed)               | `/cgu`, `/cgv`, `/charte`, `/confidentialite`, `/mentions-legales`, `/legal/[slug]` | [legal-documents.md](features/legal-documents.md)     |
+| Account links (password reset, e-mail confirmation) | `/reset-password`, `/confirm-email`                                                 | [account-links.md](features/account-links.md)         |
+| Deep links (iOS / Android)                          | `/.well-known/*`                                                                    | [deep-links.md](features/deep-links.md)               |
+| SEO (robots, sitemap, metadata)                     | `/robots.txt`, `/sitemap.xml`                                                       | [seo.md](features/seo.md)                             |
+| Analytics & conversion events                       | all pages                                                                           | [analytics.md](features/analytics.md)                 |
+| Monitoring & alerting (Sentry)                      | server                                                                              | [monitoring.md](features/monitoring.md)               |
+| Error pages (404 / 500)                             | any                                                                                 | [error-pages.md](features/error-pages.md)             |
 
 ## Integrations
 
 - [Brevo](integrations/brevo.md) — contact storage, double opt-in, transactional email
 - Cloudflare Turnstile — see [antibot.md](features/antibot.md)
-- Supabase — see [reset-password.md](features/reset-password.md)
+- Laboon API — see [account-links.md](features/account-links.md)
 - Vercel — see [deployment.md](deployment.md)
 - Sentry — see [monitoring.md](features/monitoring.md)
