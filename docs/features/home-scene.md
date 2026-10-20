@@ -17,6 +17,12 @@ swiped, a spotlight lights three steps, then the closing signup and the FAQ.
 
 Pinned sections: `.pin` with `--span` screens of scroll and a sticky `.stage`.
 
+## Centring
+
+The waves are centred on the **pinned stage** (`.stage`, 100svh) and the hero disc on the hero, not on `innerHeight`:
+on phones the window height changes while the browser bars collapse, and the text (centred in the stage)
+would drift away from the middle of the waves. Check it after any change to the stage or the hero height.
+
 ## Accessibility and motion
 
 - Skip link; one `<h1>`; decoration is `aria-hidden`; the manifesto reads as one sentence.
