@@ -13,6 +13,10 @@ browser** (CORS) — it has no account logic of its own and no secret.
 
 The API contract is `docs/openapi.yaml` and `docs/contract/README.md` in the API repo.
 
+The pages exist in French and English (`/en/reset-password`, `/en/confirm-email`). The API e-mails a link
+without a language: add `&lang=en` (or the `/en` prefix) for English accounts, otherwise the French page opens
+(see [i18n.md](i18n.md)). The language is also sent to the API as `Accept-Language`.
+
 ## Behaviour
 
 - The one-time `code` is read from the URL, then **removed from the address bar** right away.
@@ -31,7 +35,7 @@ The API contract is `docs/openapi.yaml` and `docs/contract/README.md` in the API
 
 `lib/api.ts` (client, never logs bodies), `lib/password.ts`, `components/account/`
 (`ResetPasswordView`, `ConfirmEmailView`, `NewPasswordForm`, `EmailRequestForm`,
-`useCodeFromUrl`), `app/reset-password/page.tsx`, `app/confirm-email/page.tsx`.
+`useCodeFromUrl`), `app/[lang]/reset-password/page.tsx`, `app/[lang]/confirm-email/page.tsx`.
 
 ## Configuration
 

@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useUi } from "@/components/i18n/LocaleProvider";
 import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
 
@@ -11,6 +14,7 @@ export const MAIN_CONTENT_ID = "contenu";
  * only sets its own width (`mx-auto w-full max-w-…`).
  */
 export function PageShell({ children }: { children: ReactNode }) {
+  const ui = useUi();
   return (
     <div className="relative flex min-h-svh flex-col overflow-x-clip">
       {/* Keyboard / screen reader users jump straight past the header. */}
@@ -18,7 +22,7 @@ export function PageShell({ children }: { children: ReactNode }) {
         href={`#${MAIN_CONTENT_ID}`}
         className="sr-only z-70 rounded-full bg-white px-5 py-2.5 font-semibold text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
       >
-        Aller au contenu
+        {ui.skipLink}
       </a>
       <div aria-hidden="true" className="bg-disc" />
       <SiteHeader />

@@ -1,8 +1,7 @@
-import Link from "next/link";
 import type { ComponentProps } from "react";
 import { cx } from "@/lib/cx";
 
-// Design system — heading block of an inner page: "← Retour" link, <h1> and
+// Design system — heading block of an inner page: <h1> and
 // the lighter line under it. One <h1> per page.
 
 /** The page's <h1>: Sora ExtraBold, tight tracking. */
@@ -28,22 +27,5 @@ export function Lede({ className, ...props }: ComponentProps<"p">) {
       )}
       {...props}
     />
-  );
-}
-
-export function BackLink({
-  href = "/",
-  children = "Retour à l’accueil",
-}: {
-  href?: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-[#c9ccff] transition-colors hover:text-white focus-visible:text-white"
-    >
-      <span aria-hidden="true">←</span> {children}
-    </Link>
   );
 }

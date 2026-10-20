@@ -26,11 +26,11 @@ export function CheckBadge() {
 export function DoneCard({
   title,
   children,
-  ctaLabel = "Revenir sur Laboon",
+  ctaLabel,
 }: {
   title: string;
   children: ReactNode;
-  ctaLabel?: string;
+  ctaLabel: string;
 }) {
   return (
     <Card tone="success" className="p-6 sm:p-11">

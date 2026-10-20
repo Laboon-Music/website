@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { PageShell } from "@/components/layout";
 import { BackLink } from "@/components/ui";
-import { DEFAULT_LOCALE, getLegalDoc, type LegalSlug } from "./registry";
+import type { Locale } from "@/lib/i18n";
+import { alternatesFor } from "@/lib/page-metadata";
+import { getLegalDoc, type LegalSlug } from "./registry";
 
 /**
  * Public-page wrapper for a legal document: site chrome + back link.
@@ -19,14 +21,17 @@ export function LegalPageShell({ children }: { children: ReactNode }) {
   );
 }
 
-/** Metadata of the public page of a legal document (title from the registry). */
-export function legalMetadata(slug: LegalSlug): Metadata {
-  return { title: getLegalDoc(DEFAULT_LOCALE, slug).entry.metaTitle };
+/** Metadata of the public page of a legal document (title from the registry, hreflang). */
+export function legalMetadata(locale: Locale, slug: LegalSlug): Metadata {
+  return {
+    title: getLegalDoc(locale, slug).entry.metaTitle,
+    alternates: alternatesFor(locale, `/${slug}`),
+  };
 }
 
-/** Full public page of a legal document, e.g. `<LegalPage slug="cgu" />`. */
-export function LegalPage({ slug }: { slug: LegalSlug }) {
-  const { Component } = getLegalDoc(DEFAULT_LOCALE, slug).entry;
+/** Full public page of a legal document, e.g. `<LegalPage locale="en" slug="cgu" />`. */
+export function LegalPage({ locale, slug }: { locale: Locale; slug: LegalSlug }) {
+  const { Component } = getLegalDoc(locale, slug).entry;
   return (
     <LegalPageShell>
       <Component />

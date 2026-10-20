@@ -13,8 +13,9 @@ Brevo, Cloudflare…) step by step, and automate whatever can be automated.
 
 ## Non-negotiable rules
 
-1. **Language** — website content (UI text, error messages, metadata, emails
-   to users) in **French** with informal "tu". Documentation, code,
+1. **Language** — the website exists in **French** (default, informal "tu") and
+   **English** (`/en`): UI text, error messages, metadata and e-mails to users
+   are written in both (`content/fr` + `content/en`, see [docs/features/i18n.md](docs/features/i18n.md)). Documentation, code,
    comments, commits and PRs in **English**.
 2. **Responsive** — every page must work on **mobile and desktop**.
    Mobile-first Tailwind classes (`px-4 sm:px-6`, `flex-col sm:flex-row`…),
@@ -42,7 +43,8 @@ Brevo, Cloudflare…) step by step, and automate whatever can be automated.
 9. **Env & errors** — read env variables only via `lib/env.ts`; report
    server failures with `reportError()` (`lib/monitoring.ts`) and never put
    personal data (email, name, message) in it.
-10. **Texts** — home page and site-wide texts live in `content/`, not in JSX.
+10. **Texts** — home page, FAQ and interface texts live in `content/<lang>/`, not in JSX;
+    every text exists in French **and** English. Links are written without the `/en` prefix.
 
 ## Stack
 

@@ -5,16 +5,18 @@ import { DoneCard } from "./AccountBits";
 import { EmailRequestForm } from "./EmailRequestForm";
 import { NewPasswordForm } from "./NewPasswordForm";
 import { useCodeFromUrl } from "./useCodeFromUrl";
+import { useUi } from "@/components/i18n/LocaleProvider";
 import { BackLink, Card, FormError, Lede, PageTitle } from "@/components/ui";
 
 const TITLE_CLASS = "mt-5 text-[clamp(2rem,3.6vw,3rem)]";
-
 /**
  * /reset-password. The link of the "password reset" e-mail carries a one-time
  * `?code=`: with it the visitor chooses a new password; without it (or with an
  * expired one) they ask for a new link. See docs/features/account-links.md.
  */
 export function ResetPasswordView() {
+  const ui = useUi();
+  const t = ui.account.reset;
   const code = useCodeFromUrl();
   const [done, setDone] = useState(false);
   const [invalid, setInvalid] = useState(false);
@@ -22,16 +24,15 @@ export function ResetPasswordView() {
   if (code === undefined) {
     return (
       <p role="status" className="text-center text-muted">
-        Chargement…
+        {ui.loading}
       </p>
     );
   }
 
   if (done) {
     return (
-      <DoneCard title="Mot de passe mis à jour">
-        C&apos;est tout bon ! Tu peux maintenant te reconnecter à l&apos;app Laboon avec
-        ton nouveau mot de passe.
+      <DoneCard title={t.doneTitle} ctaLabel={t.doneCta}>
+        {t.doneText}
       </DoneCard>
     );
   }
@@ -40,7 +41,7 @@ export function ResetPasswordView() {
     return (
       <>
         <BackLink />
-        <PageTitle className={TITLE_CLASS}>Choisis un nouveau mot de passe</PageTitle>
+        <PageTitle className={TITLE_CLASS}>{t.newTitle}</PageTitle>
         <Lede className="max-w-[44ch]">
           Il remplacera l&apos;ancien sur l&apos;app Laboon.
         </Lede>
@@ -49,7 +50,7 @@ export function ResetPasswordView() {
             endpoint="/auth/password/reset/confirm"
             field="new_password"
             code={code}
-            submitLabel="Mettre à jour"
+            submitLabel={t.newSubmit}
             onDone={() => setDone(true)}
             onInvalidCode={() => setInvalid(true)}
           />
@@ -62,25 +63,20 @@ export function ResetPasswordView() {
     <>
       <BackLink />
       <PageTitle className={TITLE_CLASS}>
-        {invalid ? "Lien invalide ou expiré" : "Mot de passe oublié ?"}
+        {invalid ? ui.account.invalidLink : t.askTitle}
       </PageTitle>
-      <Lede className="max-w-[44ch]">
-        Pas de panique. Indique l&apos;adresse e-mail de ton compte Laboon : on
-        t&apos;envoie un lien (valable 30 minutes) pour choisir un nouveau mot de passe.
-      </Lede>
+      <Lede className="max-w-[44ch]">{t.askLede}</Lede>
       <Card className="mt-8 p-6 sm:p-11">
         {invalid && (
           <div className="mb-5">
-            <FormError>
-              Ce lien n&apos;est plus valide (il a peut-être déjà servi ou expiré).
-            </FormError>
+            <FormError>{ui.account.invalidLinkText}</FormError>
           </div>
         )}
         <EmailRequestForm
           endpoint="/auth/password/reset"
-          submitLabel="Recevoir le lien"
-          sentTitle="Vérifie ta boîte mail"
-          sentText="Si un compte existe avec cette adresse, on vient d'y envoyer un lien. Pense à regarder dans tes spams."
+          submitLabel={t.askSubmit}
+          sentTitle={t.sentTitle}
+          sentText={t.sentText}
         />
       </Card>
     </>

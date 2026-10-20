@@ -1,11 +1,11 @@
-// Writes the e-mails to emails/dist/*.html (paste them in Brevo).
+// Writes the e-mails to emails/dist/<name>.<lang>.html (paste them in Brevo).
 // Run: npm run emails
 
-import { mkdirSync, writeFileSync } from "node:fs";
-import { campaign, doubleOptin } from "./templates.ts";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { ALL_EMAILS } from "./templates.ts";
 
 const OUT = new URL("./dist/", import.meta.url);
+rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
-writeFileSync(new URL("double-optin.html", OUT), doubleOptin);
-writeFileSync(new URL("campaign.html", OUT), campaign);
-console.log("emails/dist/double-optin.html, emails/dist/campaign.html");
+for (const { file, html } of ALL_EMAILS) writeFileSync(new URL(file, OUT), html);
+console.log(ALL_EMAILS.map((e) => `emails/dist/${e.file}`).join("\n"));

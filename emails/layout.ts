@@ -5,6 +5,7 @@
 // by itself, so the palette is chosen to stay readable when it does.
 // See docs/features/emails.md.
 
+import { DEFAULT_LOCALE, type Locale } from "../lib/i18n.ts";
 import { CONTACT_EMAIL, SITE_URL, SOCIALS } from "../lib/site.ts";
 
 export const COLORS = {
@@ -70,6 +71,12 @@ a{text-decoration:underline}
   .rule{border-color:rgba(255,255,255,0.22)!important}
 }`;
 
+/** Texts of the frame (the content is in templates.ts). */
+export const FRAME_TEXT: Record<Locale, { follow: string }> = {
+  fr: { follow: "Suis-nous" },
+  en: { follow: "Follow us" },
+};
+
 export type Email = {
   /** Hidden preview line shown next to the subject in the inbox. */
   preheader: string;
@@ -81,19 +88,17 @@ export type Email = {
   topLine?: string;
 };
 
-export function renderEmail({
-  preheader,
-  body,
-  footer = "",
-  topLine = "",
-}: Email): string {
+export function renderEmail(
+  { preheader, body, footer = "", topLine = "" }: Email,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   // Round blue buttons with a white icon (PNG: mail clients ignore SVG): same look in light and dark.
   const socials = SOCIALS.map(
     (s) =>
       `<td style="padding-right:10px;"><a href="${s.href}" target="_blank"><img src="${SITE_URL}/brand/email/${s.name.toLowerCase()}.png" width="44" height="44" alt="${s.name}" style="display:block;width:44px;height:44px;border-radius:22px;background:${COLORS.blue};color:#FFFFFF;font-family:${FONT_TEXT};font-size:11px;"></a></td>`,
   ).join("");
   return `<!doctype html>
-<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="${locale}" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -117,7 +122,7 @@ ${body}
 </td></tr>
 <tr><td class="card px" bgcolor="#FFFFFF" style="background:#FFFFFF;padding:0 40px 32px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="rule" style="border-top:1px solid ${COLORS.mist};padding-top:20px;font-family:${FONT_TEXT};font-size:14px;line-height:1.6;color:${COLORS.inkSoft};">
-<p class="soft" style="margin:0 0 10px;font-family:${FONT_TEXT};font-size:14px;color:${COLORS.inkSoft};">Suis-nous</p>
+<p class="soft" style="margin:0 0 10px;font-family:${FONT_TEXT};font-size:14px;color:${COLORS.inkSoft};">${FRAME_TEXT[locale].follow}</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px;"><tr>${socials}</tr></table>
 <p class="soft" style="margin:0;font-family:${FONT_TEXT};font-size:13px;color:${COLORS.inkSoft};">Laboon · <a class="lnk" href="mailto:${CONTACT_EMAIL}" style="color:${COLORS.inkSoft};">${CONTACT_EMAIL}</a></p>
 ${footer}

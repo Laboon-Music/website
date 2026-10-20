@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { mockFetch, sentJson } from "@/tests/helpers";
-import { NO_LIST_ERROR } from "@/lib/newsletter";
+import { UI as FR } from "@/content/fr/ui";
+import { HOME_CONTENT } from "@/content/fr/home";
 import { trackEvent } from "@/lib/analytics";
 import SignupForm from "./SignupForm";
 
@@ -12,7 +13,7 @@ describe("SignupForm", () => {
   it("submits the email, the chosen lists and the anti-bot fields", async () => {
     const fetchMock = mockFetch(200, { ok: true });
     const user = userEvent.setup();
-    render(<SignupForm />);
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
 
     await user.type(screen.getByLabelText("Ton e-mail"), "jane@example.com");
     await user.click(screen.getByLabelText("Tester la bêta en avant-première"));
@@ -37,19 +38,19 @@ describe("SignupForm", () => {
   it("requires at least one list without calling the API", async () => {
     const fetchMock = mockFetch();
     const user = userEvent.setup();
-    render(<SignupForm />);
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
 
     await user.click(screen.getByLabelText("Me prévenir du lancement"));
     await user.click(screen.getByRole("button", { name: "M’inscrire" }));
 
-    expect(screen.getByRole("alert")).toHaveTextContent(NO_LIST_ERROR);
+    expect(screen.getByRole("alert")).toHaveTextContent(FR.errors.noList);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("shows the API error message and ties it to the e-mail field", async () => {
     mockFetch(400, { error: "Adresse email invalide." });
     const user = userEvent.setup();
-    render(<SignupForm />);
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
 
     await user.click(screen.getByRole("button", { name: "M’inscrire" }));
 
@@ -62,7 +63,7 @@ describe("SignupForm", () => {
   });
 
   it("starts with the launch list checked and the beta unchecked", () => {
-    render(<SignupForm />);
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
     expect(screen.getByLabelText("Me prévenir du lancement")).toBeChecked();
     expect(screen.getByLabelText("Tester la bêta en avant-première")).not.toBeChecked();
   });

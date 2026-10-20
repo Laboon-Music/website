@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { mockFetch, sentJson } from "@/tests/helpers";
-import { GENERIC_ERROR } from "@/hooks/useProtectedForm";
+import { UI as FR } from "@/content/fr/ui";
 import { trackEvent } from "@/lib/analytics";
 import ContactForm from "./ContactForm";
 
@@ -46,6 +46,6 @@ describe("ContactForm", () => {
 
     await fillAndSend();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(GENERIC_ERROR);
+    expect(await screen.findByRole("alert")).toHaveTextContent(FR.errors.generic);
   });
 });

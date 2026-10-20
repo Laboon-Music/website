@@ -1,11 +1,11 @@
-import Link from "next/link";
+import { LocalizedLink } from "@/components/i18n/LocalizedLink";
 import type { ComponentProps } from "react";
 import { cx } from "@/lib/cx";
 
 // Design system — link inside running text. Always underlined and bold, in the
 // colour of the surrounding text, so it is not distinguished by colour alone
 // (WCAG "link in text block") and stays readable on every panel.
-// Internal paths use next/link; mailto:, tel: and external URLs a plain <a>.
+// Internal paths use LocalizedLink (same page, same language); mailto:, tel: and external URLs a plain <a>.
 
 export function TextLink({
   href,
@@ -17,7 +17,7 @@ export function TextLink({
     className,
   );
   if (href.startsWith("/")) {
-    return <Link href={href} className={classes} {...props} />;
+    return <LocalizedLink href={href} className={classes} {...props} />;
   }
   const external = /^https?:/.test(href);
   return (

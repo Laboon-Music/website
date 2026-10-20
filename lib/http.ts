@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 
 // JSON response helpers shared by the API routes.
-// Error messages are shown as-is to visitors, so they are written in French.
-
-export const INVALID_REQUEST_ERROR = "Requête invalide.";
-export const NETWORK_ERROR = "Erreur réseau. Réessaie plus tard.";
+// Error messages are shown as-is to visitors: they come from the dictionaries
+// (content/<lang>/ui.ts, see lib/request-locale.ts).
 
 export function jsonOk(extra: Record<string, unknown> = {}) {
   return NextResponse.json({ ok: true, ...extra });

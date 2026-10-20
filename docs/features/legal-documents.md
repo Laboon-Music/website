@@ -19,7 +19,7 @@ confidentialité, Mentions légales.
   `components/legal/_shared.tsx` blocks (`DocHeader`, `Section`, `List`, `TodoNote`…).
 - `components/legal/LegalPage.tsx` — `LegalPage` + `legalMetadata(slug)` used
   by each public route (2-line page files).
-- `app/legal/[slug]/page.tsx` — embed route, statically generated for every slug.
+- `app/[lang]/legal/[slug]/page.tsx` — embed route, statically generated for every slug.
 
 ## Contact address
 

@@ -1,7 +1,6 @@
-import { FAQ_CONTENT } from "@/content/faq";
-import { FaqGroup } from "./Faq";
+import { FaqGroup, type FaqContent } from "./Faq";
 
-type Group = (typeof FAQ_CONTENT.groups)[number];
+type Group = FaqContent["groups"][number];
 
 /** Spreads the groups over two columns with a similar number of questions each. */
 export function splitColumns(groups: readonly Group[]): [Group[], Group[]] {
@@ -18,8 +17,8 @@ export function splitColumns(groups: readonly Group[]): [Group[], Group[]] {
 }
 
 /** FAQ block of the home page: centred title, questions in two columns. */
-export function FaqSection() {
-  const columns = splitColumns(FAQ_CONTENT.groups);
+export function FaqSection({ content }: { content: FaqContent }) {
+  const columns = splitColumns(content.groups);
   return (
     <section
       id="faq"
@@ -34,10 +33,10 @@ export function FaqSection() {
           id="faq-title"
           className="font-title text-[30px] leading-[1.05] font-extrabold tracking-[-0.05em] text-balance text-ink sm:text-[clamp(2.2rem,4.2vw,3.75rem)]"
         >
-          {FAQ_CONTENT.title}
+          {content.title}
         </h2>
         <p className="text-base leading-snug text-ink-soft sm:text-[clamp(1.05rem,1.4vw,1.25rem)]">
-          {FAQ_CONTENT.subtitle}
+          {content.subtitle}
         </p>
       </div>
       <div className="mx-auto grid max-w-[1000px] items-start gap-5 md:grid-cols-2">

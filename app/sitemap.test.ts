@@ -16,6 +16,21 @@ describe("sitemap", () => {
     }
   });
 
+  it("lists every page in French and English, each pointing to the other (hreflang)", () => {
+    const entries = sitemap();
+    const contactEn = entries.find(
+      (e) => e.url === "https://www.laboon-app.com/en/contact",
+    );
+    expect(contactEn?.alternates?.languages).toEqual({
+      fr: "https://www.laboon-app.com/contact",
+      en: "https://www.laboon-app.com/en/contact",
+    });
+    expect(urls).toContain("https://www.laboon-app.com/en");
+    for (const slug of LEGAL_SLUGS) {
+      expect(urls).toContain(`https://www.laboon-app.com/en/${slug}`);
+    }
+  });
+
   it("never lists non-indexable pages", () => {
     expect(
       urls.some((u) =>

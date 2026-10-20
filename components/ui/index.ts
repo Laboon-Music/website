@@ -12,5 +12,6 @@ export {
   Textarea,
 } from "./form-controls";
 export { PasswordInput } from "./PasswordInput";
-export { BackLink, Lede, PageTitle } from "./PageHeading";
+export { BackLink } from "./BackLink";
+export { Lede, PageTitle } from "./PageHeading";
 export { TextLink } from "./TextLink";

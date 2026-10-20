@@ -1,21 +1,37 @@
 import { describe, expect, it } from "vitest";
+import { LOCALES } from "../lib/i18n";
 import { SOCIALS } from "../lib/site";
-import { campaign, doubleOptin } from "./templates";
+import { ALL_EMAILS, campaign, doubleOptin } from "./templates";
 
-describe("e-mail templates", () => {
+describe.each(LOCALES)("e-mail templates (%s)", (locale) => {
+  const optin = doubleOptin(locale);
+  const news = campaign(locale);
+
+  it("declares its language", () => {
+    expect(optin).toContain(`<html lang="${locale}"`);
+  });
+
   it("double opt-in carries the Brevo confirmation link on the button and as a fallback", () => {
-    expect(doubleOptin.match(/\{\{ doubleoptin \}\}/g)?.length).toBeGreaterThanOrEqual(2);
-    expect(doubleOptin).toContain('href="{{ doubleoptin }}"');
+    expect(optin.match(/\{\{ doubleoptin \}\}/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(optin).toContain('href="{{ doubleoptin }}"');
   });
 
   it("campaign has the unsubscribe and view-in-browser links Brevo requires", () => {
-    expect(campaign).toContain("{{ unsubscribe }}");
-    expect(campaign).toContain("{{ mirror }}");
+    expect(news).toContain("{{ unsubscribe }}");
+    expect(news).toContain("{{ mirror }}");
+  });
+
+  it("campaign opens the home page of its language", () => {
+    expect(news).toContain(
+      locale === "en"
+        ? 'href="https://www.laboon-app.com/en"'
+        : 'href="https://www.laboon-app.com"',
+    );
   });
 
   for (const [name, html] of [
-    ["double opt-in", doubleOptin],
-    ["campaign", campaign],
+    ["double opt-in", optin],
+    ["campaign", news],
   ] as const) {
     describe(name, () => {
       it("supports light and dark mode", () => {
@@ -30,8 +46,9 @@ describe("e-mail templates", () => {
         expect(html).not.toMatch(/font-size:1[0-5]px;line-height:1\.55/);
       });
 
-      it("stays readable without images: alt text on the logo", () => {
+      it("stays readable without images: alt text on the logo and the social icons", () => {
         expect(html).toContain('alt="Laboon"');
+        for (const social of SOCIALS) expect(html).toContain(`alt="${social.name}"`);
       });
 
       it("links every social network and the contact address", () => {
@@ -39,11 +56,27 @@ describe("e-mail templates", () => {
         expect(html).toContain("mailto:laboon.app@gmail.com");
       });
 
-      it("uses absolute https URLs for images and links", () => {
+      it("uses absolute https URLs for images", () => {
         expect(html).toContain(
           'src="https://www.laboon-app.com/brand/email/wordmark-white.png"',
         );
       });
     });
   }
+});
+
+describe("e-mail files", () => {
+  it("writes one file per template and language", () => {
+    expect(ALL_EMAILS.map((e) => e.file).sort()).toEqual([
+      "campaign.en.html",
+      "campaign.fr.html",
+      "double-optin.en.html",
+      "double-optin.fr.html",
+    ]);
+  });
+
+  it("French and English say different things", () => {
+    expect(doubleOptin("fr")).not.toBe(doubleOptin("en"));
+    expect(doubleOptin("en")).toContain("Almost done!");
+  });
 });

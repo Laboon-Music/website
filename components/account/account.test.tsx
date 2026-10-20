@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiPost } from "@/lib/api";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
 import { ConfirmEmailView } from "./ConfirmEmailView";
 import { ResetPasswordView } from "./ResetPasswordView";
 
@@ -33,10 +34,11 @@ describe("ResetPasswordView with a code", () => {
 
     await user.click(screen.getByRole("button", { name: "Mettre à jour" }));
 
-    expect(apiPost).toHaveBeenCalledWith("/auth/password/reset/confirm", {
-      code: "lbc_secret",
-      new_password: STRONG,
-    });
+    expect(apiPost).toHaveBeenCalledWith(
+      "/auth/password/reset/confirm",
+      { code: "lbc_secret", new_password: STRONG },
+      "fr",
+    );
     expect(await screen.findByText("Mot de passe mis à jour")).toBeInTheDocument();
   });
 
@@ -97,9 +99,11 @@ describe("ResetPasswordView without a code", () => {
     );
     await user.click(screen.getByRole("button", { name: "Recevoir le lien" }));
 
-    expect(apiPost).toHaveBeenCalledWith("/auth/password/reset", {
-      email: "jane@example.com",
-    });
+    expect(apiPost).toHaveBeenCalledWith(
+      "/auth/password/reset",
+      { email: "jane@example.com" },
+      "fr",
+    );
     expect(await screen.findByRole("status")).toHaveTextContent(/Si un compte existe/);
   });
 
@@ -125,10 +129,11 @@ describe("ConfirmEmailView", () => {
     render(<ConfirmEmailView />);
     const user = await fillPasswords();
     await user.click(screen.getByRole("button", { name: "Confirmer mon compte" }));
-    expect(apiPost).toHaveBeenCalledWith("/auth/confirm", {
-      code: "lbc_confirm",
-      password: STRONG,
-    });
+    expect(apiPost).toHaveBeenCalledWith(
+      "/auth/confirm",
+      { code: "lbc_confirm", password: STRONG },
+      "fr",
+    );
     expect(await screen.findByText("Compte confirmé !")).toBeInTheDocument();
   });
 
@@ -138,8 +143,51 @@ describe("ConfirmEmailView", () => {
     const user = userEvent.setup();
     await user.type(await screen.findByLabelText("E-mail du compte"), "jane@example.com");
     await user.click(screen.getByRole("button", { name: "Renvoyer le lien" }));
-    expect(apiPost).toHaveBeenCalledWith("/auth/confirm/resend", {
-      email: "jane@example.com",
+    expect(apiPost).toHaveBeenCalledWith(
+      "/auth/confirm/resend",
+      { email: "jane@example.com" },
+      "fr",
+    );
+  });
+});
+
+describe("account pages in English", () => {
+  it("shows English texts and tells the API to answer in English", async () => {
+    visit("?code=lbc_secret");
+    render(
+      <LocaleProvider locale="en">
+        <ResetPasswordView />
+      </LocaleProvider>,
+    );
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("New password"), STRONG);
+    await user.type(screen.getByLabelText("Confirm password"), STRONG);
+    expect(screen.getAllByText(/\(met\)/)).toHaveLength(4);
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    expect(apiPost).toHaveBeenCalledWith(
+      "/auth/password/reset/confirm",
+      { code: "lbc_secret", new_password: STRONG },
+      "en",
+    );
+    expect(await screen.findByText("Password updated")).toBeInTheDocument();
+  });
+
+  it("translates API errors to English", async () => {
+    visit("");
+    vi.mocked(apiPost).mockResolvedValue({
+      ok: false,
+      code: "rate_limited",
+      status: 429,
     });
+    render(
+      <LocaleProvider locale="en">
+        <ConfirmEmailView />
+      </LocaleProvider>,
+    );
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Account e-mail"), "jane@example.com");
+    await user.click(screen.getByRole("button", { name: "Resend the link" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(/Too many attempts/);
   });
 });
