@@ -1,13 +1,14 @@
-// Texts of the FAQ, shown on the website (/faq) and in the mobile app (WebView).
+// Texts of the FAQ, shown on the home page and in the mobile app (/faq/embed WebView).
 // ✏️ Safe to edit: change the text between quotes only; keep the structure.
 // A link is written [label](address): an internal path (/contact), an https://
 // address or a mailto: address. See docs/content.md.
 
-import { CONTACT_EMAIL } from "@/lib/site";
+import { CONTACT_EMAIL, SOCIALS } from "@/lib/site";
 
 export const FAQ_CONTENT = {
-  title: "Questions fréquentes",
-  subtitle: "Tout ce qu'il faut savoir sur Laboon.",
+  title: "Questions fréquentes sur Laboon",
+  subtitle:
+    "Tout ce qu’il faut savoir sur l’appli pour trouver des musiciens et former un groupe.",
   groups: [
     {
       title: "Comprendre Laboon",
@@ -80,7 +81,7 @@ export const FAQ_CONTENT = {
       items: [
         {
           question: "Comment vous contacter ou vous suivre ?",
-          answer: `Sur Instagram [@laboon.app.music](https://www.instagram.com/laboon.app.music/), par mail à [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) ou via le [formulaire de contact](/contact).`,
+          answer: `Sur ${SOCIALS.map((s) => `[${s.name}](${s.href})`).join(" ou ")}, par mail à [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) ou via le [formulaire de contact](/contact).`,
         },
         {
           question: "J'ai une idée ou un bug à signaler, comment faire ?",

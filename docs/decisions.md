@@ -112,3 +112,25 @@ changes the stack, the architecture or a convention.
 - The `Laboon-` prefix is redundant inside the `Laboon-Music` organization.
   GitHub redirects the old `Laboon-website` URL, so existing links, PRs and
   clones keep working. The `laboon-website` npm package name is unchanged.
+
+## 2026-10-20 — New brand design (product designer)
+
+- **Single light/blue brand theme** replaces the dark violet/pink one: tokens
+  redefined in `app/globals.css` (same names, so components keep working);
+  inner pages = night-blue gradient + solid blue panel, home = animated scene.
+- **Fonts via `next/font`** (Bricolage Grotesque + Sora), self-hosted: no
+  request to Google from visitors (GDPR), replaces the designer's CDN link.
+- **No Lenis** (inertial scroll from a CDN): native scroll kept — less scroll
+  hijacking, no third-party script. The scroll engine of the mockup
+  (`scrollcraft.js`, 62 KB) was replaced by a small typed module
+  (`components/home/scene.ts` + tested maths in `lib/scene-math.ts`).
+- **Mockup forms were simulated**: replaced by our real forms (API, double
+  opt-in, anti-bot). Password: only the look of the mockup is applied to
+  `/reset-password` (Supabase flow kept, 12 characters minimum); no web
+  "forgot password" page (it would reveal which e-mails have an account).
+- **Accessibility fixes over the mockup**: skip link, content visible without
+  JavaScript (intro hide has an 8 s failsafe), keyboard Tab ends the intro,
+  "pause animations" button (WCAG 2.2.2), FAQ structured data generated from
+  `content/faq.ts`.
+- Kept from our site (absent in the mockup): FAQ group "Lancement et
+  disponibilité", Facebook link, embed pages for the app, 404/error pages.

@@ -5,9 +5,8 @@ import sitemap from "./sitemap";
 describe("sitemap", () => {
   const urls = sitemap().map((entry) => entry.url);
 
-  it("lists the home, FAQ and contact pages on the canonical domain", () => {
+  it("lists the home and contact pages on the canonical domain", () => {
     expect(urls).toContain("https://www.laboon-app.com/");
-    expect(urls).toContain("https://www.laboon-app.com/faq");
     expect(urls).toContain("https://www.laboon-app.com/contact");
   });
 

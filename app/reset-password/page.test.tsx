@@ -13,7 +13,7 @@ async function submitNewPassword() {
   const user = userEvent.setup();
   await user.type(await screen.findByLabelText("Nouveau mot de passe"), PASSWORD);
   await user.type(screen.getByLabelText("Confirmer le mot de passe"), PASSWORD);
-  await user.click(screen.getByRole("button", { name: "Valider" }));
+  await user.click(screen.getByRole("button", { name: "Mettre à jour" }));
 }
 
 beforeEach(() => {
@@ -23,6 +23,34 @@ beforeEach(() => {
 });
 
 describe("/reset-password", () => {
+  it("lets the visitor reveal and hide the password", async () => {
+    render(<ResetPasswordPage />);
+    const field = await screen.findByLabelText("Nouveau mot de passe");
+    expect(field).toHaveAttribute("type", "password");
+    await userEvent.click(screen.getAllByRole("button", { name: "Afficher" })[0]);
+    expect(field).toHaveAttribute("type", "text");
+    expect(screen.getByRole("button", { name: "Masquer" })).toBeInTheDocument();
+  });
+
+  it("checks the password length rule as the visitor types", async () => {
+    render(<ResetPasswordPage />);
+    const user = userEvent.setup();
+    const field = await screen.findByLabelText("Nouveau mot de passe");
+    expect(screen.queryByText(/respecté/)).not.toBeInTheDocument();
+    await user.type(field, PASSWORD);
+    expect(screen.getByText(/respecté/)).toBeInTheDocument();
+  });
+
+  it("refuses a too short password without calling Supabase", async () => {
+    render(<ResetPasswordPage />);
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Nouveau mot de passe"), "short");
+    await user.type(screen.getByLabelText("Confirmer le mot de passe"), "short");
+    await user.click(screen.getByRole("button", { name: "Mettre à jour" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(/au moins 12 caractères/);
+    expect(auth.updateUser).not.toHaveBeenCalled();
+  });
+
   it("shows 'invalid link' without recovery tokens", async () => {
     window.location.hash = "";
     render(<ResetPasswordPage />);
@@ -58,6 +86,6 @@ describe("/reset-password", () => {
     render(<ResetPasswordPage />);
     await submitNewPassword();
     expect(await screen.findByRole("alert")).toHaveTextContent(/Réessaie plus tard/);
-    expect(screen.getByRole("button", { name: "Valider" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Mettre à jour" })).toBeEnabled();
   });
 });

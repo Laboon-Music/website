@@ -1,4 +1,4 @@
-import { DocHeader, List, Section, Subheading } from "../../_shared";
+import { DocBody, DocHeader, List, Section, Subheading } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -11,11 +11,11 @@ export default function Confidentialite() {
   return (
     <article className="space-y-8">
       <DocHeader {...CONFIDENTIALITE_META} locale="fr" />
-      <p className="text-muted">
+      <p className="max-w-[62ch] text-[clamp(1.05rem,1.4vw,1.2rem)] leading-relaxed text-muted">
         Conformément au Règlement (UE) 2016/679 du Parlement européen et du Conseil (RGPD)
         et à la loi Informatique et Libertés modifiée.
       </p>
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="1. Identité du responsable de traitement">
           <p>
             Laboon est responsable du traitement des données personnelles collectées via
@@ -138,7 +138,7 @@ export default function Confidentialite() {
             notification dans l&apos;application.
           </p>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

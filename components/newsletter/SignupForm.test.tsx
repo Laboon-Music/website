@@ -14,9 +14,9 @@ describe("SignupForm", () => {
     const user = userEvent.setup();
     render(<SignupForm />);
 
-    await user.type(screen.getByLabelText("Adresse email"), "jane@example.com");
-    await user.click(screen.getByLabelText("Devenir beta testeur·euse"));
-    await user.click(screen.getByRole("button", { name: "Je m'inscris" }));
+    await user.type(screen.getByLabelText("Ton e-mail"), "jane@example.com");
+    await user.click(screen.getByLabelText("Tester la bêta en avant-première"));
+    await user.click(screen.getByRole("button", { name: "M’inscrire" }));
 
     expect(fetchMock.mock.calls[0][0]).toBe("/api/subscribe");
     expect(sentJson(fetchMock)).toMatchObject({
@@ -40,20 +40,30 @@ describe("SignupForm", () => {
     render(<SignupForm />);
 
     await user.click(screen.getByLabelText("Me prévenir du lancement"));
-    await user.click(screen.getByRole("button", { name: "Je m'inscris" }));
+    await user.click(screen.getByRole("button", { name: "M’inscrire" }));
 
     expect(screen.getByRole("alert")).toHaveTextContent(NO_LIST_ERROR);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("shows the API error message", async () => {
+  it("shows the API error message and ties it to the e-mail field", async () => {
     mockFetch(400, { error: "Adresse email invalide." });
     const user = userEvent.setup();
     render(<SignupForm />);
 
-    await user.click(screen.getByRole("button", { name: "Je m'inscris" }));
+    await user.click(screen.getByRole("button", { name: "M’inscrire" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Adresse email invalide.");
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Adresse email invalide.");
+    const input = screen.getByLabelText("Ton e-mail");
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAttribute("aria-describedby", alert.id);
     expect(trackEvent).not.toHaveBeenCalled();
+  });
+
+  it("starts with the launch list checked and the beta unchecked", () => {
+    render(<SignupForm />);
+    expect(screen.getByLabelText("Me prévenir du lancement")).toBeChecked();
+    expect(screen.getByLabelText("Tester la bêta en avant-première")).not.toBeChecked();
   });
 });

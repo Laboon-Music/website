@@ -1,4 +1,4 @@
-import { DocHeader, List, Section, Subheading } from "../../_shared";
+import { DocBody, DocHeader, List, Section, Subheading } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -11,8 +11,10 @@ export default function Cgv() {
   return (
     <article className="space-y-8">
       <DocHeader {...CGV_META} locale="en" />
-      <p className="text-muted">Subscription offer for musician users</p>
-      <div className="space-y-6 text-muted">
+      <p className="max-w-[62ch] text-[clamp(1.05rem,1.4vw,1.2rem)] leading-relaxed text-muted">
+        Subscription offer for musician users
+      </p>
+      <DocBody>
         <Section title="Preamble">
           <p>
             These Terms of Sale (ToS) govern the contractual relationship between Laboon,
@@ -355,7 +357,7 @@ export default function Cgv() {
             </li>
           </List>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

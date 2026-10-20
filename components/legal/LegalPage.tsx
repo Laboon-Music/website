@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { PageShell } from "@/components/layout";
+import { BackLink } from "@/components/ui";
 import { DEFAULT_LOCALE, getLegalDoc, type LegalSlug } from "./registry";
 
 /**
@@ -10,12 +10,10 @@ import { DEFAULT_LOCALE, getLegalDoc, type LegalSlug } from "./registry";
  */
 export function LegalPageShell({ children }: { children: ReactNode }) {
   return (
-    <PageShell footer>
-      <div className="mx-auto max-w-3xl px-4 pt-4 pb-16 sm:px-6">
-        <Link href="/" className="text-sm text-text hover:text-brand-2">
-          ← Retour
-        </Link>
-        <div className="mt-8 break-words">{children}</div>
+    <PageShell>
+      <div className="rise mx-auto w-full max-w-[760px]">
+        <BackLink />
+        <div className="mt-5 break-words">{children}</div>
       </div>
     </PageShell>
   );

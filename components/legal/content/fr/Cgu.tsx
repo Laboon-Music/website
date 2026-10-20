@@ -1,4 +1,4 @@
-import { DocHeader, List, Section, Subheading } from "../../_shared";
+import { DocBody, DocHeader, List, Section, Subheading } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -11,7 +11,7 @@ export default function Cgu() {
   return (
     <article className="space-y-8">
       <DocHeader {...CGU_META} locale="fr" />
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="1. Objet">
           <p>
             Les présentes Conditions Générales d&apos;Utilisation (CGU) définissent les
@@ -212,7 +212,7 @@ export default function Cgu() {
             <TextLink href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</TextLink>
           </p>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

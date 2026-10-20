@@ -3,15 +3,15 @@
 
 export const SITE_CONTENT = {
   name: "Laboon",
-  title: "Laboon — Trouve tes partenaires de musique",
+  title: "Laboon · L’appli pour trouver des musiciens près de chez toi",
+  shareTitle: "Laboon · Trouve des musiciens et monte ton groupe",
   description:
-    "Laboon met en relation les musiciens : trouve des partenaires de jeu, monte ton groupe, rencontre des musiciens près de chez toi. Inscris-toi pour le lancement et la beta.",
-  shareDescription:
-    "L'application qui met en relation les musiciens. Inscris-toi pour le lancement et la beta.",
+    "Laboon, l’appli pour trouver des musiciens près de chez toi : batteur, bassiste, guitariste, chanteur·euse… Monte ton groupe et joue. Inscris-toi à la bêta.",
   keywords: [
     "musiciens",
     "groupe de musique",
     "rencontre musiciens",
+    "trouver un batteur",
     "jouer de la musique",
     "Laboon",
   ],

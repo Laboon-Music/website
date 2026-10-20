@@ -27,6 +27,7 @@ link association files).
 
 | Feature                                          | Route(s)                                                                            | Doc                                                   |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Home scene (animated landing)                    | `/`                                                                                 | [home-scene.md](features/home-scene.md)               |
 | Newsletter signup (launch / beta, double opt-in) | `/`, `/api/subscribe`, `/inscription-confirmee`                                     | [newsletter-signup.md](features/newsletter-signup.md) |
 | FAQ (+ app WebView embed)                        | `/faq`, `/faq/embed`                                                                | [faq.md](features/faq.md)                             |
 | Contact form (+ app WebView embed)               | `/contact`, `/contact/embed`, `/api/contact`                                        | [contact-form.md](features/contact-form.md)           |

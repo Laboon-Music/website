@@ -9,7 +9,9 @@ describe("SocialLinks", () => {
 
     expect(links).toHaveLength(SOCIALS.length);
     for (const social of SOCIALS) {
-      const link = screen.getByRole("link", { name: `Laboon sur ${social.name}` });
+      const link = screen.getByRole("link", {
+        name: `Laboon sur ${social.name} (nouvel onglet)`,
+      });
       expect(link).toHaveAttribute("href", social.href);
       expect(link).toHaveAttribute("target", "_blank");
       expect(link).toHaveAttribute("rel", "noopener noreferrer");

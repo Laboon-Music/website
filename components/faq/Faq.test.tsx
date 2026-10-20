@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { FAQ_CONTENT } from "@/content/faq";
-import { CONTACT_EMAIL } from "@/lib/site";
+import { CONTACT_EMAIL, SOCIALS } from "@/lib/site";
 import { Faq } from "./Faq";
-import { RichText } from "./RichText";
+import { embedHref, RichText } from "./RichText";
 
 describe("RichText", () => {
   it("turns [label](address) into links and keeps the rest", () => {
@@ -28,7 +28,37 @@ describe("RichText", () => {
   });
 });
 
+describe("embedHref", () => {
+  it("keeps links on the bare app pages", () => {
+    expect(embedHref("/contact")).toBe("/contact/embed");
+    expect(embedHref("/charte")).toBe("/legal/charte");
+    expect(embedHref("/confidentialite")).toBe("/legal/confidentialite");
+    expect(embedHref("mailto:a@b.co")).toBe("mailto:a@b.co");
+    expect(embedHref("https://example.com")).toBe("https://example.com");
+  });
+
+  it("drops home anchors, useless inside the app", () => {
+    expect(embedHref("/#inscription")).toBeNull();
+    render(
+      <p>
+        <RichText embed text="Va [ici](/#inscription) ou [là](/contact)." />
+      </p>,
+    );
+    expect(screen.queryByRole("link", { name: "ici" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "là" })).toHaveAttribute(
+      "href",
+      "/contact/embed",
+    );
+  });
+});
+
 describe("Faq", () => {
+  it("links every social network", () => {
+    render(<Faq />);
+    const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href"));
+    for (const social of SOCIALS) expect(hrefs).toContain(social.href);
+  });
+
   it("shows every question once, grouped under headings", () => {
     render(<Faq />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(

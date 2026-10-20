@@ -23,7 +23,7 @@ Instagram, WhatsApp, X… It is a text-only placeholder until brand assets
 
 ## sitemap.xml (`app/sitemap.ts`)
 
-`/`, `/faq`, `/contact` and every legal document (derived from the legal registry).
+`/`, `/contact` and every legal document (derived from the legal registry).
 **Add every new public page here.**
 
 ## Search Console

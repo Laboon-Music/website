@@ -4,11 +4,11 @@ The texts of the home page and the site-wide texts are kept in two plain
 files, separate from the code, so they can be changed safely without
 touching the layout.
 
-| File              | Contains                                                                   |
-| ----------------- | -------------------------------------------------------------------------- |
-| `content/home.ts` | Home page: menu, hero, features, "comment ça marche", final call to action |
-| `content/faq.ts`  | FAQ (website and mobile app): questions and answers, grouped by theme      |
-| `content/site.ts` | Browser tab title, Google description, text shown when the link is shared  |
+| File              | Contains                                                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------------------------- |
+| `content/home.ts` | Home page: menu, hero, manifesto, values (cards), steps, final call to action, signup form, pause button |
+| `content/faq.ts`  | FAQ (website and mobile app): questions and answers, grouped by theme                                    |
+| `content/site.ts` | Browser tab title, Google description, text shown when the link is shared                                |
 
 Other texts: forms (`components/newsletter/SignupForm.tsx`,
 `components/contact/ContactForm.tsx`), contact subjects (`lib/contact.ts`),

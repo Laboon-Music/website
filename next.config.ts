@@ -13,6 +13,10 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // The FAQ lives on the home page; /faq/embed stays for the mobile app.
+  async redirects() {
+    return [{ source: "/faq", destination: "/#faq", permanent: true }];
+  },
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
   },

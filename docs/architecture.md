@@ -33,7 +33,7 @@ app/                         Routes (App Router). Pages are thin: they compose c
 ├── not-found.tsx, error.tsx, global-error.tsx   French error pages
 ├── opengraph-image.tsx      Generated social share image
 ├── robots.ts, sitemap.ts    SEO
-└── globals.css              Theme tokens, .text-gradient / .glow, reduced motion
+└── globals.css              Theme tokens, base styles, reduced motion (+ ui.css: button, checkbox, FAQ row, disc)
 
 content/                     Editable website texts (no JSX) — see content.md
 ├── home.ts                  Home page texts
@@ -41,7 +41,9 @@ content/                     Editable website texts (no JSX) — see content.md
 
 components/
 ├── ui/                      Design system primitives (Button, Input, Card, TextLink…) — see design-system.md
-├── layout/                  Page chrome (PageShell, SiteHeader, SiteFooter, Logo, Glow, CurrentYear)
+├── layout/                  Page chrome (PageShell, SiteHeader, SiteFooter, Wordmark, CurrentYear)
+├── home/                    Animated home scene (HomeScene, scene.ts, home.css) — see features/home-scene.md
+├── faq/                     FAQ article, home FAQ section, FAQPage structured data
 ├── newsletter/              SignupForm, TrackSignupConfirmed
 ├── contact/                 ContactForm
 ├── antibot/                 Turnstile widget (lazy)

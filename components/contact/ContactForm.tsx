@@ -35,12 +35,14 @@ export default function ContactForm() {
 
   if (form.status === "success") {
     return (
-      <Card tone="success">
-        <p className="text-lg font-semibold text-accent">Message envoyé, merci ! 🎶</p>
-        <p className="mt-2 text-sm break-words text-muted">
+      <Card tone="success" role="status" className="mx-auto">
+        <p className="font-title text-2xl font-extrabold tracking-[-0.04em]">
+          Message envoyé, merci !
+        </p>
+        <p className="mt-3 break-words text-muted">
           On te répond dès que possible à l&apos;adresse {email}.
         </p>
-        <ButtonLink href="/" className="mt-6">
+        <ButtonLink href="/" className="mt-8 px-10">
           Retour à l&apos;accueil
         </ButtonLink>
       </Card>
@@ -50,16 +52,17 @@ export default function ContactForm() {
   // noValidate: native browser bubbles use the browser language (often English);
   // the API returns our French messages instead.
   return (
-    <Card>
+    <Card className="p-7 sm:p-14">
       <form
         noValidate
         onSubmit={handleSubmit}
         {...form.formProps}
-        className="flex flex-col gap-4"
+        aria-describedby={form.status === "error" ? "contact-error" : undefined}
+        className="grid gap-5"
       >
         <Honeypot {...form.honeypot} />
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Nom">
             <Input
               type="text"
@@ -71,13 +74,13 @@ export default function ContactForm() {
               autoComplete="name"
             />
           </Field>
-          <Field label="Email">
+          <Field label="E-mail">
             <Input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="ton@email.com"
+              placeholder="prenom@mail.com"
               autoComplete="email"
             />
           </Field>
@@ -107,18 +110,18 @@ export default function ContactForm() {
 
         <Turnstile {...form.turnstile} />
 
-        <FormError>{form.status === "error" && form.error}</FormError>
-
-        <Button type="submit" disabled={form.status === "loading"}>
-          {form.status === "loading" ? "Envoi…" : "Envoyer"}
-        </Button>
-
-        <p className="text-xs text-muted">
-          Ton nom et ton email servent uniquement à te répondre.{" "}
-          <TextLink href="/confidentialite" tone="inherit">
-            Politique de confidentialité
-          </TextLink>
-        </p>
+        <div className="mt-2 grid justify-items-center gap-4 text-center">
+          <Button type="submit" disabled={form.status === "loading"} className="px-10">
+            {form.status === "loading" ? "Envoi…" : "Envoyer"}
+          </Button>
+          <FormError id="contact-error">
+            {form.status === "error" && form.error}
+          </FormError>
+          <p className="max-w-[46ch] text-sm leading-normal">
+            Ton nom et ton e-mail servent uniquement à te répondre.{" "}
+            <TextLink href="/confidentialite">Politique de confidentialité</TextLink>
+          </p>
+        </div>
       </form>
     </Card>
   );

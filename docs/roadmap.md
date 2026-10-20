@@ -12,11 +12,7 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 
 ## Brand assets (waiting for a logo)
 
-- [ ] **Favicon & app icons**: `app/icon.png` (or `.svg`), `app/apple-icon.png`
-      (180×180), and a web manifest — Next.js picks them up automatically.
-      Today browsers show a generic icon and `/favicon.ico` returns 404.
-- [ ] Replace the text-only share image (`app/opengraph-image.tsx`) with a
-      designed visual including the logo.
+- [x] Favicon, apple icon and brand fonts (`next/font`) are in place.
 
 ## Technical follow-ups
 
@@ -29,8 +25,8 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 - [ ] Conversion events are wired but need the **Vercel Pro** plan to be
       recorded ([analytics.md](features/analytics.md)) — decide when traffic
       justifies it.
-- [ ] Brand **web font** (`next/font`) once the visual identity is set
-      (system fonts today).
+- [ ] **Image weight**: `public/brand/motif-hd.webp` is 3.7 MB (home disc); ask the designer for a lighter export.
+- [ ] Lighthouse a11y + manual checks of the home scene on real phones (375 px, 320 px, landscape).
 - [ ] Upgrade to **TypeScript 7** and **ESLint 10** once supported by
       `eslint-config-next`.
 

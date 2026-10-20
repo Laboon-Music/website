@@ -4,7 +4,7 @@ import { SITE_CONTENT } from "@/content/site";
 
 // Social share image (Facebook, Instagram, WhatsApp, X…), generated at build
 // time from the brand colours and texts — no image asset needed. Replace with
-// a designed visual once the brand assets exist. See docs/features/seo.md.
+// a designed visual if the brand team provides one. See docs/features/seo.md.
 
 export const alt = SITE_CONTENT.title;
 export const size = { width: 1200, height: 630 };
@@ -21,8 +21,8 @@ export default function OpenGraphImage() {
         justifyContent: "center",
         padding: "80px",
         background:
-          "radial-gradient(circle at 0% 0%, rgba(124,92,255,0.55), transparent 55%), radial-gradient(circle at 100% 30%, rgba(255,92,168,0.45), transparent 50%), #0a0a0f",
-        color: "#f4f4f8",
+          "radial-gradient(circle at 100% 0%, rgba(210,213,255,0.35), transparent 55%), linear-gradient(160deg, #4753ff, #161a8f)",
+        color: "#ffffff",
         fontFamily: "sans-serif",
       }}
     >
@@ -31,27 +31,17 @@ export default function OpenGraphImage() {
       </div>
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
           marginTop: 40,
-          fontSize: 76,
+          fontSize: 96,
           fontWeight: 800,
-          lineHeight: 1.1,
+          lineHeight: 1.05,
+          textTransform: "uppercase",
         }}
       >
-        <span>{HOME_CONTENT.hero.title}</span>
-        <span
-          style={{
-            backgroundImage: "linear-gradient(90deg, #7c5cff, #ff5ca8)",
-            backgroundClip: "text",
-            color: "transparent",
-          }}
-        >
-          {HOME_CONTENT.hero.titleHighlight}
-        </span>
+        {HOME_CONTENT.hero.title}
       </div>
-      <div style={{ marginTop: 40, fontSize: 30, color: "#a6a6ba" }}>
-        {HOME_CONTENT.hero.badge}
+      <div style={{ marginTop: 40, maxWidth: 900, fontSize: 32, color: "#d2d5ff" }}>
+        {HOME_CONTENT.hero.subtitle}
       </div>
     </div>,
     size,
