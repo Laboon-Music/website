@@ -9,6 +9,7 @@ import {
   lerp,
   manifestoInk,
   pinProgress,
+  ringFlow,
   sstep,
   stepIndex,
   wordFill,
@@ -99,5 +100,38 @@ describe("colours", () => {
     expect(wordFill(1, 4, 5, false)).toBe(1);
     expect(wordFill(0.1, 3, 5, true)).toBe(1);
     expect(wordFill(0.5, 0, 5, false)).toBeGreaterThan(wordFill(0.5, 4, 5, false));
+  });
+});
+
+describe("ring flow (seamless loop)", () => {
+  const gap = 28;
+  // Radius and identity of the ring that sits at slot `slot` at time `t`.
+  const ring = (t: number, slot: number) => {
+    const { offset, cycle } = ringFlow(t, gap);
+    return { r: slot * gap + offset, id: slot - cycle };
+  };
+
+  it("moves the rings outward by up to one gap, then wraps back", () => {
+    expect(ringFlow(0, gap).offset).toBe(0);
+    expect(ringFlow(1, gap).offset).toBeCloseTo(16);
+    const wrap = gap / 16; // seconds for one gap
+    expect(ringFlow(wrap - 0.001, gap).cycle).toBe(0);
+    expect(ringFlow(wrap + 0.001, gap).cycle).toBe(1);
+  });
+
+  it("keeps the same ring identity across the wrap (no visible pop)", () => {
+    const wrap = gap / 16;
+    const before = ring(wrap - 0.0001, 3);
+    // Just after the wrap the same physical ring sits one slot further out.
+    const after = ring(wrap + 0.0001, 4);
+    expect(after.r).toBeCloseTo(before.r, 1);
+    expect(after.id).toBe(before.id);
+  });
+
+  it("is steady over many wraps", () => {
+    for (let n = 1; n <= 20; n++) {
+      const t = (n * gap) / 16;
+      expect(ring(t - 1e-4, 5).id).toBe(ring(t + 1e-4, 6).id);
+    }
   });
 });

@@ -123,3 +123,20 @@ export function wordFill(
   if (reduced) return 1;
   return c01(sstep(0.2, 0.86, progress) * count - index);
 }
+
+/**
+ * Outward flow of the wave rings. `offset` (0..gap) is how far every ring has moved from its slot;
+ * `cycle` counts how many times the pattern wrapped. A ring's shape must depend on its identity
+ * `index - cycle`, not on its slot index: when the flow wraps, every ring moves to the next
+ * slot (index + 1) and `cycle` grows by one, so the identity — and the wobble — stays the same.
+ * (Using the slot index made every ring change shape at each wrap: the loop visibly "popped".)
+ */
+export function ringFlow(
+  time: number,
+  gap: number,
+  speed = 16,
+): { offset: number; cycle: number } {
+  const travelled = (time * speed) / gap;
+  const cycle = Math.floor(travelled);
+  return { offset: (travelled - cycle) * gap, cycle };
+}

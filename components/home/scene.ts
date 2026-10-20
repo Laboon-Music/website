@@ -17,6 +17,7 @@ import {
   lerp,
   manifestoInk,
   pinProgress,
+  ringFlow,
   sstep,
   stepIndex,
   wordFill,
@@ -194,7 +195,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     const maxR = Math.hypot(Math.max(cx, vw - cx), Math.max(cy, vh - cy)) + gap * 2;
     const lim = Math.min(maxR, S.R + gap * 3);
     const start = S.hole;
-    const flow = reduce ? 0 : (t * 16) % gap;
+    const { offset: flow, cycle } = reduce ? { offset: 0, cycle: 0 } : ringFlow(t, gap);
     const c = S.col;
     ctx.lineWidth = S.lw;
     for (let i = 0; ; i++) {
@@ -206,7 +207,9 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       if (start > 0) a *= c01((r - start) / (gap * 1.5));
       if (a < 0.01) continue;
       ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`;
-      ring(cx, cy, r, phase + i * 0.32, wob, spin, i * 0.9);
+      // Shape from the ring's identity (i - cycle), so it does not change when the flow wraps.
+      const id = i - cycle;
+      ring(cx, cy, r, phase + id * 0.32, wob, spin, id * 0.9);
     }
   }
 
