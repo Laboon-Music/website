@@ -40,10 +40,10 @@ describe("embedHref", () => {
   });
 
   it("drops home anchors, useless inside the app", () => {
-    expect(embedHref("/#inscription")).toBeNull();
+    expect(embedHref("/#rejoindre")).toBeNull();
     render(
       <p>
-        <RichText embed text="Va [ici](/#inscription) ou [là](/contact)." />
+        <RichText embed text="Va [ici](/#rejoindre) ou [là](/contact)." />
       </p>,
     );
     expect(screen.queryByRole("link", { name: "ici" })).not.toBeInTheDocument();
@@ -75,7 +75,7 @@ describe.each(LOCALES)("Faq (%s)", (locale) => {
     const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href"));
     expect(hrefs).toEqual(
       expect.arrayContaining([
-        localePath(locale, "/#inscription"),
+        localePath(locale, "/#rejoindre"),
         localePath(locale, "/confidentialite"),
         localePath(locale, "/charte"),
         localePath(locale, "/contact"),

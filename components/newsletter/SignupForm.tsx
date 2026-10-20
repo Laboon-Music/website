@@ -1,12 +1,13 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import { Button, Checkbox, FormError, Honeypot, Input, TextLink } from "@/components/ui";
 import { useUi } from "@/components/i18n/LocaleProvider";
 import type { HOME_CONTENT } from "@/content/fr/home";
 import { useProtectedForm } from "@/hooks/useProtectedForm";
 import { trackEvent } from "@/lib/analytics";
+import { isValidEmail } from "@/lib/validation";
 
 // Newsletter signup (launch and/or beta lists), drawn for the blue areas of the
 // home page (white texts). `id` is used by the home page to focus the e-mail
@@ -27,9 +28,16 @@ export default function SignupForm({
   const emailId = `${uid}-email`;
   const errorId = `${uid}-error`;
   const hasError = form.status === "error";
+  const emailRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Told at once, in the browser: no round trip, no loading flash.
+    if (!isValidEmail(email.trim())) {
+      form.fail(ui.errors.invalidEmail);
+      emailRef.current?.focus();
+      return;
+    }
     if (!wantsLaunch && !wantsBeta) return form.fail(ui.errors.noList);
     if (await form.submit({ email, wantsLaunch, wantsBeta })) {
       trackEvent("signup_submitted", { launch: wantsLaunch, beta: wantsBeta });
@@ -65,6 +73,7 @@ export default function SignupForm({
         </label>
         <div className="flex w-full items-stretch sm:w-auto">
           <Input
+            ref={emailRef}
             joined
             id={emailId}
             type="email"

@@ -316,8 +316,10 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   addEventListener("keydown", onKey);
 
   function discFrame(dt: number, st: { heroE: number; mp: number }) {
-    // however the visitor scrolls (wheel, bar, keyboard, link), the intro speeds up
-    if (st.heroE > 0.02) skipIntro();
+    // however the visitor scrolls (wheel, bar, keyboard, link), the intro speeds up;
+    // landing far down (anchor link, reload) skips it: the header must show at once.
+    if (st.heroE > 0.5 && introT < INTRO_END) introT = INTRO_END;
+    else if (st.heroE > 0.02) skipIntro();
     const started = !discImg || discImg.complete || performance.now() - pageT0 > 2500;
     if (started) introT += dt * introSpeed;
     const t = introT;

@@ -86,11 +86,14 @@
   opacity: 0.7;
 }
 
-/* Loading: a spinner replaces the label, the button keeps its size and stays fully
-   readable (no greyed-out text). */
+/* Loading: a spinner replaces the label, the button keeps its size and its colours
+   (hover/focus effects are switched off: a tapped button stays "hovered" on phones,
+   which would turn a white label and spinner white on white). The spinner only
+   appears after 150 ms, so an instant answer does not flash. */
 .btn--loading,
 .btn--loading:hover,
-.btn--loading:focus-visible {
+.btn--loading:focus-visible,
+.btn--loading:active {
   scale: 1;
   cursor: progress;
   text-shadow: none;
@@ -100,8 +103,31 @@
   opacity: 1;
 }
 
+.btn--loading::before,
+.btn--loading:hover::before,
+.btn--loading:focus-visible::before {
+  opacity: 0;
+}
+
+.btn--reverted.btn--loading,
+.btn--reverted.btn--loading:hover,
+.btn--reverted.btn--loading:focus-visible {
+  background-color: #4753ff;
+  color: #fff;
+}
+
+.btn--stroke.btn--loading,
+.btn--stroke.btn--loading:hover,
+.btn--stroke.btn--loading:focus-visible,
+.btn--text.btn--loading,
+.btn--text.btn--loading:hover,
+.btn--text.btn--loading:focus-visible {
+  background-color: #fff;
+  color: var(--color-ink);
+}
+
 .btn--loading .btn__label {
-  visibility: hidden;
+  animation: btn-label-out 0s 0.15s forwards;
 }
 
 .btn__spinner {
@@ -113,7 +139,22 @@
   border: 3px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
-  animation: btn-spin 0.75s linear infinite;
+  opacity: 0;
+  animation:
+    btn-spinner-in 0.15s linear 0.15s forwards,
+    btn-spin 0.75s linear infinite;
+}
+
+@keyframes btn-label-out {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes btn-spinner-in {
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes btn-spin {
@@ -125,7 +166,7 @@
 /* Reduced motion: a still ring (the label for assistive tech says "loading"). */
 @media (prefers-reduced-motion: reduce) {
   .btn__spinner {
-    animation: none;
+    animation: btn-spinner-in 0.01s linear 0.15s forwards;
   }
 }
 

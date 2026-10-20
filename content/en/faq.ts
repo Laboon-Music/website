@@ -42,7 +42,7 @@ export const FAQ_CONTENT: typeof FrFaq = {
       items: [
         {
           question: "When is the app coming out?",
-          answer: "[Join the waiting list](/#inscription) to be the first to know.",
+          answer: "[Join the waiting list](/#rejoindre) to be the first to know.",
         },
         {
           question: "What is the waiting list for? What do I get out of it?",

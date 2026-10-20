@@ -45,8 +45,10 @@
   }
 }
 
+/* No smooth scrolling for anchors: on the home page they jump over thousands of
+   pixels of pinned scenes, which a smooth scroll turns into a long, unpredictable
+   ride. They land instantly (the back-to-top button animates by itself). */
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -70,12 +72,8 @@ body:has(.home) {
   border-radius: 6px;
 }
 
-/* Respect the OS "reduce motion" setting: no smooth scroll, no transitions. */
+/* Respect the OS "reduce motion" setting: no transitions. */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {

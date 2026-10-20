@@ -64,7 +64,7 @@ describe.each(LOCALES)("home page (%s)", (locale) => {
       "#rejoindre",
     );
     expect(document.getElementById("rejoindre")).toBeInTheDocument();
-    expect(document.getElementById("inscription")).toBeInTheDocument();
+    expect(document.getElementById("inscription-hero")).toBeInTheDocument();
   });
 
   it("includes the FAQ with every group", async () => {

@@ -42,7 +42,7 @@ export const FAQ_CONTENT = {
         {
           question: "Quand l'appli sort-elle ?",
           answer:
-            "[Inscris-toi à la liste d'attente](/#inscription) pour être prévenu·e en premier.",
+            "[Inscris-toi à la liste d'attente](/#rejoindre) pour être prévenu·e en premier.",
         },
         {
           question: "À quoi sert la liste d'attente ? Qu'est-ce que j'y gagne ?",

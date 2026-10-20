@@ -785,6 +785,8 @@
 
 /* A solid Laboon-blue panel keeps the text away from the waves. */
 .home .home-close__inner {
+  /* Anchor target: stop under the floating header, not behind it. */
+  scroll-margin-top: calc(var(--pill-h) + 48px);
   position: relative;
   display: grid;
   justify-items: center;

@@ -54,27 +54,35 @@ export default function HomeScene({
 
   useEffect(() => {
     const mq = matchMedia("(prefers-reduced-motion: reduce)");
+    // The hero form is only readable at the very top (it fades as the page scrolls):
+    // `/#inscription` (old links) opens the page there. The form's own id is
+    // `inscription-hero`, so the browser does not jump to it first.
+    const openHero = () => {
+      if (window.location.hash === "#inscription") window.scrollTo(0, 0);
+    };
+    openHero();
+    window.addEventListener("hashchange", openHero);
     sceneRef.current = startHomeScene(
       rootRef.current!,
       () => mq.matches || pausedRef.current,
     );
     return () => {
+      window.removeEventListener("hashchange", openHero);
       sceneRef.current?.destroy();
       sceneRef.current = null;
     };
   }, []);
 
   function onJoin(e: React.MouseEvent<HTMLAnchorElement>) {
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     // At the top the signup is the hero's: show it now and focus it.
     if (scrollY < innerHeight * 0.4) {
       e.preventDefault();
       sceneRef.current?.reveal();
-      focusEmail("inscription");
+      focusEmail("inscription-hero");
       return;
     }
     // Elsewhere the link scrolls to the closing form, then we focus it.
-    setTimeout(() => focusEmail("inscription-fin"), reduced ? 0 : 1500);
+    setTimeout(() => focusEmail("inscription-fin"), 400);
   }
 
   return (
@@ -136,7 +144,7 @@ export default function HomeScene({
               />
               <h1 id="hero-title">{hero.title}</h1>
               <p className="hero__lede">{hero.subtitle}</p>
-              <SignupForm id="inscription" texts={signup} />
+              <SignupForm id="inscription-hero" texts={signup} />
             </div>
           </div>
         </section>
@@ -259,11 +267,11 @@ export default function HomeScene({
         {/* 5 · End: the field is back, fully in phase */}
         <section
           data-scene="close"
-          id="rejoindre"
           className="home-close on-dark"
           aria-labelledby="close-title"
         >
-          <div className="home-close__inner">
+          {/* Target of every "sign up" link: the panel itself, so the title lands just under the header. */}
+          <div id="rejoindre" className="home-close__inner">
             <h2 id="close-title" className="display">
               {finalCta.title}
             </h2>
