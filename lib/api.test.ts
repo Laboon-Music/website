@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-async function loadApi(apiUrl: string | undefined) {
+async function loadApi(apiUrl: string | undefined, apiStagingKey?: string) {
   vi.resetModules();
-  vi.doMock("@/lib/env", () => ({ publicEnv: { apiUrl } }));
+  vi.doMock("@/lib/env", () => ({ publicEnv: { apiUrl, apiStagingKey } }));
   return (await import("./api")).apiPost;
 }
 
@@ -23,6 +23,23 @@ describe("apiPost", () => {
     expect(JSON.parse(init.body as string)).toEqual({ email: "a@b.co" });
     expect(init.headers).toMatchObject({ "Accept-Language": "fr" });
     expect(init.cache).toBe("no-store");
+  });
+
+  it("sends the staging header only when the staging key is configured", async () => {
+    const fetchMock = vi.fn(async () => new Response(null, { status: 202 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await (
+      await loadApi("https://api.example.com/v1", "s3cret")
+    )("/x", {});
+    const withKey = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(withKey[1].headers).toMatchObject({ "X-Laboon-Staging": "s3cret" });
+
+    await (
+      await loadApi("https://api.example.com/v1")
+    )("/x", {});
+    const without = fetchMock.mock.calls[1] as unknown as [string, RequestInit];
+    expect(without[1].headers).not.toHaveProperty("X-Laboon-Staging");
   });
 
   it("returns the stable error code of the API", async () => {
