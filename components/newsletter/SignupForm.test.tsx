@@ -40,6 +40,7 @@ describe("SignupForm", () => {
     const user = userEvent.setup();
     render(<SignupForm texts={HOME_CONTENT.signup} />);
 
+    await user.type(screen.getByLabelText("Ton e-mail"), "jane@example.com");
     await user.click(screen.getByLabelText("Me prévenir du lancement"));
     await user.click(screen.getByRole("button", { name: "M’inscrire" }));
 
@@ -60,6 +61,25 @@ describe("SignupForm", () => {
     expect(input).toHaveAttribute("aria-invalid", "true");
     expect(input).toHaveAttribute("aria-describedby", alert.id);
     expect(trackEvent).not.toHaveBeenCalled();
+  });
+
+  it("tells an empty or wrong e-mail at once, without calling the API or showing a spinner", async () => {
+    const fetchMock = mockFetch();
+    const user = userEvent.setup();
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
+
+    await user.click(screen.getByRole("button", { name: "M’inscrire" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(FR.errors.invalidEmail);
+    expect(screen.getByLabelText("Ton e-mail")).toHaveFocus();
+    expect(screen.getByLabelText("Ton e-mail")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("button", { name: "M’inscrire" })).not.toHaveAttribute(
+      "aria-busy",
+    );
+
+    await user.type(screen.getByLabelText("Ton e-mail"), "not-an-email");
+    await user.click(screen.getByRole("button", { name: "M’inscrire" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(FR.errors.invalidEmail);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("starts with the launch list checked and the beta unchecked", () => {

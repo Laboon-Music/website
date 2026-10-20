@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/json-ld";
 import type { FaqContent } from "./Faq";
 
 /** Turns `[label](address)` into `label`: structured data is plain text. */
@@ -24,7 +25,7 @@ export function FaqJsonLd({ content }: { content: FaqContent }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData(content)) }}
+      dangerouslySetInnerHTML={{ __html: jsonLd(faqStructuredData(content)) }}
     />
   );
 }

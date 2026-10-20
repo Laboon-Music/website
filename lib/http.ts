@@ -12,10 +12,15 @@ export function jsonError(error: string, status: number) {
   return NextResponse.json({ error }, { status });
 }
 
-/** Parses a JSON object body; returns null when the body is not a JSON object. */
+/** Largest JSON body accepted (the longest legitimate one is a 5000-character message). */
+export const MAX_BODY_BYTES = 64 * 1024;
+
+/** Parses a JSON object body; returns null when it is not a JSON object or is too large. */
 export async function readJsonBody<T extends object>(
   request: Request,
 ): Promise<Partial<T> | null> {
+  const declared = Number(request.headers.get("content-length") ?? 0);
+  if (declared > MAX_BODY_BYTES) return null;
   try {
     const body: unknown = await request.json();
     return body && typeof body === "object" && !Array.isArray(body)

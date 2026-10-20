@@ -17,9 +17,13 @@ Next to the code they test: `lib/antibot.ts` → `lib/antibot.test.ts`,
 `components/contact/ContactForm.tsx` → `ContactForm.test.tsx`,
 `app/api/subscribe/route.ts` → `route.test.ts`.
 
+**Accessibility** is tested automatically with axe-core (`app/a11y.test.tsx`): every kind of page, in
+French and English, must have no violation (colour contrast is checked with Lighthouse in a real browser).
+
 Shared setup and helpers are in `tests/`:
 
 - `tests/setup.ts` — jest-dom matchers, DOM cleanup.
+- `tests/axe.ts` — `axeViolations()`; `tests/params.ts` — route params of `app/[lang]` pages.
 - `tests/helpers.ts` — `jsonRequest()`, `mockFetch()`, `sentJson()`,
   `silenceConsole()`, `HUMAN` (anti-bot fields of a legit submission).
 

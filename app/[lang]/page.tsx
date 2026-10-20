@@ -3,6 +3,7 @@ import { FaqJsonLd } from "@/components/faq/FaqJsonLd";
 import { FaqSection } from "@/components/faq/FaqSection";
 import HomeScene from "@/components/home/HomeScene";
 import { getContent } from "@/content";
+import { jsonLd } from "@/lib/json-ld";
 import { languageAlternates, localePath } from "@/lib/i18n";
 import { resolveLocale, type LangParams } from "@/lib/locale-params";
 import { CONTACT_EMAIL, SITE_URL, SOCIALS } from "@/lib/site";
@@ -34,7 +35,7 @@ export default async function Home({ params }: LangParams) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(organization) }}
       />
       <FaqJsonLd content={faq} />
       <HomeScene content={home} faq={<FaqSection content={faq} />} />

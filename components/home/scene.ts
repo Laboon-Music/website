@@ -43,6 +43,12 @@ type Field = {
 
 /** Total length of the intro (disc turning, then growing), in seconds. */
 const INTRO_END = 5.6;
+/**
+ * Playback speed of the intro: 1 = the designer's original timing (5.6 s). The disc growing
+ * is the last thing painted, so it sets the Largest Contentful Paint: at 1.7 the intro lasts
+ * about 3.3 s, same choreography, faster.
+ */
+const INTRO_PACE = 1.7;
 /** The hero content appears once the disc has opened around it. */
 const REVEAL_AT = 4.9;
 const NIGHT = "#0F127A";
@@ -59,6 +65,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const discDot = $("disc-dot");
   const introMark = $("intro-mark");
   const man = $("manifesto");
+  const manStage = man.querySelector<HTMLElement>(".stage")!;
   const values = $("values");
   const steps = $("steps");
   const close = $("close");
@@ -72,7 +79,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const dustCv = $<HTMLCanvasElement>("dust");
   const ctx = field.getContext("2d")!;
   const dustCtx = dustCv.getContext("2d")!;
-  const discImg = disc.firstElementChild as HTMLImageElement | null;
+  const discImg = disc.querySelector<HTMLImageElement>("img.disc__motif");
 
   let reduce = isReduced();
   let vw = innerWidth;
@@ -239,8 +246,11 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     const tuneP = sstep(0, 0.26, mp);
     const discR = Math.min(vw, vh) * (mobile ? 0.42 : 0.36);
     const maxR = Math.hypot(vw, vh);
+    // Centre of the pinned stage, where the manifesto text sits. On phones the stage
+    // is 100svh (browser bars shown) while innerHeight changes as the bars collapse:
+    // the waves follow the stage, not the window, so they stay centred on the text.
     const cx = vw / 2;
-    const cy = vh / 2;
+    const cy = manStage.offsetHeight / 2;
 
     T.alpha = 0;
     T.tune = 0.5 + heroE * 0.1;
@@ -316,10 +326,12 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   addEventListener("keydown", onKey);
 
   function discFrame(dt: number, st: { heroE: number; mp: number }) {
-    // however the visitor scrolls (wheel, bar, keyboard, link), the intro speeds up
-    if (st.heroE > 0.02) skipIntro();
+    // however the visitor scrolls (wheel, bar, keyboard, link), the intro speeds up;
+    // landing far down (anchor link, reload) skips it: the header must show at once.
+    if (st.heroE > 0.5 && introT < INTRO_END) introT = INTRO_END;
+    else if (st.heroE > 0.02) skipIntro();
     const started = !discImg || discImg.complete || performance.now() - pageT0 > 2500;
-    if (started) introT += dt * introSpeed;
+    if (started) introT += dt * introSpeed * INTRO_PACE;
     const t = introT;
     const W = Math.min(788, vw * 0.86);
     const D1 = W * (572 / 788);
@@ -332,8 +344,10 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     const b = easeInOut((t - 2.1) / 3.3);
     let sz = D1 * Math.pow(D2 / D1, b);
     let rot = -12.56 + (409.17 + 12.56) * (0.5 * a + 0.5 * b);
+    // Same for the hero: its content is centred in the hero (min 100svh), not in the window.
+    const heroMidY = Math.min(vh, hero.offsetHeight) / 2;
     const cx = lerp(c1x, vw / 2, b);
-    const cy = lerp(c1y, vh / 2, b);
+    const cy = lerp(c1y, heroMidY, b);
     if (t > REVEAL_AT) reveal();
     // on scroll: keeps turning and grows until it covers the screen
     const z = Math.pow(st.heroE, 1.6);

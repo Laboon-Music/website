@@ -1,12 +1,14 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import { Button, Checkbox, FormError, Honeypot, Input, TextLink } from "@/components/ui";
+import { CheckBadge } from "@/components/account/AccountBits";
 import { useUi } from "@/components/i18n/LocaleProvider";
 import type { HOME_CONTENT } from "@/content/fr/home";
 import { useProtectedForm } from "@/hooks/useProtectedForm";
 import { trackEvent } from "@/lib/analytics";
+import { isValidEmail } from "@/lib/validation";
 
 // Newsletter signup (launch and/or beta lists), drawn for the blue areas of the
 // home page (white texts). `id` is used by the home page to focus the e-mail
@@ -27,9 +29,16 @@ export default function SignupForm({
   const emailId = `${uid}-email`;
   const errorId = `${uid}-error`;
   const hasError = form.status === "error";
+  const emailRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Told at once, in the browser: no round trip, no loading flash.
+    if (!isValidEmail(email.trim())) {
+      form.fail(ui.errors.invalidEmail);
+      emailRef.current?.focus();
+      return;
+    }
     if (!wantsLaunch && !wantsBeta) return form.fail(ui.errors.noList);
     if (await form.submit({ email, wantsLaunch, wantsBeta })) {
       trackEvent("signup_submitted", { launch: wantsLaunch, beta: wantsBeta });
@@ -39,11 +48,17 @@ export default function SignupForm({
 
   if (form.status === "success") {
     return (
-      <div id={id} role="status" className="max-w-[26rem] text-center">
-        <p className="font-title text-xl font-extrabold tracking-[-0.03em]">
+      // Same top spacing as the form it replaces (.signup), so it never sticks to the text above.
+      <div
+        id={id}
+        role="status"
+        className="mt-[clamp(32px,5.5vh,48px)] grid max-w-[26rem] justify-items-center gap-5 text-center"
+      >
+        <CheckBadge />
+        <p className="font-title text-2xl leading-tight font-extrabold tracking-[-0.03em]">
           {T.successTitle}
         </p>
-        <p className="mt-3 leading-normal">{T.successText}</p>
+        <p className="text-base leading-relaxed">{T.successText}</p>
       </div>
     );
   }
@@ -65,6 +80,7 @@ export default function SignupForm({
         </label>
         <div className="flex w-full items-stretch sm:w-auto">
           <Input
+            ref={emailRef}
             joined
             id={emailId}
             type="email"
@@ -78,8 +94,12 @@ export default function SignupForm({
             aria-describedby={hasError ? errorId : undefined}
             className="min-w-0 flex-1 pl-[22px] sm:w-[clamp(220px,28vw,300px)] sm:flex-none"
           />
-          <Button type="submit" disabled={form.status === "loading"}>
-            {form.status === "loading" ? T.submitting : T.submit}
+          <Button
+            type="submit"
+            loading={form.status === "loading"}
+            loadingLabel={ui.sending}
+          >
+            {T.submit}
           </Button>
         </div>
       </div>

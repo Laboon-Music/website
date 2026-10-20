@@ -27,7 +27,11 @@ export async function POST(request: Request) {
   const blocked = await checkAntibot(body, request);
   if (blocked) return blocked;
 
-  const name = cleanText(body.name).slice(0, CONTACT_LIMITS.nameMax);
+  // One line, no control characters: the name ends up in the e-mail subject.
+  const name = cleanText(body.name)
+    .replace(/[\u0000-\u001f\u007f]+/g, " ")
+    .trim()
+    .slice(0, CONTACT_LIMITS.nameMax);
   const email = normalizeEmail(body.email);
   const subject = subjectEmailLabel(body.subject);
   const message = cleanText(body.message);

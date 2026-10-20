@@ -29,14 +29,45 @@ export function Button({
   fullWidth,
   className,
   type = "button",
+  loading,
+  loadingLabel,
+  children,
+  disabled,
   ...props
-}: ComponentProps<"button"> & StyleProps) {
+}: ComponentProps<"button"> &
+  StyleProps & {
+    /** Shows a spinner in place of the label (the button keeps its size) and disables it. */
+    loading?: boolean;
+    /** Announced to screen readers while loading, e.g. "Envoi…". */
+    loadingLabel?: string;
+  }) {
   return (
     <button
       type={type}
-      className={cx(buttonClass({ variant, fullWidth }), className)}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      className={cx(
+        buttonClass({ variant, fullWidth }),
+        loading && "btn--loading",
+        className,
+      )}
       {...props}
-    />
+    >
+      {loading ? (
+        <>
+          {/* The label stays (hidden) so the button keeps its width. */}
+          <span className="btn__label" aria-hidden="true">
+            {children}
+          </span>
+          <span className="btn__spinner" aria-hidden="true" />
+          <span className="sr-only" role="status">
+            {loadingLabel}
+          </span>
+        </>
+      ) : (
+        children
+      )}
+    </button>
   );
 }
 

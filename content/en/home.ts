@@ -27,22 +27,22 @@ export const HOME_CONTENT: typeof FrHome = {
     subtitle: "Four reasons to ditch classified ads and find your musicians.",
     items: [
       {
-        icon: "icon-puzzle.png",
+        icon: "icon-puzzle.webp",
         title: "The right musical match",
         text: "Find musicians by instrument, style, level and what you are looking for. No more classified ads that lead nowhere.",
       },
       {
-        icon: "icon-pin.png",
+        icon: "icon-pin.webp",
         title: "Close to you",
         text: "Discover musicians in your city, ready to play, rehearse or start a project together.",
       },
       {
-        icon: "icon-instruments.png",
+        icon: "icon-instruments.webp",
         title: "Form your band",
         text: "Looking for a drummer, a singer, a bass player? Put your band together in a few swipes.",
       },
       {
-        icon: "icon-heart.png",
+        icon: "icon-heart.webp",
         title: "A real community",
         text: "Chat, organise jams and rehearsals, and join a community of musicians who actually play.",
       },
@@ -54,17 +54,17 @@ export const HOME_CONTENT: typeof FrHome = {
     subtitle: "Three steps between you and your next rehearsal.",
     items: [
       {
-        icon: "icon-microphone.png",
+        icon: "icon-microphone.webp",
         label: "Step 1",
         text: "Create your musician profile: your instruments, your styles, your level and what you are looking for.",
       },
       {
-        icon: "icon-pin.png",
+        icon: "icon-pin.webp",
         label: "Step 2",
         text: "Laboon suggests compatible musicians and bands near you.",
       },
       {
-        icon: "icon-theater.png",
+        icon: "icon-theater.webp",
         label: "Step 3",
         text: "Chat, set up a rehearsal or a jam, and kick off your next musical project.",
       },
@@ -82,7 +82,6 @@ export const HOME_CONTENT: typeof FrHome = {
     launch: "Let me know when it launches",
     beta: "Try the beta first",
     submit: "Sign up",
-    submitting: "…",
     successTitle: "Almost done! Check your inbox",
     successText:
       "We just sent you an e-mail: click the link to confirm your sign-up (remember to check your spam folder).",

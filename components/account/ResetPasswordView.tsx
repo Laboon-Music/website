@@ -22,10 +22,14 @@ export function ResetPasswordView() {
   const [invalid, setInvalid] = useState(false);
 
   if (code === undefined) {
+    // Short loading state (the code is read after hydration). The page always has its <h1>.
     return (
-      <p role="status" className="text-center text-muted">
-        {ui.loading}
-      </p>
+      <>
+        <h1 className="sr-only">{t.askTitle}</h1>
+        <p role="status" className="text-center text-muted">
+          {ui.loading}
+        </p>
+      </>
     );
   }
 

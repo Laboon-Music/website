@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import {
   Button,
@@ -19,18 +19,47 @@ import { useProtectedForm } from "@/hooks/useProtectedForm";
 import { trackEvent } from "@/lib/analytics";
 import { CONTACT_LIMITS, CONTACT_SUBJECTS, DEFAULT_CONTACT_SUBJECT } from "@/lib/contact";
 import { fmt } from "@/lib/i18n";
+import { isValidEmail } from "@/lib/validation";
 
 // Contact form (/contact). See docs/features/contact-form.md.
 export default function ContactForm() {
-  const { contact: t } = useUi();
+  const ui = useUi();
+  const t = ui.contact;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState<string>(DEFAULT_CONTACT_SUBJECT);
   const [message, setMessage] = useState("");
   const form = useProtectedForm("/api/contact");
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+  const [invalid, setInvalid] = useState<"name" | "email" | "message" | null>(null);
+
+  // Checked in the browser first: an empty or wrong field is told at once, without
+  // the round trip (and the loading state flashing) of a server answer.
+  function firstProblem() {
+    if (!name.trim()) return { field: "name", message: ui.errors.nameRequired } as const;
+    if (!isValidEmail(email.trim())) {
+      return { field: "email", message: ui.errors.invalidEmail } as const;
+    }
+    if (message.trim().length < CONTACT_LIMITS.messageMin) {
+      const short = fmt(ui.errors.messageShort, { min: CONTACT_LIMITS.messageMin });
+      return { field: "message", message: short } as const;
+    }
+    return null;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const problem = firstProblem();
+    setInvalid(problem?.field ?? null);
+    if (problem) {
+      form.fail(problem.message);
+      ({ name: nameRef, email: emailRef, message: messageRef })[
+        problem.field
+      ].current?.focus();
+      return;
+    }
     if (await form.submit({ name, email, subject, message })) {
       trackEvent("contact_sent", { subject });
     }
@@ -66,6 +95,9 @@ export default function ContactForm() {
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label={t.name}>
             <Input
+              ref={nameRef}
+              aria-invalid={invalid === "name" || undefined}
+              aria-describedby={invalid === "name" ? "contact-error" : undefined}
               type="text"
               required
               maxLength={CONTACT_LIMITS.nameMax}
@@ -77,6 +109,9 @@ export default function ContactForm() {
           </Field>
           <Field label={t.email}>
             <Input
+              ref={emailRef}
+              aria-invalid={invalid === "email" || undefined}
+              aria-describedby={invalid === "email" ? "contact-error" : undefined}
               type="email"
               required
               value={email}
@@ -99,6 +134,9 @@ export default function ContactForm() {
 
         <Field label={t.message}>
           <Textarea
+            ref={messageRef}
+            aria-invalid={invalid === "message" || undefined}
+            aria-describedby={invalid === "message" ? "contact-error" : undefined}
             required
             minLength={CONTACT_LIMITS.messageMin}
             maxLength={CONTACT_LIMITS.messageMax}
@@ -112,8 +150,13 @@ export default function ContactForm() {
         <Turnstile {...form.turnstile} />
 
         <div className="mt-2 grid justify-items-center gap-4 text-center">
-          <Button type="submit" disabled={form.status === "loading"} className="px-10">
-            {form.status === "loading" ? t.sending : t.send}
+          <Button
+            type="submit"
+            loading={form.status === "loading"}
+            loadingLabel={t.sending}
+            className="px-10"
+          >
+            {t.send}
           </Button>
           <FormError id="contact-error">
             {form.status === "error" && form.error}

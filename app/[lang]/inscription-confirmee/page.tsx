@@ -21,7 +21,7 @@ export default async function InscriptionConfirmeePage({ params }: LangParams) {
   return (
     <PageShell>
       <TrackSignupConfirmed />
-      <Card tone="success" className="mx-auto w-full max-w-lg">
+      <Card tone="success" className="mx-auto w-full max-w-lg p-8 sm:p-12">
         <div
           aria-hidden="true"
           className="mx-auto grid size-[84px] place-items-center rounded-full bg-white shadow-[0_0_0_10px_rgb(255_255_255/0.14),0_0_0_22px_rgb(255_255_255/0.07)]"
@@ -40,12 +40,14 @@ export default async function InscriptionConfirmeePage({ params }: LangParams) {
         <h1 className="mt-8 font-title text-3xl font-extrabold tracking-[-0.04em]">
           {confirmed.title}
         </h1>
-        <p className="mt-4 text-muted">{confirmed.text}</p>
-        <div className="mt-6 flex flex-col items-center gap-3">
+        <p className="mx-auto mt-5 max-w-[34ch] text-lg leading-relaxed text-muted">
+          {confirmed.text}
+        </p>
+        <div className="mt-10 flex flex-col items-center gap-4 border-t border-white/20 pt-8">
           <p className="text-sm">{confirmed.follow}</p>
           <SocialLinks />
         </div>
-        <ButtonLink href="/" className="mt-8 px-10">
+        <ButtonLink href="/" fullWidth className="mt-10 px-10 sm:w-auto">
           {confirmed.backHome}
         </ButtonLink>
       </Card>

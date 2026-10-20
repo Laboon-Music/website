@@ -16,8 +16,7 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 
 ## Technical follow-ups
 
-- [ ] **Content-Security-Policy** header (needs an allowlist for
-      `challenges.cloudflare.com` and Vercel Analytics; test on staging first).
+- [ ] **Enforce the Content-Security-Policy** (sent as report-only today): see [security.md](features/security.md).
 - [ ] **Rate limiting** on `/api/subscribe` and `/api/contact` (e.g. Vercel
       Firewall rule or Upstash) if spam gets past the anti-bot layers.
 - [ ] **E2E tests** (Playwright) for the two forms at mobile and desktop
@@ -25,8 +24,7 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 - [ ] Conversion events are wired but need the **Vercel Pro** plan to be
       recorded ([analytics.md](features/analytics.md)) — decide when traffic
       justifies it.
-- [ ] **Image weight**: `public/brand/motif-hd.webp` is 3.7 MB (home disc); ask the designer for a lighter export.
-- [ ] Lighthouse a11y + manual checks of the home scene on real phones (375 px, 320 px, landscape).
+- [x] Image weight: home disc cropped and re-encoded (3.7 MB → 380 KB phones / 870 KB desktop), icons in WebP.
 - [ ] Upgrade to **TypeScript 7** and **ESLint 10** once supported by
       `eslint-config-next`.
 

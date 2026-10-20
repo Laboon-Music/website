@@ -109,8 +109,14 @@ export function NewPasswordForm({
       </div>
       <div className="mt-2 grid justify-items-center gap-4">
         <FormError>{error}</FormError>
-        <Button type="submit" disabled={submitting} fullWidth className="px-9 sm:w-auto">
-          {submitting ? ui.sending : submitLabel}
+        <Button
+          type="submit"
+          loading={submitting}
+          loadingLabel={ui.sending}
+          fullWidth
+          className="px-9 sm:w-auto"
+        >
+          {submitLabel}
         </Button>
       </div>
     </form>

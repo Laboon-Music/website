@@ -9,6 +9,7 @@ export const UI: typeof FrUI = {
   loading: "Loading…",
   sending: "Sending…",
   backHome: "Back to home",
+  backToTop: "Back to the top of the page",
 
   header: { logoLabel: "Laboon, back to home", join: "Sign up" },
 

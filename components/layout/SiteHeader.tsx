@@ -31,7 +31,7 @@ export function SiteHeader({
         aria-label={logoLabel ?? ui.header.logoLabel}
         className="flex min-h-11 flex-none items-center rounded-full px-1 outline-brand"
       >
-        <Wordmark className="w-[clamp(96px,9vw,124px)]" />
+        <Wordmark priority className="w-[clamp(96px,9vw,124px)]" />
       </LocalizedLink>
       <ButtonLink variant="text" href={ctaHref} onClick={onCtaClick}>
         {ctaLabel ?? ui.header.join}

@@ -13,7 +13,7 @@ mobile app.
 
 The footer links to `/#faq`. The app loads `https://www.laboon-app.com/faq/embed`.
 In the embed, links stay on bare pages (`/contact` → `/contact/embed`, legal
-pages → `/legal/<slug>`) and home anchors (`/#inscription`) are shown as plain
+pages → `/legal/<slug>`) and home anchors (`/#rejoindre`) are shown as plain
 text: see `embedHref()`. Safe-area insets are respected (notch, home bar).
 
 ## Code

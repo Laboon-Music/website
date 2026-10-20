@@ -17,13 +17,25 @@ swiped, a spotlight lights three steps, then the closing signup and the FAQ.
 
 Pinned sections: `.pin` with `--span` screens of scroll and a sticky `.stage`.
 
+## Intro length
+
+The intro keeps the designer's choreography (5.6 s of animation time) played at `INTRO_PACE = 1.7`
+(`scene.ts`), so it lasts about 3.3 s. The growing disc is the last element painted: it decides the
+Largest Contentful Paint, so a shorter intro directly improves it. Any key or scroll still speeds it up.
+
+## Centring
+
+The waves are centred on the **pinned stage** (`.stage`, 100svh) and the hero disc on the hero, not on `innerHeight`:
+on phones the window height changes while the browser bars collapse, and the text (centred in the stage)
+would drift away from the middle of the waves. Check it after any change to the stage or the hero height.
+
 ## Accessibility and motion
 
 - Skip link; one `<h1>`; decoration is `aria-hidden`; the manifesto reads as one sentence.
 - `prefers-reduced-motion` is read live; the footer button "Mettre les animations
   en pause" does the same on demand (WCAG 2.2.2).
 - The intro hides the hero only when scripts run (`.js` class set in
-  `app/[lang]/layout.tsx`); it never hides it for good (8 s CSS failsafe) and the first
+  `app/[lang]/layout.tsx`); it never hides it for good (8 s failsafe: `reveal-failsafe` class set by a script in the layout) and the first
   Tab key ends it.
 - Short screens (`max-height: 620px`, 200 % zoom): cards and steps are stacked, not pinned.
 

@@ -6,7 +6,7 @@ launch and/or test the beta.
 ## Where
 
 - Form: `components/newsletter/SignupForm.tsx`, shown twice on `/` (hero and
-  final CTA, anchor `#inscription`).
+  final CTA, anchors `#rejoindre` (closing form, target of every "sign up" link) and `#inscription-hero`).
 - API: `app/api/subscribe/route.ts` — `POST /api/subscribe`.
 - Confirmation page: `app/inscription-confirmee/page.tsx`.
 - Shared messages: `lib/newsletter.ts`.
