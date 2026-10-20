@@ -9,6 +9,7 @@ export const UI = {
   loading: "Chargement…",
   sending: "Envoi…",
   backHome: "Retour à l’accueil",
+  backToTop: "Retour en haut de la page",
 
   header: { logoLabel: "Laboon, retour à l'accueil", join: "M’inscrire" },
 

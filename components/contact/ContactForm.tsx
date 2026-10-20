@@ -112,8 +112,13 @@ export default function ContactForm() {
         <Turnstile {...form.turnstile} />
 
         <div className="mt-2 grid justify-items-center gap-4 text-center">
-          <Button type="submit" disabled={form.status === "loading"} className="px-10">
-            {form.status === "loading" ? t.sending : t.send}
+          <Button
+            type="submit"
+            loading={form.status === "loading"}
+            loadingLabel={t.sending}
+            className="px-10"
+          >
+            {t.send}
           </Button>
           <FormError id="contact-error">
             {form.status === "error" && form.error}

@@ -78,8 +78,12 @@ export default function SignupForm({
             aria-describedby={hasError ? errorId : undefined}
             className="min-w-0 flex-1 pl-[22px] sm:w-[clamp(220px,28vw,300px)] sm:flex-none"
           />
-          <Button type="submit" disabled={form.status === "loading"}>
-            {form.status === "loading" ? T.submitting : T.submit}
+          <Button
+            type="submit"
+            loading={form.status === "loading"}
+            loadingLabel={ui.sending}
+          >
+            {T.submit}
           </Button>
         </div>
       </div>

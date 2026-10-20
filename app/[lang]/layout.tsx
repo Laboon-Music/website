@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Sora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import { BackToTop } from "@/components/layout/BackToTop";
 import { getContent } from "@/content";
 import { LOCALES } from "@/lib/i18n";
 import { resolveLocale, type LangParams } from "@/lib/locale-params";
@@ -78,7 +79,10 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: JS_FLAG }} />
       </head>
       <body className="font-sans">
-        <LocaleProvider locale={locale}>{children}</LocaleProvider>
+        <LocaleProvider locale={locale}>
+          {children}
+          <BackToTop />
+        </LocaleProvider>
         {/* Vercel Web Analytics: cookieless, anonymous, aggregated. See docs/features/analytics.md */}
         <Analytics />
       </body>

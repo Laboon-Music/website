@@ -86,6 +86,49 @@
   opacity: 0.7;
 }
 
+/* Loading: a spinner replaces the label, the button keeps its size and stays fully
+   readable (no greyed-out text). */
+.btn--loading,
+.btn--loading:hover,
+.btn--loading:focus-visible {
+  scale: 1;
+  cursor: progress;
+  text-shadow: none;
+}
+
+.btn--loading:disabled {
+  opacity: 1;
+}
+
+.btn--loading .btn__label {
+  visibility: hidden;
+}
+
+.btn__spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border: 3px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.75s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Reduced motion: a still ring (the label for assistive tech says "loading"). */
+@media (prefers-reduced-motion: reduce) {
+  .btn__spinner {
+    animation: none;
+  }
+}
+
 .btn--text::before {
   scale: 0.9;
   background: radial-gradient(

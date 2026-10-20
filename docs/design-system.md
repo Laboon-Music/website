@@ -26,18 +26,19 @@ header pill on phones), `--focus` (focus ring colour).
 
 ## UI primitives — `@/components/ui`
 
-| Component                               | Purpose                     | Notes                                                                                                           |
-| --------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `Button`, `ButtonLink`, `buttonClass()` | Actions / navigation        | `variant="primary"` (blue + white outline, default), `"outline"`, `"text"` (white pill); styles in `app/ui.css` |
-| `Card`                                  | Solid blue panel            | `tone="success"` centres a confirmation                                                                         |
-| `Disclosure`                            | FAQ row                     | Native `<details>`, works without JS                                                                            |
-| `Field`, `Input`, `Textarea`, `Select`  | Form controls               | White pills; `Input joined` glues to a button; `aria-invalid` styles the error state                            |
-| `PasswordInput`                         | Password + show/hide        | Needs an `id` and a `<label htmlFor>`                                                                           |
-| `Checkbox`                              | Labelled checkbox           | Custom white tick (`.check-input`)                                                                              |
-| `FormError`                             | Error pill (`role="alert"`) | `id` to link it with `aria-describedby`                                                                         |
-| `Honeypot`                              | Anti-bot trap               | Mandatory in every public form                                                                                  |
-| `TextLink`                              | Link in text                | Underlined, bold, inherits the text colour                                                                      |
-| `PageTitle`, `Lede`, `BackLink`         | Inner page heading          | One `<h1>` per page                                                                                             |
+| Component                               | Purpose                     | Notes                                                                                                                                                          |
+| --------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`, `ButtonLink`, `buttonClass()` | Actions / navigation        | `variant="primary"` (blue + white outline, default), `"outline"`, `"text"` (white pill); styles in `app/ui.css`                                                |
+| `Button loading`                        | Spinner state               | `loading` + `loadingLabel`: a spinner replaces the label, the button keeps its size, stays fully readable and is announced ("Envoi…"); use it for every submit |
+| `Card`                                  | Solid blue panel            | `tone="success"` centres a confirmation                                                                                                                        |
+| `Disclosure`                            | FAQ row                     | Native `<details>`, works without JS                                                                                                                           |
+| `Field`, `Input`, `Textarea`, `Select`  | Form controls               | White pills; `Input joined` glues to a button; `aria-invalid` styles the error state                                                                           |
+| `PasswordInput`                         | Password + show/hide        | Needs an `id` and a `<label htmlFor>`                                                                                                                          |
+| `Checkbox`                              | Labelled checkbox           | Custom white tick (`.check-input`)                                                                                                                             |
+| `FormError`                             | Error pill (`role="alert"`) | `id` to link it with `aria-describedby`                                                                                                                        |
+| `Honeypot`                              | Anti-bot trap               | Mandatory in every public form                                                                                                                                 |
+| `TextLink`                              | Link in text                | Underlined, bold, inherits the text colour                                                                                                                     |
+| `PageTitle`, `Lede`, `BackLink`         | Inner page heading          | One `<h1>` per page                                                                                                                                            |
 
 ## Layout — `@/components/layout`
 
@@ -46,6 +47,7 @@ header pill on phones), `--focus` (focus ring colour).
 | `PageShell`  | Frame of every inner page: skip link, wave disc, floating header, `<main id="contenu">` (gutter + rhythm), footer. Pages only set their own width. |
 | `SiteHeader` | White pill: wordmark + "M'inscrire"                                                                                                                |
 | `SiteFooter` | Wordmark, 3 link columns (socials from `SOCIALS`), © year; optional children                                                                       |
+| `BackToTop`  | Round "back to top" button                                                                                                                         | Phones and tablets only (`md:hidden`), appears after one screen of scroll; mounted once in `app/[lang]/layout.tsx` |
 | `Wordmark`   | Brand wordmark (`white` for dark backgrounds)                                                                                                      |
 
 The home page does not use `PageShell`: see [features/home-scene.md](features/home-scene.md).

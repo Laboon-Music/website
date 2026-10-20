@@ -126,3 +126,27 @@ describe("Disclosure", () => {
     );
   });
 });
+
+describe("Button loading state", () => {
+  it("keeps its label (hidden, to keep the width), shows a spinner and is announced", () => {
+    render(
+      <Button loading loadingLabel="Envoi…">
+        M’inscrire
+      </Button>,
+    );
+    const button = screen.getByRole("button", { name: "Envoi…" });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+    expect(button.className).toContain("btn--loading");
+    expect(button.querySelector(".btn__label")).toHaveTextContent("M’inscrire");
+    expect(button.querySelector(".btn__spinner")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("is a plain button when not loading", () => {
+    render(<Button>Go</Button>);
+    const button = screen.getByRole("button", { name: "Go" });
+    expect(button).toBeEnabled();
+    expect(button).not.toHaveAttribute("aria-busy");
+    expect(button.querySelector(".btn__spinner")).toBeNull();
+  });
+});

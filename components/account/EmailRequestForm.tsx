@@ -77,11 +77,12 @@ export function EmailRequestForm({
         <FormError id={errorId}>{error}</FormError>
         <Button
           type="submit"
-          disabled={status === "loading"}
+          loading={status === "loading"}
+          loadingLabel={ui.sending}
           fullWidth
           className="px-9 sm:w-auto"
         >
-          {status === "loading" ? ui.sending : submitLabel}
+          {submitLabel}
         </Button>
       </div>
     </form>
