@@ -15,7 +15,7 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage",
   display: "swap",
-  axes: ["opsz", "wdth"],
+  axes: ["opsz"],
 });
 const sora = Sora({
   subsets: ["latin"],
@@ -61,8 +61,10 @@ export const viewport: Viewport = {
 };
 
 // Tells the CSS that scripts run, so the home intro may hide content until it
-// is revealed. Without JavaScript nothing is ever hidden.
-const JS_FLAG = "document.documentElement.classList.add('js')";
+// is revealed. Without JavaScript nothing is ever hidden, and after 8 s the
+// `reveal-failsafe` class shows everything even if the scene did not start.
+const JS_FLAG =
+  "var h=document.documentElement;h.classList.add('js');setTimeout(function(){h.classList.add('reveal-failsafe')},8000)";
 
 export default async function RootLayout({
   children,

@@ -28,22 +28,22 @@ export const HOME_CONTENT = {
     // `icon` = file name in public/brand.
     items: [
       {
-        icon: "icon-puzzle.png",
+        icon: "icon-puzzle.webp",
         title: "Le bon match musical",
         text: "Trouve des musiciens selon l’instrument, le style, le niveau et tes envies. Fini les petites annonces qui ne mènent à rien.",
       },
       {
-        icon: "icon-pin.png",
+        icon: "icon-pin.webp",
         title: "Près de chez toi",
         text: "Découvre les musiciens de ta ville prêts à jouer, répéter ou monter un projet ensemble.",
       },
       {
-        icon: "icon-instruments.png",
+        icon: "icon-instruments.webp",
         title: "Monte ton groupe",
         text: "Tu cherches un batteur, un·e chanteur·euse, un bassiste ? Compose ton groupe de musique en quelques swipes.",
       },
       {
-        icon: "icon-heart.png",
+        icon: "icon-heart.webp",
         title: "Une vraie communauté",
         text: "Échange, organise des jams et des répètes, et rejoins une communauté de musiciens qui jouent vraiment.",
       },
@@ -55,17 +55,17 @@ export const HOME_CONTENT = {
     subtitle: "Trois étapes entre toi et ta prochaine répète.",
     items: [
       {
-        icon: "icon-microphone.png",
+        icon: "icon-microphone.webp",
         label: "Étape 1",
         text: "Crée ton profil de musicien : tes instruments, tes styles, ton niveau et ce que tu recherches.",
       },
       {
-        icon: "icon-pin.png",
+        icon: "icon-pin.webp",
         label: "Étape 2",
         text: "Laboon te propose des musiciens et des groupes compatibles près de chez toi.",
       },
       {
-        icon: "icon-theater.png",
+        icon: "icon-theater.webp",
         label: "Étape 3",
         text: "Discute, cale une répète ou une jam, et lance ton prochain projet musical.",
       },

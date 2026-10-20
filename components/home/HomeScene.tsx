@@ -97,15 +97,19 @@ export default function HomeScene({
       {/* Decor: backdrop, growing disc, wave field and the opening wordmark. */}
       <div data-scene="bgflow" className="bgflow" aria-hidden="true" />
       <div data-scene="disc" className="disc" aria-hidden="true">
-        <Image
-          className="disc__motif"
-          src="/brand/motif-hd.webp"
-          alt=""
-          width={4807}
-          height={3548}
-          unoptimized
-          priority
-        />
+        {/* Lighter image on phones. Plain <img>/<picture>: next/image cannot pick a source by media query. */}
+        <picture>
+          <source media="(max-width: 860px)" srcSet="/brand/motif-mobile.webp" />
+          <img
+            className="disc__motif"
+            src="/brand/motif-desktop.webp"
+            alt=""
+            width={1800}
+            height={1800}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
         <Image
           data-scene="disc-dot"
           className="disc__dot"
@@ -255,8 +259,8 @@ export default function HomeScene({
                   className="stepper__plate"
                   src="/brand/plate-white.webp"
                   alt=""
-                  width={900}
-                  height={900}
+                  width={700}
+                  height={700}
                   unoptimized
                 />
               </div>

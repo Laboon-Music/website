@@ -23,7 +23,7 @@ Pinned sections: `.pin` with `--span` screens of scroll and a sticky `.stage`.
 - `prefers-reduced-motion` is read live; the footer button "Mettre les animations
   en pause" does the same on demand (WCAG 2.2.2).
 - The intro hides the hero only when scripts run (`.js` class set in
-  `app/[lang]/layout.tsx`); it never hides it for good (8 s CSS failsafe) and the first
+  `app/[lang]/layout.tsx`); it never hides it for good (8 s failsafe: `reveal-failsafe` class set by a script in the layout) and the first
   Tab key ends it.
 - Short screens (`max-height: 620px`, 200 % zoom): cards and steps are stacked, not pinned.
 

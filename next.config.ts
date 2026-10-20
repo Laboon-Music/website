@@ -13,6 +13,8 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Inlines the (small) CSS in the HTML: no render-blocking stylesheet request.
+  experimental: { inlineCss: true },
   // The FAQ lives on the home page of each language; /faq/embed stays for the mobile app.
   async redirects() {
     return [

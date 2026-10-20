@@ -72,7 +72,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const dustCv = $<HTMLCanvasElement>("dust");
   const ctx = field.getContext("2d")!;
   const dustCtx = dustCv.getContext("2d")!;
-  const discImg = disc.firstElementChild as HTMLImageElement | null;
+  const discImg = disc.querySelector<HTMLImageElement>("img.disc__motif");
 
   let reduce = isReduced();
   let vw = innerWidth;
