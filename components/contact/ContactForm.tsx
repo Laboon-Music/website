@@ -49,6 +49,11 @@ export default function ContactForm() {
     return null;
   }
 
+  // A browser-side problem is shown under its own field; anything else (server) at the bottom.
+  const fieldError = (field: "name" | "email" | "message") =>
+    form.status === "error" && invalid === field ? form.error : null;
+  const generalError = form.status === "error" && !invalid ? form.error : null;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const problem = firstProblem();
@@ -87,17 +92,17 @@ export default function ContactForm() {
         noValidate
         onSubmit={handleSubmit}
         {...form.formProps}
-        aria-describedby={form.status === "error" ? "contact-error" : undefined}
+        aria-describedby={generalError ? "contact-error" : undefined}
         className="grid gap-5"
       >
         <Honeypot {...form.honeypot} />
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label={t.name}>
+          <Field label={t.name} error={fieldError("name")} errorId="contact-error-name">
             <Input
               ref={nameRef}
               aria-invalid={invalid === "name" || undefined}
-              aria-describedby={invalid === "name" ? "contact-error" : undefined}
+              aria-describedby={invalid === "name" ? "contact-error-name" : undefined}
               type="text"
               required
               maxLength={CONTACT_LIMITS.nameMax}
@@ -107,11 +112,15 @@ export default function ContactForm() {
               autoComplete="name"
             />
           </Field>
-          <Field label={t.email}>
+          <Field
+            label={t.email}
+            error={fieldError("email")}
+            errorId="contact-error-email"
+          >
             <Input
               ref={emailRef}
               aria-invalid={invalid === "email" || undefined}
-              aria-describedby={invalid === "email" ? "contact-error" : undefined}
+              aria-describedby={invalid === "email" ? "contact-error-email" : undefined}
               type="email"
               required
               value={email}
@@ -132,11 +141,15 @@ export default function ContactForm() {
           </Select>
         </Field>
 
-        <Field label={t.message}>
+        <Field
+          label={t.message}
+          error={fieldError("message")}
+          errorId="contact-error-message"
+        >
           <Textarea
             ref={messageRef}
             aria-invalid={invalid === "message" || undefined}
-            aria-describedby={invalid === "message" ? "contact-error" : undefined}
+            aria-describedby={invalid === "message" ? "contact-error-message" : undefined}
             required
             minLength={CONTACT_LIMITS.messageMin}
             maxLength={CONTACT_LIMITS.messageMax}
@@ -158,9 +171,7 @@ export default function ContactForm() {
           >
             {t.send}
           </Button>
-          <FormError id="contact-error">
-            {form.status === "error" && form.error}
-          </FormError>
+          <FormError id="contact-error">{generalError}</FormError>
           <p className="max-w-[46ch] text-sm leading-normal">
             {t.note} <TextLink href="/confidentialite">{t.privacy}</TextLink>
           </p>

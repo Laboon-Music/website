@@ -274,6 +274,27 @@
   }
 }
 
+/* ------------------------------------------------------------ invalid field */
+/* Joined e-mail + button is ONE white pill: when the e-mail is invalid the whole outline
+   (the button's border included) turns the error colour, so the pill never looks cut in two. */
+.field-row:has(input[aria-invalid="true"]) .btn--reverted {
+  border-color: var(--color-error-accent);
+}
+
+/* Small "!" inside an invalid field (not the joined one: its right end is under the button). */
+input[aria-invalid="true"]:not([data-joined]),
+textarea[aria-invalid="true"] {
+  padding-right: 48px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23E8461E'/%3E%3Cpath d='M10 5.5v5.5' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='14.5' r='1.2' fill='white'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 20px 20px;
+}
+
+textarea[aria-invalid="true"] {
+  background-position: right 16px top 16px;
+}
+
 /* ---------------------------------------------------------------- checkbox */
 /* White outline, filled white with a navy tick when checked (sits on blue). */
 .check-input {

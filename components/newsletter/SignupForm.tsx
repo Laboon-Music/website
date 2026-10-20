@@ -66,7 +66,7 @@ export default function SignupForm({
         <label htmlFor={emailId} className="pl-[22px] text-[15px] font-semibold">
           {T.emailLabel}
         </label>
-        <div className="flex w-full items-stretch sm:w-auto">
+        <div className="field-row flex w-full items-stretch sm:w-auto">
           <Input
             ref={emailRef}
             joined

@@ -20,6 +20,7 @@ export function Input({
 }: ComponentProps<"input"> & { joined?: boolean }) {
   return (
     <input
+      data-joined={joined || undefined}
       className={cx(
         CONTROL,
         "h-[52px]",
@@ -74,12 +75,26 @@ export function Select({ className, children, ...props }: ComponentProps<"select
 }
 
 /** Visible label wrapping its control (no id/htmlFor wiring needed). */
-export function Field({ label, children }: { label: string; children: ReactNode }) {
+export function Field({
+  label,
+  error,
+  errorId,
+  children,
+}: {
+  label: string;
+  /** Message shown right under this field (not inside the label, so it is not part of its name). */
+  error?: ReactNode;
+  errorId?: string;
+  children: ReactNode;
+}) {
   return (
-    <label className="flex flex-col gap-2 text-[15px] font-semibold">
-      <span className="pl-1">{label}</span>
-      {children}
-    </label>
+    <div className="grid content-start gap-2">
+      <label className="flex flex-col gap-2 text-[15px] font-semibold">
+        <span className="pl-1">{label}</span>
+        {children}
+      </label>
+      <FormError id={errorId}>{error}</FormError>
+    </div>
   );
 }
 
