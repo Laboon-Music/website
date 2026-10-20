@@ -17,6 +17,12 @@ swiped, a spotlight lights three steps, then the closing signup and the FAQ.
 
 Pinned sections: `.pin` with `--span` screens of scroll and a sticky `.stage`.
 
+## Intro length
+
+The intro keeps the designer's choreography (5.6 s of animation time) played at `INTRO_PACE = 1.7`
+(`scene.ts`), so it lasts about 3.3 s. The growing disc is the last element painted: it decides the
+Largest Contentful Paint, so a shorter intro directly improves it. Any key or scroll still speeds it up.
+
 ## Centring
 
 The waves are centred on the **pinned stage** (`.stage`, 100svh) and the hero disc on the hero, not on `innerHeight`:

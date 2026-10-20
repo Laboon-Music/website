@@ -43,6 +43,12 @@ type Field = {
 
 /** Total length of the intro (disc turning, then growing), in seconds. */
 const INTRO_END = 5.6;
+/**
+ * Playback speed of the intro: 1 = the designer's original timing (5.6 s). The disc growing
+ * is the last thing painted, so it sets the Largest Contentful Paint: at 1.7 the intro lasts
+ * about 3.3 s, same choreography, faster.
+ */
+const INTRO_PACE = 1.7;
 /** The hero content appears once the disc has opened around it. */
 const REVEAL_AT = 4.9;
 const NIGHT = "#0F127A";
@@ -325,7 +331,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     if (st.heroE > 0.5 && introT < INTRO_END) introT = INTRO_END;
     else if (st.heroE > 0.02) skipIntro();
     const started = !discImg || discImg.complete || performance.now() - pageT0 > 2500;
-    if (started) introT += dt * introSpeed;
+    if (started) introT += dt * introSpeed * INTRO_PACE;
     const t = introT;
     const W = Math.min(788, vw * 0.86);
     const D1 = W * (572 / 788);
