@@ -2,19 +2,19 @@
 
 ## Stack
 
-| Layer                      | Choice                                                                 |
-| -------------------------- | ---------------------------------------------------------------------- |
-| Framework                  | **Next.js 16** (App Router, React 19, TypeScript, Turbopack)           |
-| Styling                    | **Tailwind CSS v4** (tokens in `app/globals.css`, no config file)      |
-| Email / contacts           | **Brevo** REST API (no SDK, see `lib/brevo.ts`)                        |
-| Anti-bot                   | Honeypot + minimum delay + **Cloudflare Turnstile**                    |
-| Auth (reset password only) | **Supabase** JS client                                                 |
-| Analytics                  | **Vercel Web Analytics** (cookieless)                                  |
-| Hosting                    | **Vercel** — two projects: production (`main`) and staging (`staging`) |
-| Tests                      | **Vitest** + Testing Library (jsdom)                                   |
-| Monitoring                 | **Sentry** (server-side only, no personal data)                        |
-| Formatting                 | **Prettier** (+ Tailwind class sorting)                                |
-| CI                         | GitHub Actions: format → lint → typecheck → test → build               |
+| Layer            | Choice                                                                 |
+| ---------------- | ---------------------------------------------------------------------- |
+| Framework        | **Next.js 16** (App Router, React 19, TypeScript, Turbopack)           |
+| Styling          | **Tailwind CSS v4** (tokens in `app/globals.css`, no config file)      |
+| Email / contacts | **Brevo** REST API (no SDK, see `lib/brevo.ts`)                        |
+| Anti-bot         | Honeypot + minimum delay + **Cloudflare Turnstile**                    |
+| Account links    | **Laboon API** (fetch from the browser), see account-links.md          |
+| Analytics        | **Vercel Web Analytics** (cookieless)                                  |
+| Hosting          | **Vercel** — two projects: production (`main`) and staging (`staging`) |
+| Tests            | **Vitest** + Testing Library (jsdom)                                   |
+| Monitoring       | **Sentry** (server-side only, no personal data)                        |
+| Formatting       | **Prettier** (+ Tailwind class sorting)                                |
+| CI               | GitHub Actions: format → lint → typecheck → test → build               |
 
 ## Folder layout
 
@@ -24,7 +24,8 @@ app/                         Routes (App Router). Pages are thin: they compose c
 ├── page.tsx                 Landing page (texts in content/home.ts)
 ├── contact/                 Contact page
 ├── inscription-confirmee/   Double opt-in landing page (+ signup_confirmed event)
-├── reset-password/          Password reset web fallback (Supabase)
+├── reset-password/          Password reset page (Laboon API)
+├── confirm-email/           Sign-up confirmation page (Laboon API)
 ├── cgu|cgv|charte|confidentialite|mentions-legales/   Public legal pages
 ├── legal/[slug]/            Bare legal pages for the app WebView (noindex)
 ├── .well-known/             iOS / Android deep link association files
@@ -33,7 +34,7 @@ app/                         Routes (App Router). Pages are thin: they compose c
 ├── not-found.tsx, error.tsx, global-error.tsx   French error pages
 ├── opengraph-image.tsx      Generated social share image
 ├── robots.ts, sitemap.ts    SEO
-└── globals.css              Theme tokens, .text-gradient / .glow, reduced motion
+└── globals.css              Theme tokens, base styles, reduced motion (+ ui.css: button, checkbox, FAQ row, disc)
 
 content/                     Editable website texts (no JSX) — see content.md
 ├── home.ts                  Home page texts
@@ -41,7 +42,9 @@ content/                     Editable website texts (no JSX) — see content.md
 
 components/
 ├── ui/                      Design system primitives (Button, Input, Card, TextLink…) — see design-system.md
-├── layout/                  Page chrome (PageShell, SiteHeader, SiteFooter, Logo, Glow, CurrentYear)
+├── layout/                  Page chrome (PageShell, SiteHeader, SiteFooter, Wordmark, CurrentYear)
+├── home/                    Animated home scene (HomeScene, scene.ts, home.css) — see features/home-scene.md
+├── faq/                     FAQ article, home FAQ section, FAQPage structured data
 ├── newsletter/              SignupForm, TrackSignupConfirmed
 ├── contact/                 ContactForm
 ├── antibot/                 Turnstile widget (lazy)
@@ -61,8 +64,8 @@ lib/                         Framework-agnostic logic (pure, unit-tested)
 ├── newsletter.ts            Signup messages (shared client/server)
 ├── http.ts                  JSON response helpers, body parsing
 ├── validation.ts            Email / text normalisation, HTML escaping
-├── password.ts              Recovery link parsing, password rules, Supabase error translation
-├── supabase.ts              Lazy Supabase browser client
+├── password.ts              Password rules, French API error messages
+├── api.ts                   Laboon API client (account links)
 ├── site.ts                  Canonical URL, production hosts, robots rules
 └── cx.ts                    className joiner
 
@@ -81,7 +84,7 @@ docs/                        This documentation
 - **`lib/`** holds logic with no React. Anything shared by client and server
   (limits, labels, messages) lives here so both sides agree.
 - External services are called only from `lib/` (or the route that owns the
-  flow), never from components — except the Supabase browser client.
+  flow), never from components — except `NEXT_PUBLIC_*` values read through `publicEnv`.
 - Environment variables are read **only** through `lib/env.ts`
   (`readEnv`, `readIdEnv`, `missingEnv`, `publicEnv`); new variables are
   added to `ENV_NAMES` (+ `FEATURE_ENV` if a feature depends on it).

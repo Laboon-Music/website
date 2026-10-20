@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 export default function FaqEmbedPage() {
   return (
-    <main className="mx-auto max-w-3xl px-5 py-8">
-      <Faq />
+    <main className="mx-auto max-w-3xl px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <Faq embed />
     </main>
   );
 }

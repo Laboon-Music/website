@@ -1,4 +1,4 @@
-import { DocHeader, List, Section, Subheading } from "../../_shared";
+import { DocBody, DocHeader, List, Section, Subheading } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -11,7 +11,7 @@ export default function Charte() {
   return (
     <article className="space-y-8">
       <DocHeader {...CHARTE_META} locale="fr" />
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="Notre vision">
           <p>
             Laboon est né d&apos;une conviction simple : trouver des musiciens avec qui
@@ -237,7 +237,7 @@ export default function Charte() {
             <TextLink href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</TextLink>
           </p>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

@@ -1,7 +1,7 @@
 # Deep links (iOS Universal Links / Android App Links)
 
 The site serves the association files that let the OS open the Laboon app
-instead of the browser for selected URLs (today: `/reset-password`).
+instead of the browser for selected URLs (today: `/reset-password`; `/confirm-email` is not registered yet).
 
 | File                        | Route                                                 |
 | --------------------------- | ----------------------------------------------------- |

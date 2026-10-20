@@ -39,3 +39,7 @@ it right after parsing the body in any new form route. Client: use
 
 `lib/antibot.test.ts`, `hooks/useProtectedForm.test.tsx` (lazy start, wait
 for token, timeout, single-use tokens), plus anti-bot cases in both route tests.
+
+## Exception: account links
+
+`/reset-password` and `/confirm-email` call the Laboon API directly and rely on its own rate limits: see [account-links.md](account-links.md#anti-bot).

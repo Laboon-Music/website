@@ -16,14 +16,14 @@ Instagram, WhatsApp, X… It is a text-only placeholder until brand assets
 ## robots.txt (`app/robots.ts` → `robotsFor()` in `lib/site.ts`)
 
 - Production hosts (`www.laboon-app.com`, `laboon-app.com`): indexable,
-  except `/api/`, `/legal/`, `/faq/embed`, `/reset-password`, `/inscription-confirmee`;
+  except `/api/`, `/legal/`, `/faq/embed`, `/reset-password`, `/confirm-email`, `/inscription-confirmee`;
   points to the sitemap.
 - Any other host (staging, `*.vercel.app`, localhost): `Disallow: /` to avoid
   duplicate content.
 
 ## sitemap.xml (`app/sitemap.ts`)
 
-`/`, `/faq`, `/contact` and every legal document (derived from the legal registry).
+`/`, `/contact` and every legal document (derived from the legal registry).
 **Add every new public page here.**
 
 ## Search Console

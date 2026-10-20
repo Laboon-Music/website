@@ -1,4 +1,4 @@
-import { DocHeader, List, Section, Subheading } from "../../_shared";
+import { DocBody, DocHeader, List, Section, Subheading } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -11,10 +11,10 @@ export default function Cgv() {
   return (
     <article className="space-y-8">
       <DocHeader {...CGV_META} locale="fr" />
-      <p className="text-muted">
+      <p className="max-w-[62ch] text-[clamp(1.05rem,1.4vw,1.2rem)] leading-relaxed text-muted">
         Offre d&apos;abonnement à destination des utilisateurs musiciens
       </p>
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="Préambule">
           <p>
             Les présentes Conditions Générales de Vente (CGV) régissent les relations
@@ -396,7 +396,7 @@ export default function Cgv() {
             </li>
           </List>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

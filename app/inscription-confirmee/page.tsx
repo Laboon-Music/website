@@ -13,26 +13,37 @@ export default function InscriptionConfirmeePage() {
   return (
     <PageShell>
       <TrackSignupConfirmed />
-      <section className="mx-auto max-w-md px-4 py-16 sm:px-6">
-        <Card className="text-center">
-          <h1 className="text-2xl font-bold">
-            Inscription confirmée <span className="text-accent">✓</span>
-          </h1>
-          <p className="mt-4 text-muted">
-            Merci ! Ton adresse est validée. On te tiendra au courant du lancement de
-            Laboon 🎶
-          </p>
-          <div className="mt-6 flex flex-col items-center gap-3">
-            <p className="text-sm text-muted">
-              En attendant, suis-nous pour ne rien rater :
-            </p>
-            <SocialLinks size="lg" />
-          </div>
-          <ButtonLink href="/" className="mt-8">
-            Retour à l&apos;accueil
-          </ButtonLink>
-        </Card>
-      </section>
+      <Card tone="success" className="mx-auto w-full max-w-lg">
+        <div
+          aria-hidden="true"
+          className="mx-auto grid size-[84px] place-items-center rounded-full bg-white shadow-[0_0_0_10px_rgb(255_255_255/0.14),0_0_0_22px_rgb(255_255_255/0.07)]"
+        >
+          <svg viewBox="0 0 38 38" className="size-[38px]">
+            <path
+              d="M9 20l7 7 13-15"
+              fill="none"
+              stroke="#0a4d2a"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <h1 className="mt-8 font-title text-3xl font-extrabold tracking-[-0.04em]">
+          Inscription confirmée
+        </h1>
+        <p className="mt-4 text-muted">
+          Merci ! Ton adresse est validée. On te tiendra au courant du lancement de
+          Laboon.
+        </p>
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <p className="text-sm">En attendant, suis-nous pour ne rien rater :</p>
+          <SocialLinks />
+        </div>
+        <ButtonLink href="/" className="mt-8 px-10">
+          Retour à l&apos;accueil
+        </ButtonLink>
+      </Card>
     </PageShell>
   );
 }

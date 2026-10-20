@@ -5,21 +5,25 @@ mobile app.
 
 ## Routes
 
-| Route        | For                | Chrome               | Indexed        |
-| ------------ | ------------------ | -------------------- | -------------- |
-| `/faq`       | Website visitors   | `PageShell` + footer | yes (sitemap)  |
-| `/faq/embed` | Mobile app WebView | none (bare article)  | no (`noindex`) |
+| Route        | For                | Chrome                  | Indexed        |
+| ------------ | ------------------ | ----------------------- | -------------- |
+| `/` (#faq)   | Website visitors   | Home page section       | yes            |
+| `/faq`       | Old links          | 308 redirect to `/#faq` | —              |
+| `/faq/embed` | Mobile app WebView | none (bare article)     | no (`noindex`) |
 
-The footer links to `/faq`. The app should load `https://www.laboon-app.com/faq/embed`.
+The footer links to `/#faq`. The app loads `https://www.laboon-app.com/faq/embed`.
+In the embed, links stay on bare pages (`/contact` → `/contact/embed`, legal
+pages → `/legal/<slug>`) and home anchors (`/#inscription`) are shown as plain
+text: see `embedHref()`. Safe-area insets are respected (notch, home bar).
 
 ## Code
 
 - `content/faq.ts` — the texts: groups of question/answer. A link in an
   answer is `[label](address)`. The contact address comes from `CONTACT_EMAIL`.
-- `components/faq/Faq.tsx` — the article, shared by both routes.
+- `components/faq/Faq.tsx` — the standalone article (embed); `FaqSection.tsx` — the home section (two columns); `FaqJsonLd.tsx` — schema.org data.
 - `components/faq/RichText.tsx` — turns `[label](address)` into `TextLink`.
 - `components/ui/Disclosure.tsx` — the expandable row (native `<details>`).
-- `app/faq/page.tsx`, `app/faq/embed/page.tsx` — thin routes.
+- `app/faq/embed/page.tsx` — thin route; the `/faq` redirect is in `next.config.ts`.
 
 ## Tests
 

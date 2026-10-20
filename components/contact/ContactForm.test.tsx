@@ -11,7 +11,7 @@ vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
 async function fillAndSend() {
   const user = userEvent.setup();
   await user.type(screen.getByLabelText("Nom"), "Jane");
-  await user.type(screen.getByLabelText("Email"), "jane@example.com");
+  await user.type(screen.getByLabelText("E-mail"), "jane@example.com");
   await user.selectOptions(screen.getByLabelText("Sujet"), "partenariat");
   await user.type(screen.getByLabelText("Message"), "Hello Laboon team!");
   await user.click(screen.getByRole("button", { name: "Envoyer" }));

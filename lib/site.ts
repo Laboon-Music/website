@@ -10,6 +10,7 @@ const NOINDEX_PATHS = [
   "/legal/",
   "/faq/embed",
   "/reset-password",
+  "/confirm-email",
   "/inscription-confirmee",
 ];
 
@@ -30,3 +31,17 @@ export function robotsFor(host: string | null | undefined): MetadataRoute.Robots
 
 /** Official contact address shown in the legal documents (GDPR requests, etc.). */
 export const CONTACT_EMAIL = "laboon.app@gmail.com";
+
+/** Social networks. Every place that lists them (footer, contact, FAQ, structured data) reads this. */
+export const SOCIALS = [
+  {
+    name: "Instagram",
+    handle: "@laboon.app.music",
+    href: "https://www.instagram.com/laboon.app.music/",
+  },
+  {
+    name: "Facebook",
+    handle: "Laboon",
+    href: "https://www.facebook.com/people/LaboonAPPMUSIC/61595076662122/",
+  },
+] as const;
