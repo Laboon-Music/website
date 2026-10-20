@@ -1,13 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useId, useRef, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import { Button, Checkbox, FormError, Honeypot, Input, TextLink } from "@/components/ui";
-import { CheckBadge } from "@/components/account/AccountBits";
-import { useUi } from "@/components/i18n/LocaleProvider";
+import { useLocale, useUi } from "@/components/i18n/LocaleProvider";
 import type { HOME_CONTENT } from "@/content/fr/home";
 import { useProtectedForm } from "@/hooks/useProtectedForm";
 import { trackEvent } from "@/lib/analytics";
+import { localePath } from "@/lib/i18n";
 import { isValidEmail } from "@/lib/validation";
 
 // Newsletter signup (launch and/or beta lists), drawn for the blue areas of the
@@ -21,6 +22,8 @@ export default function SignupForm({
   texts: typeof HOME_CONTENT.signup;
 }) {
   const ui = useUi();
+  const locale = useLocale();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [wantsLaunch, setWantsLaunch] = useState(true);
   const [wantsBeta, setWantsBeta] = useState(false);
@@ -42,25 +45,10 @@ export default function SignupForm({
     if (!wantsLaunch && !wantsBeta) return form.fail(ui.errors.noList);
     if (await form.submit({ email, wantsLaunch, wantsBeta })) {
       trackEvent("signup_submitted", { launch: wantsLaunch, beta: wantsBeta });
-      setEmail("");
+      // The confirmation lives on its own page. The form stays (button in loading state)
+      // until the navigation completes.
+      router.push(localePath(locale, "/inscription-envoyee"));
     }
-  }
-
-  if (form.status === "success") {
-    return (
-      // Same top spacing as the form it replaces (.signup), so it never sticks to the text above.
-      <div
-        id={id}
-        role="status"
-        className="mt-[clamp(32px,5.5vh,48px)] grid max-w-[26rem] justify-items-center gap-5 text-center"
-      >
-        <CheckBadge />
-        <p className="font-title text-2xl leading-tight font-extrabold tracking-[-0.03em]">
-          {T.successTitle}
-        </p>
-        <p className="text-base leading-relaxed">{T.successText}</p>
-      </div>
-    );
   }
 
   // noValidate: native browser bubbles use the browser language (often English);
@@ -96,7 +84,7 @@ export default function SignupForm({
           />
           <Button
             type="submit"
-            loading={form.status === "loading"}
+            loading={form.status === "loading" || form.status === "success"}
             loadingLabel={ui.sending}
           >
             {T.submit}

@@ -1,13 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { mockFetch, sentJson } from "@/tests/helpers";
 import { UI as FR } from "@/content/fr/ui";
 import { HOME_CONTENT } from "@/content/fr/home";
 import { trackEvent } from "@/lib/analytics";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import { HOME_CONTENT as EN_HOME } from "@/content/en/home";
 import SignupForm from "./SignupForm";
 
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
+
+const push = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
 describe("SignupForm", () => {
   it("submits the email, the chosen lists and the anti-bot fields", async () => {
@@ -28,7 +33,12 @@ describe("SignupForm", () => {
       turnstileToken: "",
       elapsedMs: expect.any(Number),
     });
-    expect(await screen.findByText(/Vérifie ta boîte mail/)).toBeInTheDocument();
+    // The confirmation is its own page: the visitor is sent there, the button keeps spinning meanwhile.
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/inscription-envoyee"));
+    expect(screen.getAllByRole("button", { name: "Envoi…" })[0]).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
     expect(trackEvent).toHaveBeenCalledWith("signup_submitted", {
       launch: true,
       beta: true,
@@ -61,6 +71,19 @@ describe("SignupForm", () => {
     expect(input).toHaveAttribute("aria-invalid", "true");
     expect(input).toHaveAttribute("aria-describedby", alert.id);
     expect(trackEvent).not.toHaveBeenCalled();
+  });
+
+  it("sends English visitors to the English confirmation page", async () => {
+    mockFetch(200, { ok: true });
+    const user = userEvent.setup();
+    render(
+      <LocaleProvider locale="en">
+        <SignupForm texts={EN_HOME.signup} />
+      </LocaleProvider>,
+    );
+    await user.type(screen.getByLabelText("Your e-mail"), "jane@example.com");
+    await user.click(screen.getByRole("button", { name: "Sign up" }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/en/inscription-envoyee"));
   });
 
   it("tells an empty or wrong e-mail at once, without calling the API or showing a spinner", async () => {

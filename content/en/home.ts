@@ -82,9 +82,6 @@ export const HOME_CONTENT: typeof FrHome = {
     launch: "Let me know when it launches",
     beta: "Try the beta first",
     submit: "Sign up",
-    successTitle: "Almost done! Check your inbox",
-    successText:
-      "We just sent you an e-mail: click the link to confirm your sign-up (remember to check your spam folder).",
     privacy: "Privacy policy",
     privacyNote: "We will only send you Laboon news. Unsubscribe in one click.",
   },

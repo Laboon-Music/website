@@ -12,6 +12,7 @@ import { LOCALES, type Locale } from "@/lib/i18n";
 import { axeViolations } from "@/tests/axe";
 import { langParams } from "@/tests/params";
 import ContactPage from "./[lang]/contact/page";
+import SignupSentPage from "./[lang]/inscription-envoyee/page";
 import Home from "./[lang]/page";
 
 // Automated accessibility checks (axe-core) of every kind of page, in both
@@ -19,7 +20,10 @@ import Home from "./[lang]/page";
 vi.mock("@/components/home/scene", () => ({
   startHomeScene: vi.fn(() => ({ reveal: vi.fn(), destroy: vi.fn() })),
 }));
-vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn() }),
+}));
 
 beforeEach(() => {
   // jsdom has no canvas: the scene is mocked, this only silences the warning.
@@ -54,6 +58,11 @@ describe.each(LOCALES)("accessibility (%s)", (locale) => {
 
   it("contact page", async () => {
     render(inLocale(locale, await ContactPage(langParams(locale))));
+    expect(await axeViolations()).toEqual([]);
+  });
+
+  it("signup sent page", async () => {
+    render(inLocale(locale, await SignupSentPage(langParams(locale))));
     expect(await axeViolations()).toEqual([]);
   });
 

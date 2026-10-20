@@ -13,6 +13,11 @@ vi.mock("@/components/home/scene", () => ({
   startHomeScene: vi.fn(() => ({ reveal: vi.fn(), destroy: vi.fn() })),
 }));
 
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 beforeEach(() => {
   vi.stubGlobal(
     "matchMedia",

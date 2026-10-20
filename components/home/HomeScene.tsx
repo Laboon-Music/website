@@ -97,9 +97,17 @@ export default function HomeScene({
       {/* Decor: backdrop, growing disc, wave field and the opening wordmark. */}
       <div data-scene="bgflow" className="bgflow" aria-hidden="true" />
       <div data-scene="disc" className="disc" aria-hidden="true">
-        {/* Lighter image on phones. Plain <img>/<picture>: next/image cannot pick a source by media query. */}
+        {/* AVIF keeps the disc sharp when the animation zooms in (full resolution, ~570 KB); WebP is the
+            fallback for old browsers. Lighter version on phones. Plain <picture>: next/image cannot
+            pick a source by media query. */}
         <picture>
+          <source
+            media="(max-width: 860px)"
+            type="image/avif"
+            srcSet="/brand/motif-mobile.avif"
+          />
           <source media="(max-width: 860px)" srcSet="/brand/motif-mobile.webp" />
+          <source type="image/avif" srcSet="/brand/motif-desktop.avif" />
           <img
             className="disc__motif"
             src="/brand/motif-desktop.webp"

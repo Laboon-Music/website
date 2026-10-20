@@ -13,6 +13,7 @@ const NOINDEX_PAGES = [
   "/reset-password",
   "/confirm-email",
   "/inscription-confirmee",
+  "/inscription-envoyee",
 ];
 const NOINDEX_PATHS = [
   "/api/",

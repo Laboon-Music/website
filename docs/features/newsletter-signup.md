@@ -3,6 +3,10 @@
 The core feature: collect emails of people who want to be notified of the
 launch and/or test the beta.
 
+## After the form
+
+Once the API accepts the signup, the visitor is sent to **`/inscription-envoyee`** (`/en/inscription-envoyee`): a page of its own "check your inbox" with a back-to-home button (no home animation). The page after the click in the e-mail is `/inscription-confirmee`. Both are `noindex`.
+
 ## Where
 
 - Form: `components/newsletter/SignupForm.tsx`, shown twice on `/` (hero and

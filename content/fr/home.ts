@@ -83,9 +83,6 @@ export const HOME_CONTENT = {
     launch: "Me prévenir du lancement",
     beta: "Tester la bêta en avant-première",
     submit: "M’inscrire",
-    successTitle: "Presque fini ! Vérifie ta boîte mail",
-    successText:
-      "On vient de t’envoyer un e-mail : clique sur le lien pour confirmer ton inscription (pense à regarder dans les spams).",
     privacy: "Politique de confidentialité",
     privacyNote:
       "On ne t’enverra que des nouvelles de Laboon. Désinscription en un clic.",
