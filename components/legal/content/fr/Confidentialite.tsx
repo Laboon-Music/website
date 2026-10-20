@@ -4,8 +4,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 export const CONFIDENTIALITE_META = {
   title: "Politique de Confidentialité",
-  version: "2",
-  effectiveDate: "12/10/2026",
+  version: "3",
+  effectiveDate: "20/10/2026",
 };
 export default function Confidentialite() {
   return (
@@ -121,8 +121,10 @@ export default function Confidentialite() {
         <Section title="7. Cookies et traceurs">
           <p>
             L&apos;application mobile Laboon n&apos;utilise pas de cookies. Notre site web
-            peut utiliser des traceurs à des fins analytiques. Un bandeau de consentement
-            vous sera présenté lors de votre première visite.
+            n&apos;utilise pas de cookies de suivi : il mesure son audience avec un outil
+            qui n&apos;utilise ni cookie ni identifiant et ne permet pas de vous
+            reconnaître d&apos;une visite à l&apos;autre. Aucun bandeau de consentement
+            n&apos;est donc nécessaire.
           </p>
         </Section>
         <Section title="8. Sécurité">

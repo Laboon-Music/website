@@ -4,8 +4,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 export const CONFIDENTIALITE_META = {
   title: "Privacy Policy",
-  version: "2",
-  effectiveDate: "12 October 2026",
+  version: "3",
+  effectiveDate: "20 October 2026",
 };
 export default function Confidentialite() {
   return (
@@ -112,9 +112,10 @@ export default function Confidentialite() {
         </Section>
         <Section title="7. Cookies and trackers">
           <p>
-            The Laboon mobile application does not use cookies. Our website may use
-            trackers for analytics purposes. A consent banner will be shown on your first
-            visit.
+            The Laboon mobile application does not use cookies. Our website does not use
+            tracking cookies: it measures its audience with a tool that uses no cookie and
+            no identifier and cannot recognise you from one visit to the next. No consent
+            banner is therefore required.
           </p>
         </Section>
         <Section title="8. Security">
