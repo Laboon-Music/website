@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-async function loadApi(apiUrl: string | undefined, apiStagingHeader?: string) {
+async function loadApi(apiUrl: string | undefined, apiStagingKey?: string) {
   vi.resetModules();
-  vi.doMock("@/lib/env", () => ({ publicEnv: { apiUrl, apiStagingHeader } }));
+  vi.doMock("@/lib/env", () => ({ publicEnv: { apiUrl, apiStagingKey } }));
   return (await import("./api")).apiPost;
 }
 
@@ -25,7 +25,7 @@ describe("apiPost", () => {
     expect(init.cache).toBe("no-store");
   });
 
-  it("sends the staging header only when the staging header value is configured", async () => {
+  it("sends the staging header only when the staging key is configured", async () => {
     const fetchMock = vi.fn(async () => new Response(null, { status: 202 }));
     vi.stubGlobal("fetch", fetchMock);
 

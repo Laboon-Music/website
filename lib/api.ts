@@ -3,7 +3,7 @@
 // calls the API directly (the site's origin is in the API's CORS_ORIGINS), so no
 // secret is involved. On staging the API is closed to the public: Cloudflare
 // requires the `X-Laboon-Staging` header (infra: docs/cloudflare.md), sent when
-// NEXT_PUBLIC_API_STAGING_HEADER is set. See docs/features/account-links.md.
+// NEXT_PUBLIC_API_STAGING_KEY is set. See docs/features/account-links.md.
 
 import { publicEnv } from "@/lib/env";
 import type { Locale } from "@/lib/i18n";
@@ -36,8 +36,7 @@ export async function apiPost(
     "Accept-Language": locale,
   };
   // Staging only (the value ships in the bundle: it keeps robots and the curious out, it is not a secret).
-  if (publicEnv.apiStagingHeader)
-    headers["X-Laboon-Staging"] = publicEnv.apiStagingHeader;
+  if (publicEnv.apiStagingKey) headers["X-Laboon-Staging"] = publicEnv.apiStagingKey;
 
   let res: Response;
   try {

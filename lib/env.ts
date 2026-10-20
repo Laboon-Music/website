@@ -11,7 +11,7 @@ export const ENV_NAMES = [
   "TURNSTILE_SECRET_KEY",
   "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
   "NEXT_PUBLIC_API_URL",
-  "NEXT_PUBLIC_API_STAGING_HEADER",
+  "NEXT_PUBLIC_API_STAGING_KEY",
   "SENTRY_DSN",
 ] as const;
 
@@ -25,7 +25,7 @@ export type EnvName = (typeof ENV_NAMES)[number];
 export const publicEnv = {
   turnstileSiteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || undefined,
   apiUrl: process.env.NEXT_PUBLIC_API_URL || undefined,
-  apiStagingHeader: process.env.NEXT_PUBLIC_API_STAGING_HEADER || undefined,
+  apiStagingKey: process.env.NEXT_PUBLIC_API_STAGING_KEY || undefined,
 };
 
 /** Server-side read: trimmed value, or undefined when unset or blank. */

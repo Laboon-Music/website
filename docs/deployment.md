@@ -39,7 +39,7 @@ Full list with comments: [`.env.example`](../.env.example).
 | `CONTACT_TO_EMAIL`                                        | contact                 | inbox receiving messages                                                   |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | anti-bot                | _Production_ environment only                                              |
 | `NEXT_PUBLIC_API_URL`                                     | account links           | Laboon API base URL with `/v1` (+ site origin in the API's `CORS_ORIGINS`) |
-| `NEXT_PUBLIC_API_STAGING_HEADER`                          | account links (staging) | value of the `X-Laboon-Staging` header (staging only; empty in production) |
+| `NEXT_PUBLIC_API_STAGING_KEY`                             | account links (staging) | value of the `X-Laboon-Staging` header (staging only; empty in production) |
 | `SENTRY_DSN`                                              | error alerts            | same value on both projects (environments are told apart automatically)    |
 
 Online, a missing variable makes the related form show an error (never a
