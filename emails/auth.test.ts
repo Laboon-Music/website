@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AUTH_EMAILS, AUTH_SUBJECTS } from "./auth";
+import { AUTH_EMAILS } from "./auth";
 
 const byFile = Object.fromEntries(AUTH_EMAILS.map((e) => [e.file, e.html]));
 
@@ -9,11 +9,6 @@ describe("auth e-mail templates (served to GoTrue)", () => {
       "confirmation.html",
       "email_change.html",
       "recovery.html",
-    ]);
-    expect(Object.keys(AUTH_SUBJECTS).sort()).toEqual([
-      "confirmation",
-      "email_change",
-      "recovery",
     ]);
   });
 

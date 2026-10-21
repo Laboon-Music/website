@@ -1,6 +1,7 @@
 // The e-mails sent by the Laboon auth server (GoTrue): sign-up confirmation, password reset and e-mail change.
 // GoTrue only loads a template from a URL, so `npm run emails` writes them to public/emails/auth/ and the site serves
-// them (https://www.laboon-app.com/emails/auth/<name>.html). One file per mail holds both languages: GoTrue fills the
+// them (https://www.laboon-app.com/emails/auth/<name>.html). The subjects are plain strings set in the auth service itself
+// (GOTRUE_MAILER_SUBJECTS_*, both languages), see documentation/COOLIFY_SUPABASE.md in the app repository. One file per mail holds both languages: GoTrue fills the
 // `{{ … }}` variables, and English is chosen when the account's `legal_locale` (user metadata, set at sign-up) is
 // "en", French otherwise. See docs/features/emails.md.
 
@@ -113,10 +114,3 @@ export const AUTH_EMAILS = [
   { file: "recovery.html", html: bilingual("recovery") },
   { file: "email_change.html", html: bilingual("emailChange") },
 ];
-
-/** GoTrue subjects are plain strings (not translated), hence both languages. */
-export const AUTH_SUBJECTS = {
-  confirmation: "Bienvenue sur Laboon · Welcome to Laboon",
-  recovery: "Nouveau mot de passe · New password",
-  email_change: "Confirme ta nouvelle adresse · Confirm your new address",
-};

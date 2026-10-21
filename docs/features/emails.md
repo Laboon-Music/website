@@ -48,7 +48,8 @@ change. It can only load a template **from a URL**, so the site serves them: `em
 
 - One file holds both languages: English when the account's `legal_locale` (user metadata, set at sign-up) is `en`,
   French otherwise. Variables are GoTrue's: `{{ .ConfirmationURL }}`, `{{ .Email }}`, `{{ .NewEmail }}`.
-- Subjects are plain strings in GoTrue (not translated), so they carry both languages (`AUTH_SUBJECTS`).
+- Subjects are plain strings in GoTrue (not translated), so they carry both languages. They are set in the auth service (`GOTRUE_MAILER_SUBJECTS_*`), not in this repository.
+- **Security:** GoTrue puts the recovery and confirmation links into whatever these files contain, so whoever can change `public/emails/auth/` can leak them. Treat these files, and the deployment of this site, as part of the account security: review every change to them, and keep the restricted deploy author.
 - Images always come from `https://www.laboon-app.com/brand/email/`.
 - Wiring (Coolify variables, per environment): see `documentation/COOLIFY_SUPABASE.md` in the app repository.
 - If GoTrue cannot load a template it silently sends its default English one: after a change, send a real test.
