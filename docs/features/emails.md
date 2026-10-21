@@ -3,10 +3,11 @@
 Branded HTML e-mails (blue header with the wordmark, card, social links),
 readable in **light and dark mode** and on **phones**. French (informal "tu") and English, one file per language.
 
-| Template       | File                                            | Used for                                                                                  |
-| -------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Double opt-in  | `emails/dist/double-optin.fr.html` / `.en.html` | Brevo confirmation template (`BREVO_DOI_TEMPLATE_ID` / `_EN`), button `{{ doubleoptin }}` |
-| Campaign frame | `emails/dist/campaign.fr.html` / `.en.html`     | Newsletters (launch, beta invitation): edit title and text in Brevo                       |
+| Template       | File                                                           | Used for                                                                                    |
+| -------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Double opt-in  | `emails/dist/double-optin.fr.html` / `.en.html`                | Brevo confirmation template (`BREVO_DOI_TEMPLATE_ID` / `_EN`), button `{{ doubleoptin }}`   |
+| Campaign frame | `emails/dist/campaign.fr.html` / `.en.html`                    | Newsletters (launch, beta invitation): edit title and text in Brevo                         |
+| App auth mails | `public/emails/auth/{confirmation,recovery,email_change}.html` | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue) |
 
 ## Code
 
@@ -37,6 +38,21 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 2. For a campaign: create a template from `campaign.fr.html` (or `.en.html`) and edit the text in the HTML.
 3. Send a **test e-mail** to yourself and check Gmail (web + app) and Apple Mail, light and dark.
 
+## Auth e-mails of the app (GoTrue)
+
+The Laboon auth server (Supabase GoTrue, on Coolify) sends the sign-up confirmation, the password reset and the e-mail
+change. It can only load a template **from a URL**, so the site serves them: `emails/auth.ts` → `npm run emails` →
+`public/emails/auth/*.html` (commit them, like `dist`). They are not indexed (`robots.txt`) and skip the language routing
+(`proxy.ts`).
+
+- One file holds both languages: English when the account's `legal_locale` (user metadata, set at sign-up) is `en`,
+  French otherwise. Variables are GoTrue's: `{{ .ConfirmationURL }}`, `{{ .Email }}`, `{{ .NewEmail }}`.
+- Subjects are plain strings in GoTrue (not translated), so they carry both languages. They are set in the auth service (`GOTRUE_MAILER_SUBJECTS_*`), not in this repository.
+- **Security:** GoTrue puts the recovery and confirmation links into whatever these files contain, so whoever can change `public/emails/auth/` can leak them. Treat these files, and the deployment of this site, as part of the account security: review every change to them, and keep the restricted deploy author.
+- Images always come from `https://www.laboon-app.com/brand/email/`.
+- Wiring (Coolify variables, per environment): see `documentation/COOLIFY_SUPABASE.md` in the app repository.
+- If GoTrue cannot load a template it silently sends its default English one: after a change, send a real test.
+
 ## Tests
 
-`emails/emails.test.ts`. The visual check (375 px / 600 px, light / dark) is manual.
+`emails/emails.test.ts`, `emails/auth.test.ts`. The visual check (375 px / 600 px, light / dark) is manual.

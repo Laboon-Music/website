@@ -39,8 +39,8 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Everything except the API, Next internals, deep-link files, icons, brand
-  // images, robots and sitemap.
+  // images, the e-mail templates loaded by the auth server, robots and sitemap.
   matcher: [
-    "/((?!api|_next|\\.well-known|brand|icon\\.png|apple-icon\\.png|robots\\.txt|sitemap\\.xml|favicon\\.ico).*)",
+    "/((?!api|_next|\\.well-known|brand|emails/|icon\\.png|apple-icon\\.png|robots\\.txt|sitemap\\.xml|favicon\\.ico).*)",
   ],
 };
