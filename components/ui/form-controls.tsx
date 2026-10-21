@@ -2,10 +2,12 @@ import type { ComponentProps, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 
 // Design system — form controls, drawn for the blue panels: white pill fields
-// with navy text. See docs/design-system.md.
+// with navy text. An invalid field keeps the exact shape of a normal one: only its
+// border turns the error colour (no glow, which changed the silhouette and looked
+// broken next to the joined e-mail + button). See docs/design-system.md.
 
 const CONTROL =
-  "w-full border-2 border-white bg-white px-5 text-base font-medium text-ink placeholder:text-[#5a60b0] aria-invalid:border-[#ff6a3d] aria-invalid:ring-[3px] aria-invalid:ring-[#ff6a3d]/45";
+  "w-full border-2 border-white bg-white px-5 text-base font-medium text-ink placeholder:text-[#5a60b0] aria-invalid:border-error-accent";
 
 /**
  * Pill input. `joined` glues it to a button on its right (e-mail + submit):
@@ -18,6 +20,7 @@ export function Input({
 }: ComponentProps<"input"> & { joined?: boolean }) {
   return (
     <input
+      data-joined={joined || undefined}
       className={cx(
         CONTROL,
         "h-[52px]",
@@ -72,12 +75,26 @@ export function Select({ className, children, ...props }: ComponentProps<"select
 }
 
 /** Visible label wrapping its control (no id/htmlFor wiring needed). */
-export function Field({ label, children }: { label: string; children: ReactNode }) {
+export function Field({
+  label,
+  error,
+  errorId,
+  children,
+}: {
+  label: string;
+  /** Message shown right under this field (not inside the label, so it is not part of its name). */
+  error?: ReactNode;
+  errorId?: string;
+  children: ReactNode;
+}) {
   return (
-    <label className="flex flex-col gap-2 text-[15px] font-semibold">
-      <span className="pl-1">{label}</span>
-      {children}
-    </label>
+    <div className="grid content-start gap-2">
+      <label className="flex flex-col gap-2 text-[15px] font-semibold">
+        <span className="pl-1">{label}</span>
+        {children}
+      </label>
+      <FormError id={errorId}>{error}</FormError>
+    </div>
   );
 }
 

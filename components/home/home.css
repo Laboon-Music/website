@@ -312,6 +312,94 @@
   color: var(--subtitle-dark);
 }
 
+.home .deck-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+}
+
+/* Previous / next buttons and dots: the scroll drives the deck, these tell how it works. */
+.home .pager {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* the stacked cards stick out 42 px to the right: keep the controls under the top card */
+  margin-right: 42px;
+}
+
+.home .steps .pager {
+  margin-right: 0;
+}
+
+.home .pager__arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid rgb(255 255 255 / 0.6);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease),
+    opacity 0.2s var(--ease);
+}
+
+.home .pager__arrow svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home .pager__arrow:hover:not(:disabled) {
+  background: #fff;
+  color: var(--blue);
+}
+
+.home .pager__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.home .pager__dots {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home .pager__dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.home .pager__dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.4);
+  transition:
+    width 0.3s var(--ease),
+    background-color 0.3s var(--ease);
+}
+
+.home .pager__dot[aria-current="true"]::before {
+  width: 22px;
+  background: #fff;
+}
+
 /* The deck: each back card is shifted by 14 px and more transparent. */
 .home .deck {
   position: relative;
@@ -673,6 +761,23 @@
     text-align: left;
   }
 
+  /* Text on the left over both rows; the stepper and its controls stack on the right. */
+  .home .steps__intro {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .home .stepper {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .home .steps .pager {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: center;
+  }
+
   .home .steps__intro h2 {
     font-size: clamp(2rem, 2.8vw, 2.5rem);
   }
@@ -848,6 +953,10 @@
     height: auto;
     overflow: visible;
     padding-block: calc(var(--pill-h) + 32px) 48px;
+  }
+
+  .home .pager {
+    display: none;
   }
 
   .home .deck {

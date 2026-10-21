@@ -37,6 +37,12 @@ would drift away from the middle of the waves. Check it after any change to the 
 - The intro hides the hero only when scripts run (`.js` class set in
   `app/[lang]/layout.tsx`); it never hides it for good (8 s failsafe: `reveal-failsafe` class set by a script in the layout) and the first
   Tab key ends it.
+- Card deck and steps controls: visitors tried to swipe sideways, so previous / next buttons and dots sit
+  under the deck (`PagerControls` in `HomeScene.tsx`, texts in `content/<lang>/home.ts` →
+  `values.controls` and `steps.controls`; the same buttons drive the steps via `stepProgressFor`). The scroll stays the single source of truth: a click scrolls the page to the
+  position where that card rests (`deckProgressFor`, the inverse of `deckScroll`), and the scene
+  loop keeps `aria-current` / `disabled` in sync (`deckIndex`). Hidden on short screens, where the
+  cards are stacked. A horizontal swipe gesture is not implemented yet.
 - Short screens (`max-height: 620px`, 200 % zoom): cards and steps are stacked, not pinned.
 
 ## Tests

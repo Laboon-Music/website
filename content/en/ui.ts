@@ -110,6 +110,15 @@ export const UI: typeof FrUI = {
     backHome: "Back to home",
   },
 
+  signupSent: {
+    metaTitle: "Check your inbox — Laboon",
+    title: "Almost done!",
+    subtitle: "Check your inbox",
+    text: "We just sent you an e-mail: click the link to confirm your sign-up.",
+    tip: "Remember to check your spam folder.",
+    backHome: "Back to home",
+  },
+
   notFound: {
     metaTitle: "Page not found — Laboon",
     title: "This page is playing quietly",

@@ -11,7 +11,7 @@ export const HOME_CONTENT = {
   hero: {
     // The wordmark above the title is an image: this is its accessible name.
     wordmarkAlt: "Laboon",
-    title: "Trouve ton band",
+    title: "Trouve ton groupe",
     subtitle:
       "L’appli qui met les musiciens sur la même longueur d’onde : trouve des musiciens près de chez toi et monte ton groupe.",
   },
@@ -26,6 +26,13 @@ export const HOME_CONTENT = {
     subtitle:
       "Quatre raisons de laisser tomber les petites annonces pour trouver tes musiciens.",
     // `icon` = file name in public/brand.
+    // Controls under the deck (the cards also follow the scroll).
+    controls: {
+      label: "Cartes",
+      prev: "Carte précédente",
+      next: "Carte suivante",
+      goTo: "Aller à la carte {n} sur {total}",
+    },
     items: [
       {
         icon: "icon-puzzle.webp",
@@ -53,6 +60,12 @@ export const HOME_CONTENT = {
   steps: {
     title: "Comment trouver tes musiciens",
     subtitle: "Trois étapes entre toi et ta prochaine répète.",
+    controls: {
+      label: "Étapes",
+      prev: "Étape précédente",
+      next: "Étape suivante",
+      goTo: "Aller à l’étape {n} sur {total}",
+    },
     items: [
       {
         icon: "icon-microphone.webp",
@@ -83,9 +96,6 @@ export const HOME_CONTENT = {
     launch: "Me prévenir du lancement",
     beta: "Tester la bêta en avant-première",
     submit: "M’inscrire",
-    successTitle: "Presque fini ! Vérifie ta boîte mail",
-    successText:
-      "On vient de t’envoyer un e-mail : clique sur le lien pour confirmer ton inscription (pense à regarder dans les spams).",
     privacy: "Politique de confidentialité",
     privacyNote:
       "On ne t’enverra que des nouvelles de Laboon. Désinscription en un clic.",

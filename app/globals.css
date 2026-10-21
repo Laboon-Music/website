@@ -72,6 +72,13 @@ body:has(.home) {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
+  /* No border-radius here: it would override the shape of the focused element (a pill field
+     turned square on focus). The outline follows the element's own radius. */
+}
+
+/* Links without their own shape get softly rounded corners (zero specificity: any
+   rounded-* class wins). */
+:where(a):focus-visible {
   border-radius: 6px;
 }
 

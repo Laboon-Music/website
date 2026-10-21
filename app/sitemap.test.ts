@@ -34,7 +34,7 @@ describe("sitemap", () => {
   it("never lists non-indexable pages", () => {
     expect(
       urls.some((u) =>
-        /\/(api|legal|faq\/embed|reset-password|confirm-email|inscription-confirmee)/.test(
+        /\/(api|legal|faq\/embed|reset-password|confirm-email|inscription-confirmee|inscription-envoyee)/.test(
           u,
         ),
       ),

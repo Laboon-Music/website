@@ -19,6 +19,61 @@ function pinStyle(span: number) {
   return { "--span": span } as React.CSSProperties;
 }
 
+// Previous / next buttons and dots under the card deck and the steps. scene.ts wires the clicks (they scroll
+// to the card) and keeps `aria-current` / `disabled` in sync with the scroll position.
+function PagerControls({
+  name,
+  controls,
+  count,
+}: {
+  /** `data-scene` prefix: "deck" or "steps". */
+  name: string;
+  controls: typeof HOME_CONTENT.values.controls;
+  count: number;
+}) {
+  return (
+    <div className="pager" role="group" aria-label={controls.label}>
+      <button
+        type="button"
+        data-scene={`${name}-prev`}
+        className="pager__arrow"
+        aria-label={controls.prev}
+        disabled
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" />
+        </svg>
+      </button>
+      <ol className="pager__dots">
+        {Array.from({ length: count }, (_, i) => (
+          <li key={i}>
+            <button
+              type="button"
+              data-scene={`${name}-dot`}
+              data-index={i}
+              className="pager__dot"
+              aria-label={controls.goTo
+                .replace("{n}", String(i + 1))
+                .replace("{total}", String(count))}
+              aria-current={i === 0 ? "true" : undefined}
+            />
+          </li>
+        ))}
+      </ol>
+      <button
+        type="button"
+        data-scene={`${name}-next`}
+        className="pager__arrow"
+        aria-label={controls.next}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 function focusEmail(formId: string) {
   document.querySelector<HTMLInputElement>(`#${formId} input[type=email]`)?.focus({
     preventScroll: true,
@@ -97,12 +152,14 @@ export default function HomeScene({
       {/* Decor: backdrop, growing disc, wave field and the opening wordmark. */}
       <div data-scene="bgflow" className="bgflow" aria-hidden="true" />
       <div data-scene="disc" className="disc" aria-hidden="true">
-        {/* Lighter image on phones. Plain <img>/<picture>: next/image cannot pick a source by media query. */}
+        {/* The disc is zoomed up to ~4x by the animation: AVIF keeps it at the full resolution of the
+            artwork (3267 px) for ~600 KB; WebP (lower resolution) is only the fallback for old
+            browsers. A vector version from the designer would be sharper still. */}
         <picture>
-          <source media="(max-width: 860px)" srcSet="/brand/motif-mobile.webp" />
+          <source type="image/avif" srcSet="/brand/motif.avif" />
           <img
             className="disc__motif"
-            src="/brand/motif-desktop.webp"
+            src="/brand/motif.webp"
             alt=""
             width={1800}
             height={1800}
@@ -188,22 +245,29 @@ export default function HomeScene({
               </h2>
               <p>{values.subtitle}</p>
             </div>
-            <ol className="deck">
-              {values.items.map((item) => (
-                <li key={item.title} data-scene="card" className="deck-card">
-                  <h3>{item.title}</h3>
-                  <Image
-                    className="deck-card__icon"
-                    src={`/brand/${item.icon}`}
-                    alt=""
-                    width={256}
-                    height={256}
-                    unoptimized
-                  />
-                  <p>{item.text}</p>
-                </li>
-              ))}
-            </ol>
+            <div className="deck-wrap">
+              <ol className="deck">
+                {values.items.map((item) => (
+                  <li key={item.title} data-scene="card" className="deck-card">
+                    <h3>{item.title}</h3>
+                    <Image
+                      className="deck-card__icon"
+                      src={`/brand/${item.icon}`}
+                      alt=""
+                      width={256}
+                      height={256}
+                      unoptimized
+                    />
+                    <p>{item.text}</p>
+                  </li>
+                ))}
+              </ol>
+              <PagerControls
+                name="deck"
+                controls={values.controls}
+                count={values.items.length}
+              />
+            </div>
           </div>
         </section>
 
@@ -265,6 +329,11 @@ export default function HomeScene({
                 />
               </div>
             </div>
+            <PagerControls
+              name="steps"
+              controls={steps.controls}
+              count={steps.items.length}
+            />
           </div>
         </section>
 

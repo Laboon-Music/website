@@ -112,6 +112,16 @@ export const UI = {
     backHome: "Retour à l'accueil",
   },
 
+  signupSent: {
+    metaTitle: "Vérifie ta boîte mail — Laboon",
+    // Non-breaking space before "!" (French typography): the mark never drops to its own line.
+    title: "Presque fini\u00a0!",
+    subtitle: "Vérifie ta boîte mail",
+    text: "On vient de t’envoyer un e-mail : clique sur le lien pour confirmer ton inscription.",
+    tip: "Pense à regarder dans tes spams.",
+    backHome: "Retour à l'accueil",
+  },
+
   notFound: {
     metaTitle: "Page introuvable — Laboon",
     title: "Cette page joue en sourdine",

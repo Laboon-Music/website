@@ -25,6 +25,13 @@ export const HOME_CONTENT: typeof FrHome = {
   values: {
     title: "The app made for musicians",
     subtitle: "Four reasons to ditch classified ads and find your musicians.",
+    // Controls under the deck (the cards also follow the scroll).
+    controls: {
+      label: "Cards",
+      prev: "Previous card",
+      next: "Next card",
+      goTo: "Go to card {n} of {total}",
+    },
     items: [
       {
         icon: "icon-puzzle.webp",
@@ -52,6 +59,12 @@ export const HOME_CONTENT: typeof FrHome = {
   steps: {
     title: "How to find your musicians",
     subtitle: "Three steps between you and your next rehearsal.",
+    controls: {
+      label: "Steps",
+      prev: "Previous step",
+      next: "Next step",
+      goTo: "Go to step {n} of {total}",
+    },
     items: [
       {
         icon: "icon-microphone.webp",
@@ -82,9 +95,6 @@ export const HOME_CONTENT: typeof FrHome = {
     launch: "Let me know when it launches",
     beta: "Try the beta first",
     submit: "Sign up",
-    successTitle: "Almost done! Check your inbox",
-    successText:
-      "We just sent you an e-mail: click the link to confirm your sign-up (remember to check your spam folder).",
     privacy: "Privacy policy",
     privacyNote: "We will only send you Laboon news. Unsubscribe in one click.",
   },

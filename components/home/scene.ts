@@ -10,6 +10,8 @@ import {
   TAU,
   c01,
   cardStyle,
+  deckIndex,
+  deckProgressFor,
   deckScroll,
   easeInOut,
   enterProgress,
@@ -17,8 +19,10 @@ import {
   lerp,
   manifestoInk,
   pinProgress,
+  ringFlow,
   sstep,
   stepIndex,
+  stepProgressFor,
   wordFill,
   type Rgb,
 } from "@/lib/scene-math";
@@ -59,6 +63,54 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const $$ = <T extends HTMLElement>(name: string) =>
     Array.from(root.querySelectorAll<T>(`[data-scene="${name}"]`));
 
+  /**
+   * Previous / next buttons and dots of a pinned section (`data-scene="<name>-prev|next|dot"`).
+   * The scroll stays the source of truth: a click scrolls to where item `i` rests, and `show`
+   * (called by the frame loop) keeps `aria-current` / `disabled` in sync.
+   */
+  function pager(
+    name: string,
+    section: HTMLElement,
+    count: number,
+    progressFor: (index: number, count: number) => number,
+  ) {
+    const prev = $<HTMLButtonElement>(`${name}-prev`);
+    const next = $<HTMLButtonElement>(`${name}-next`);
+    const dots = $$<HTMLButtonElement>(`${name}-dot`);
+    let current = -1;
+    function goTo(index: number) {
+      const i = Math.min(Math.max(index, 0), count - 1);
+      const y =
+        scrollY +
+        section.getBoundingClientRect().top +
+        progressFor(i, count) * Math.max(section.offsetHeight - innerHeight, 0);
+      scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+    }
+    const onPrev = () => goTo(current - 1);
+    const onNext = () => goTo(current + 1);
+    const onDot = dots.map((_, i) => () => goTo(i));
+    prev.addEventListener("click", onPrev);
+    next.addEventListener("click", onNext);
+    dots.forEach((dot, i) => dot.addEventListener("click", onDot[i]));
+    return {
+      show(index: number) {
+        if (index === current) return;
+        current = index;
+        dots.forEach((dot, i) => {
+          if (i === index) dot.setAttribute("aria-current", "true");
+          else dot.removeAttribute("aria-current");
+        });
+        prev.disabled = index === 0;
+        next.disabled = index === count - 1;
+      },
+      destroy() {
+        prev.removeEventListener("click", onPrev);
+        next.removeEventListener("click", onNext);
+        dots.forEach((dot, i) => dot.removeEventListener("click", onDot[i]));
+      },
+    };
+  }
+
   const hero = $("hero");
   const copy = $("copy");
   const disc = $("disc");
@@ -75,6 +127,11 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const cards = $$("card");
   const stepTexts = $$("step-text");
   const stepIcons = $$("step-icon");
+  const pagers = [
+    pager("deck", values, cards.length, deckProgressFor),
+    pager("steps", steps, stepTexts.length, stepProgressFor),
+  ];
+  const [deckPager, stepsPager] = pagers;
   const field = $<HTMLCanvasElement>("field");
   const dustCv = $<HTMLCanvasElement>("dust");
   const ctx = field.getContext("2d")!;
@@ -194,7 +251,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     const maxR = Math.hypot(Math.max(cx, vw - cx), Math.max(cy, vh - cy)) + gap * 2;
     const lim = Math.min(maxR, S.R + gap * 3);
     const start = S.hole;
-    const flow = reduce ? 0 : (t * 16) % gap;
+    const { offset: flow, cycle } = reduce ? { offset: 0, cycle: 0 } : ringFlow(t, gap);
     const c = S.col;
     ctx.lineWidth = S.lw;
     for (let i = 0; ; i++) {
@@ -206,7 +263,9 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       if (start > 0) a *= c01((r - start) / (gap * 1.5));
       if (a < 0.01) continue;
       ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`;
-      ring(cx, cy, r, phase + i * 0.32, wob, spin, i * 0.9);
+      // Shape from the ring's identity (i - cycle), so it does not change when the flow wraps.
+      const id = i - cycle;
+      ring(cx, cy, r, phase + id * 0.32, wob, spin, id * 0.9);
     }
   }
 
@@ -383,7 +442,10 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     const dt = Math.min((now - t0) / 1000, 0.05);
     t0 = now;
     clock += dt;
+    // Every layout read first, every style write after: reading a rect once styles have
+    // changed forces the browser to recompute the layout ("forced reflow") on every frame.
     const st = targets();
+    const sr = steps.getBoundingClientRect();
     const k = reduce ? 1 : 1 - Math.pow(0.0009, dt); // frame-rate independent smoothing
     S.ax = lerp(S.ax, T.ax, k);
     S.ay = lerp(S.ay, T.ay, k);
@@ -440,6 +502,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       card.style.zIndex = String(s.zIndex);
       card.classList.toggle("is-back", s.back);
     });
+    deckPager.show(deckIndex(scroll, cards.length));
 
     // closing → FAQ: the night background turns into the light FAQ background
     const bgT = sstep(0.2, 0.62, st.cOut);
@@ -461,7 +524,6 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     //  - "arrived": the section covers most of the screen
     //  - lit as soon as the scroll really slows down (< 2 px/frame for 0.12 s) or after 0.8 s
     //  - switched off only once clearly left (hysteresis: no flicker at the edges)
-    const sr = steps.getBoundingClientRect();
     const arrived = sr.top < vh * 0.2 && sr.bottom > vh * 0.8;
     const gone = sr.top > vh * 0.5 || sr.bottom < vh * 0.5;
     if (beamOn) {
@@ -487,14 +549,16 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     if (si !== stepIdx) {
       stepIdx = si;
       // the beam pulses at each new step
+      // Restarts the pulse animation: remove the class now, add it back on the next frame
+      // (no forced reflow).
       steps.classList.remove("is-pulse");
-      void steps.offsetWidth;
-      steps.classList.add("is-pulse");
+      requestAnimationFrame(() => steps.classList.add("is-pulse"));
       clearTimeout(pulseT);
       pulseT = window.setTimeout(() => steps.classList.remove("is-pulse"), 700);
       stepTexts.forEach((el, q) => el.classList.toggle("is-active", q === si));
       stepIcons.forEach((el, q) => el.classList.toggle("is-active", q === si));
     }
+    stepsPager.show(si);
 
     raf = requestAnimationFrame(frame);
   }
@@ -509,6 +573,15 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   document.fonts?.ready.then(() => {
     if (!dead) placeGradient();
   });
+  // The backdrop must follow the real height of the hero and of the manifesto: the hero grows when
+  // an error message appears in the signup form, text wraps differently, etc. A stale height left
+  // the gradient ending too early (a darker band above the next section).
+  const sizeObserver =
+    typeof ResizeObserver === "undefined"
+      ? null
+      : new ResizeObserver(() => placeGradient());
+  sizeObserver?.observe(hero);
+  sizeObserver?.observe(man);
   raf = requestAnimationFrame(frame);
 
   return {
@@ -524,6 +597,8 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       removeEventListener("touchstart", skipIntro);
       removeEventListener("keydown", onKey);
       removeEventListener("resize", onResize);
+      sizeObserver?.disconnect();
+      pagers.forEach((x) => x.destroy());
       document.body.style.backgroundColor = "";
     },
   };
