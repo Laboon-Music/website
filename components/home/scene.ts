@@ -10,6 +10,8 @@ import {
   TAU,
   c01,
   cardStyle,
+  deckIndex,
+  deckProgressFor,
   deckScroll,
   easeInOut,
   enterProgress,
@@ -74,6 +76,9 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const bgEl = $("bgflow");
   const words = $$("word");
   const cards = $$("card");
+  const deckPrev = $<HTMLButtonElement>("deck-prev");
+  const deckNext = $<HTMLButtonElement>("deck-next");
+  const deckDots = $$<HTMLButtonElement>("deck-dot");
   const stepTexts = $$("step-text");
   const stepIcons = $$("step-icon");
   const field = $<HTMLCanvasElement>("field");
@@ -371,6 +376,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   let t0 = performance.now();
   let clock = 0;
   let lastDrawKey = "";
+  let deckTop = -1; // card on top of the deck, as last shown by the controls
   let beamOn = false;
   let settleT = 0;
   let stayT = 0;
@@ -446,6 +452,16 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       card.style.zIndex = String(s.zIndex);
       card.classList.toggle("is-back", s.back);
     });
+    const top = deckIndex(scroll, cards.length);
+    if (top !== deckTop) {
+      deckTop = top;
+      deckDots.forEach((dot, i) => {
+        if (i === top) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      });
+      deckPrev.disabled = top === 0;
+      deckNext.disabled = top === cards.length - 1;
+    }
 
     // closing → FAQ: the night background turns into the light FAQ background
     const bgT = sstep(0.2, 0.62, st.cOut);
@@ -505,6 +521,22 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
     raf = requestAnimationFrame(frame);
   }
 
+  // Deck controls: the scroll stays the source of truth, a click scrolls to the card.
+  function goToCard(index: number) {
+    const i = Math.min(Math.max(index, 0), cards.length - 1);
+    const y =
+      scrollY +
+      values.getBoundingClientRect().top +
+      deckProgressFor(i, cards.length) * Math.max(values.offsetHeight - innerHeight, 0);
+    scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+  }
+  const onDeckPrev = () => goToCard(deckTop - 1);
+  const onDeckNext = () => goToCard(deckTop + 1);
+  const dotHandlers = deckDots.map((_, i) => () => goToCard(i));
+  deckPrev.addEventListener("click", onDeckPrev);
+  deckNext.addEventListener("click", onDeckNext);
+  deckDots.forEach((dot, i) => dot.addEventListener("click", dotHandlers[i]));
+
   function onResize() {
     size();
     placeGradient();
@@ -540,6 +572,9 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       removeEventListener("keydown", onKey);
       removeEventListener("resize", onResize);
       sizeObserver?.disconnect();
+      deckPrev.removeEventListener("click", onDeckPrev);
+      deckNext.removeEventListener("click", onDeckNext);
+      deckDots.forEach((dot, i) => dot.removeEventListener("click", dotHandlers[i]));
       document.body.style.backgroundColor = "";
     },
   };

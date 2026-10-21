@@ -26,6 +26,13 @@ export const HOME_CONTENT = {
     subtitle:
       "Quatre raisons de laisser tomber les petites annonces pour trouver tes musiciens.",
     // `icon` = file name in public/brand.
+    // Controls under the deck (the cards also follow the scroll).
+    controls: {
+      label: "Cartes",
+      prev: "Carte précédente",
+      next: "Carte suivante",
+      goTo: "Aller à la carte {n} sur {total}",
+    },
     items: [
       {
         icon: "icon-puzzle.webp",

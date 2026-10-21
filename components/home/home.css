@@ -312,6 +312,90 @@
   color: var(--subtitle-dark);
 }
 
+.home .deck-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+}
+
+/* Previous / next buttons and dots: the scroll drives the deck, these tell how it works. */
+.home .deck-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* the stacked cards stick out 42 px to the right: keep the controls under the top card */
+  margin-right: 42px;
+}
+
+.home .deck-controls__arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid rgb(255 255 255 / 0.6);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease),
+    opacity 0.2s var(--ease);
+}
+
+.home .deck-controls__arrow svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home .deck-controls__arrow:hover:not(:disabled) {
+  background: #fff;
+  color: var(--blue);
+}
+
+.home .deck-controls__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.home .deck-controls__dots {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home .deck-controls__dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.home .deck-controls__dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.4);
+  transition:
+    width 0.3s var(--ease),
+    background-color 0.3s var(--ease);
+}
+
+.home .deck-controls__dot[aria-current="true"]::before {
+  width: 22px;
+  background: #fff;
+}
+
 /* The deck: each back card is shifted by 14 px and more transparent. */
 .home .deck {
   position: relative;
@@ -848,6 +932,10 @@
     height: auto;
     overflow: visible;
     padding-block: calc(var(--pill-h) + 32px) 48px;
+  }
+
+  .home .deck-controls {
+    display: none;
   }
 
   .home .deck {

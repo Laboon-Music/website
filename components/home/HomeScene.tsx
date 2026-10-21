@@ -19,6 +19,58 @@ function pinStyle(span: number) {
   return { "--span": span } as React.CSSProperties;
 }
 
+// Previous / next buttons and dots under the card deck. scene.ts wires the clicks (they scroll
+// to the card) and keeps `aria-current` / `disabled` in sync with the scroll position.
+function DeckControls({
+  controls,
+  count,
+}: {
+  controls: typeof HOME_CONTENT.values.controls;
+  count: number;
+}) {
+  return (
+    <div className="deck-controls" role="group" aria-label={controls.label}>
+      <button
+        type="button"
+        data-scene="deck-prev"
+        className="deck-controls__arrow"
+        aria-label={controls.prev}
+        disabled
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" />
+        </svg>
+      </button>
+      <ol className="deck-controls__dots">
+        {Array.from({ length: count }, (_, i) => (
+          <li key={i}>
+            <button
+              type="button"
+              data-scene="deck-dot"
+              data-index={i}
+              className="deck-controls__dot"
+              aria-label={controls.goTo
+                .replace("{n}", String(i + 1))
+                .replace("{total}", String(count))}
+              aria-current={i === 0 ? "true" : undefined}
+            />
+          </li>
+        ))}
+      </ol>
+      <button
+        type="button"
+        data-scene="deck-next"
+        className="deck-controls__arrow"
+        aria-label={controls.next}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 function focusEmail(formId: string) {
   document.querySelector<HTMLInputElement>(`#${formId} input[type=email]`)?.focus({
     preventScroll: true,
@@ -190,22 +242,25 @@ export default function HomeScene({
               </h2>
               <p>{values.subtitle}</p>
             </div>
-            <ol className="deck">
-              {values.items.map((item) => (
-                <li key={item.title} data-scene="card" className="deck-card">
-                  <h3>{item.title}</h3>
-                  <Image
-                    className="deck-card__icon"
-                    src={`/brand/${item.icon}`}
-                    alt=""
-                    width={256}
-                    height={256}
-                    unoptimized
-                  />
-                  <p>{item.text}</p>
-                </li>
-              ))}
-            </ol>
+            <div className="deck-wrap">
+              <ol className="deck">
+                {values.items.map((item) => (
+                  <li key={item.title} data-scene="card" className="deck-card">
+                    <h3>{item.title}</h3>
+                    <Image
+                      className="deck-card__icon"
+                      src={`/brand/${item.icon}`}
+                      alt=""
+                      width={256}
+                      height={256}
+                      unoptimized
+                    />
+                    <p>{item.text}</p>
+                  </li>
+                ))}
+              </ol>
+              <DeckControls controls={values.controls} count={values.items.length} />
+            </div>
           </div>
         </section>
 

@@ -25,6 +25,13 @@ export const HOME_CONTENT: typeof FrHome = {
   values: {
     title: "The app made for musicians",
     subtitle: "Four reasons to ditch classified ads and find your musicians.",
+    // Controls under the deck (the cards also follow the scroll).
+    controls: {
+      label: "Cards",
+      prev: "Previous card",
+      next: "Next card",
+      goTo: "Go to card {n} of {total}",
+    },
     items: [
       {
         icon: "icon-puzzle.webp",

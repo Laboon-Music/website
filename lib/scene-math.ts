@@ -44,15 +44,34 @@ export type CardStyle = {
   back: boolean;
 };
 
+const DECK_FROM = 0.06;
+const DECK_TO = 0.9;
+
 /**
  * Position of the deck (0..count-1, fractional while a card is being swiped).
  * With reduced motion it only rests on whole cards.
  */
 export function deckScroll(progress: number, count: number, reduced: boolean): number {
-  const raw = sstep(0.06, 0.9, progress) * (count - 1);
+  const raw = sstep(DECK_FROM, DECK_TO, progress) * (count - 1);
   if (reduced) return Math.round(raw);
   const whole = Math.floor(raw);
   return whole + sstep(0.2, 0.8, raw - whole);
+}
+
+/**
+ * Pinned-section progress at which card `index` rests on top of the deck: the inverse of
+ * `deckScroll` (used by the previous / next buttons and the dots to scroll to a card).
+ */
+export function deckProgressFor(index: number, count: number): number {
+  if (count < 2) return 0;
+  const s = c01(index / (count - 1));
+  const t = 0.5 - Math.sin(Math.asin(1 - 2 * s) / 3); // inverse of the smoothstep
+  return DECK_FROM + t * (DECK_TO - DECK_FROM);
+}
+
+/** Card currently on top of the deck (the nearest whole card). */
+export function deckIndex(scroll: number, count: number): number {
+  return clamp(Math.round(scroll), 0, Math.max(count - 1, 0));
 }
 
 /**

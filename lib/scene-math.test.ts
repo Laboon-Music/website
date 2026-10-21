@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   c01,
   cardStyle,
+  deckIndex,
+  deckProgressFor,
   deckScroll,
   easeInOut,
   enterProgress,
@@ -14,6 +16,26 @@ import {
   stepIndex,
   wordFill,
 } from "./scene-math";
+
+describe("deck navigation", () => {
+  it("deckProgressFor is the inverse of deckScroll for every card", () => {
+    for (const count of [2, 4, 5]) {
+      for (let i = 0; i < count; i++) {
+        expect(deckScroll(deckProgressFor(i, count), count, false)).toBeCloseTo(i, 6);
+        expect(
+          deckIndex(deckScroll(deckProgressFor(i, count), count, false), count),
+        ).toBe(i);
+      }
+    }
+  });
+
+  it("deckIndex rounds to the nearest card and stays in range", () => {
+    expect(deckIndex(1.4, 4)).toBe(1);
+    expect(deckIndex(1.6, 4)).toBe(2);
+    expect(deckIndex(-1, 4)).toBe(0);
+    expect(deckIndex(9, 4)).toBe(3);
+  });
+});
 
 describe("scene maths", () => {
   it("clamps and interpolates", () => {
