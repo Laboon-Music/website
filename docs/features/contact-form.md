@@ -25,6 +25,11 @@ Defined once in `CONTACT_SUBJECTS` (`lib/contact.ts`): `question`, `beta`,
 `partenariat`, `bug`, `autre`. Each has a form label and an email label.
 To add one, add an entry there — form and API pick it up.
 
+## Confirmation
+
+Once the message is sent the form is replaced by a short confirmation card. The page scrolls back to
+the top at that moment, otherwise it stays where the send button was and shows the footer.
+
 ## API contract
 
 Same shape as [newsletter-signup](newsletter-signup.md#api-contract):

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Turnstile from "@/components/antibot/Turnstile";
 import {
   Button,
@@ -48,6 +48,12 @@ export default function ContactForm() {
     }
     return null;
   }
+
+  // The confirmation is much shorter than the form: without this the page stays scrolled to
+  // where the send button was and lands on the footer.
+  useEffect(() => {
+    if (form.status === "success") window.scrollTo({ top: 0, behavior: "instant" });
+  }, [form.status]);
 
   // A browser-side problem is shown under its own field; anything else (server) at the bottom.
   const fieldError = (field: "name" | "email" | "message") =>

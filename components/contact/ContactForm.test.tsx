@@ -47,6 +47,8 @@ describe("ContactForm validation in the browser", () => {
 
 describe("ContactForm", () => {
   it("sends the message and confirms", async () => {
+    const scrollTo = vi.fn();
+    vi.stubGlobal("scrollTo", scrollTo);
     const fetchMock = mockFetch(200, { ok: true });
     render(<ContactForm />);
 
@@ -61,6 +63,8 @@ describe("ContactForm", () => {
       website: "",
     });
     expect(await screen.findByText(/Message envoyé/)).toBeInTheDocument();
+    // back to the top, so the confirmation is in view and not the footer
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
     expect(trackEvent).toHaveBeenCalledWith("contact_sent", { subject: "partenariat" });
     expect(screen.getByRole("link", { name: "Retour à l'accueil" })).toHaveAttribute(
       "href",
