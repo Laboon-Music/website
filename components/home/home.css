@@ -761,6 +761,23 @@
     text-align: left;
   }
 
+  /* Text on the left over both rows; the stepper and its controls stack on the right. */
+  .home .steps__intro {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .home .stepper {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .home .steps .pager {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: center;
+  }
+
   .home .steps__intro h2 {
     font-size: clamp(2rem, 2.8vw, 2.5rem);
   }
