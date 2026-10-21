@@ -17,6 +17,7 @@ const NOINDEX_PAGES = [
 ];
 const NOINDEX_PATHS = [
   "/api/",
+  "/emails/",
   ...NOINDEX_PAGES.flatMap((page) => LOCALES.map((locale) => localePath(locale, page))),
 ];
 

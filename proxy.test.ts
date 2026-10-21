@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
-import { proxy } from "./proxy";
+import { config, proxy } from "./proxy";
 
 const run = (path: string) => proxy(new NextRequest(`https://www.laboon-app.com${path}`));
 const rewrittenTo = (res: Response) => res.headers.get("x-middleware-rewrite");
@@ -47,5 +47,14 @@ describe("language routing", () => {
 
   it("ignores ?lang= on ordinary pages", () => {
     expect(rewrittenTo(run("/contact?lang=en"))).toContain("/fr/contact");
+  });
+});
+
+describe("proxy matcher", () => {
+  const matches = (path: string) => new RegExp(`^${config.matcher[0]}$`).test(path);
+
+  it("leaves the e-mail templates loaded by the auth server alone (no language rewrite)", () => {
+    expect(matches("/emails/auth/recovery.html")).toBe(false);
+    expect(matches("/contact")).toBe(true);
   });
 });
