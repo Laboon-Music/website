@@ -12,8 +12,12 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 
 - `emails/layout.ts` — shared frame, palette, button; `emails/templates.ts` — the texts.
 - `npm run emails` regenerates `emails/dist/*.html` (commit them). Never edit `dist` by hand.
-- The logo is `public/brand/email/wordmark-white.png`, loaded from
-  `https://www.laboon-app.com/brand/email/…`: it only shows once deployed to production.
+- The images (`public/brand/email/*.png`) are loaded from a site address. **Campaign**: always
+  `https://www.laboon-app.com`. **Double opt-in**: the site that sent the sign-up, through the Brevo
+  contact attribute `SITE_URL` (set by `app/api/subscribe/route.ts`, placeholder
+  `{{ contact.SITE_URL | default : 'https://www.laboon-app.com' }}`): staging mails show staging
+  images, production mails production ones. Create the text attribute `SITE_URL` in Brevo
+  (Contacts → Settings → Contact attributes), otherwise the fallback (production) is used.
 - Social links come from `SOCIALS` in `lib/site.ts`: round blue buttons with a white icon
   (`public/brand/email/instagram.png`, `facebook.png`; a new network needs its own PNG).
 
