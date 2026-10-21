@@ -2,7 +2,6 @@
 // {{ mirror }} (view in browser), {{ unsubscribe }}, {{ contact.FIRSTNAME }}.
 
 import { LOCALES, type Locale } from "../lib/i18n.ts";
-import { SITE_URL } from "../lib/site.ts";
 import { COLORS, button, p, renderEmail, small, title } from "./layout.ts";
 
 const TEXTS = {
@@ -55,20 +54,12 @@ const TEXTS = {
   },
 } satisfies Record<Locale, unknown>;
 
-/**
- * Images of the double opt-in come from the site that sent the sign-up: the subscribe route
- * stores its address in the contact attribute SITE_URL (staging mails show staging images, and
- * nothing is broken while a release is pending). Production is the fallback.
- */
-export const OPTIN_ASSETS_BASE = `{{ contact.SITE_URL | default : '${SITE_URL}' }}`;
-
 /** Double opt-in: sent right after the signup form (Brevo template, one per language). */
 export function doubleOptin(locale: Locale): string {
   const t = TEXTS[locale].optin;
   return renderEmail(
     {
       preheader: t.preheader,
-      assetsBase: OPTIN_ASSETS_BASE,
       body: [
         title(t.title),
         `<div style="height:20px;line-height:20px;">&nbsp;</div>`,

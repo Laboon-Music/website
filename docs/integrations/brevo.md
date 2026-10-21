@@ -30,7 +30,6 @@ plan, campaigns can be sent from the same tool later.
 - ⚠️ Do **not** enable "block unauthorised IPs" on API keys: Vercel has no
   fixed IPs, every call would fail.
 - Optional: create text contact attributes `SOURCE` (the site sends `landing`) and `LANGUAGE` (`fr` / `en`).
-- Create the text attribute `SITE_URL` (the site sends its own address): the confirmation e-mail loads its images from it.
 - English confirmation template: duplicate template 1 with `emails/dist/double-optin.en.html` and set its ID in `BREVO_DOI_TEMPLATE_ID_EN`.
 
 ## Environment variables
