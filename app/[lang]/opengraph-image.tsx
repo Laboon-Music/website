@@ -1,46 +1,33 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { getContent } from "@/content";
-import { resolveLocale, type LangParams } from "@/lib/locale-params";
 
-// Social share image (Facebook, Instagram, WhatsApp, X…), generated at build
-// time from the brand colours and texts — no image asset needed. Replace with
-// a designed visual if the brand team provides one. See docs/features/seo.md.
+// Social share image (Facebook, Instagram, WhatsApp, Discord, X…): the blue Laboon logo on a
+// white background, generated at build time from `public/brand/wordmark.svg`. Same image in
+// every language. See docs/features/seo.md.
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function OpenGraphImage({ params }: LangParams) {
-  const { home, site } = getContent(await resolveLocale(params));
+// The wordmark is 510 × 132.
+const LOGO_WIDTH = 760;
+const LOGO_HEIGHT = Math.round((LOGO_WIDTH * 132) / 510);
+
+export default async function OpenGraphImage() {
+  const svg = await readFile(join(process.cwd(), "public/brand/wordmark.svg"));
+  const logo = `data:image/svg+xml;base64,${svg.toString("base64")}`;
   return new ImageResponse(
     <div
       style={{
         width: "100%",
         height: "100%",
         display: "flex",
-        flexDirection: "column",
+        alignItems: "center",
         justifyContent: "center",
-        padding: "80px",
-        background:
-          "radial-gradient(circle at 100% 0%, rgba(210,213,255,0.35), transparent 55%), linear-gradient(160deg, #4753ff, #161a8f)",
-        color: "#ffffff",
-        fontFamily: "sans-serif",
+        background: "#ffffff",
       }}
     >
-      <div style={{ fontSize: 44, fontWeight: 700, letterSpacing: -1 }}>{site.name}</div>
-      <div
-        style={{
-          marginTop: 40,
-          fontSize: 96,
-          fontWeight: 800,
-          lineHeight: 1.05,
-          textTransform: "uppercase",
-        }}
-      >
-        {home.hero.title}
-      </div>
-      <div style={{ marginTop: 40, maxWidth: 900, fontSize: 32, color: "#d2d5ff" }}>
-        {home.hero.subtitle}
-      </div>
+      <img src={logo} width={LOGO_WIDTH} height={LOGO_HEIGHT} alt="Laboon" />
     </div>,
     size,
   );
