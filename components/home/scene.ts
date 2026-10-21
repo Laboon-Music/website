@@ -515,6 +515,15 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   document.fonts?.ready.then(() => {
     if (!dead) placeGradient();
   });
+  // The backdrop must follow the real height of the hero and of the manifesto: the hero grows when
+  // an error message appears in the signup form, text wraps differently, etc. A stale height left
+  // the gradient ending too early (a darker band above the next section).
+  const sizeObserver =
+    typeof ResizeObserver === "undefined"
+      ? null
+      : new ResizeObserver(() => placeGradient());
+  sizeObserver?.observe(hero);
+  sizeObserver?.observe(man);
   raf = requestAnimationFrame(frame);
 
   return {
@@ -530,6 +539,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       removeEventListener("touchstart", skipIntro);
       removeEventListener("keydown", onKey);
       removeEventListener("resize", onResize);
+      sizeObserver?.disconnect();
       document.body.style.backgroundColor = "";
     },
   };
