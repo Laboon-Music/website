@@ -508,3 +508,19 @@ textarea[aria-invalid="true"] {
     padding: 0 24px 22px 56px;
   }
 }
+
+/* ------------------------------------------------- joined field focus ring */
+/* The joined input runs under its button, so its own outline would be cut off there. The
+   ring is drawn around the whole e-mail + button pill instead. */
+.field-row {
+  border-radius: 9999px;
+}
+
+.field-row:has(input[data-joined]:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.field-row input[data-joined]:focus-visible {
+  outline: none;
+}
