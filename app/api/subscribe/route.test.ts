@@ -104,11 +104,7 @@ describe("POST /api/subscribe — Brevo", () => {
       includeListIds: [7, 8],
       templateId: 1,
       redirectionUrl: "https://staging.laboon-app.com/inscription-confirmee",
-      attributes: {
-        SOURCE: "landing",
-        LANGUAGE: "fr",
-        SITE_URL: "https://staging.laboon-app.com",
-      },
+      attributes: { SOURCE: "landing", LANGUAGE: "fr" },
     });
   });
 
@@ -120,11 +116,7 @@ describe("POST /api/subscribe — Brevo", () => {
     expect(sentJson(fetchMock)).toMatchObject({
       templateId: 2,
       redirectionUrl: "https://staging.laboon-app.com/en/inscription-confirmee",
-      attributes: {
-        SOURCE: "landing",
-        LANGUAGE: "en",
-        SITE_URL: "https://staging.laboon-app.com",
-      },
+      attributes: { SOURCE: "landing", LANGUAGE: "en" },
     });
     const res = await post({ ...valid, locale: "en", email: "nope" });
     expect(await res.json()).toEqual({ error: EN.errors.invalidEmail });

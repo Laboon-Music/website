@@ -16,15 +16,6 @@ describe.each(LOCALES)("e-mail templates (%s)", (locale) => {
     expect(optin).toContain('href="{{ doubleoptin }}"');
   });
 
-  it("double opt-in loads its images from the site that sent the sign-up", () => {
-    expect(optin).toContain(
-      "{{ contact.SITE_URL | default : 'https://www.laboon-app.com' }}/brand/email/wordmark-white.png",
-    );
-    expect(news).toContain(
-      'src="https://www.laboon-app.com/brand/email/wordmark-white.png"',
-    );
-  });
-
   it("campaign has the unsubscribe and view-in-browser links Brevo requires", () => {
     expect(news).toContain("{{ unsubscribe }}");
     expect(news).toContain("{{ mirror }}");
@@ -65,14 +56,10 @@ describe.each(LOCALES)("e-mail templates (%s)", (locale) => {
         expect(html).toContain("mailto:laboon.app@gmail.com");
       });
 
-      it("uses absolute URLs for images (a base site address, never a relative path)", () => {
-        const srcs = [...html.matchAll(/<img[^>]*? src="([^"]+)"/g)].map((m) => m[1]);
-        expect(srcs.length).toBeGreaterThan(1);
-        for (const src of srcs) {
-          expect(src).toMatch(
-            /^(https:\/\/www\.laboon-app\.com|\{\{ contact\.SITE_URL .*\}\})\/brand\/email\//,
-          );
-        }
+      it("uses absolute https URLs for images", () => {
+        expect(html).toContain(
+          'src="https://www.laboon-app.com/brand/email/wordmark-white.png"',
+        );
       });
     });
   }

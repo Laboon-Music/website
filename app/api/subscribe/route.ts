@@ -72,7 +72,6 @@ export async function POST(request: Request) {
     // Double opt-in: Brevo emails a confirmation link. The contact joins the
     // lists only after clicking it, then lands on /inscription-confirmee of the
     // same site (prod or staging).
-    const origin = new URL(request.url).origin;
     const sent = await brevoPost(
       "/contacts/doubleOptinConfirmation",
       apiKey,
@@ -80,9 +79,8 @@ export async function POST(request: Request) {
         email,
         includeListIds: listIds,
         templateId,
-        redirectionUrl: `${origin}${localePath(locale, "/inscription-confirmee")}`,
-        // SITE_URL: the confirmation e-mail loads its images from the site that sent it.
-        attributes: { SOURCE: "landing", LANGUAGE: locale, SITE_URL: origin },
+        redirectionUrl: `${new URL(request.url).origin}${localePath(locale, "/inscription-confirmee")}`,
+        attributes: { SOURCE: "landing", LANGUAGE: locale },
       },
       "subscribe",
     );
