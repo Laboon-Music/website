@@ -36,6 +36,11 @@ export function stepIndex(progress: number, count: number): number {
   return Math.min(count - 1, Math.floor(progress * count * 0.999));
 }
 
+/** Pinned-section progress in the middle of step `index` (inverse of `stepIndex`). */
+export function stepProgressFor(index: number, count: number): number {
+  return c01((index + 0.5) / count);
+}
+
 export type CardStyle = {
   transform: string;
   opacity: number;

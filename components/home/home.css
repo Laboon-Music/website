@@ -319,7 +319,7 @@
 }
 
 /* Previous / next buttons and dots: the scroll drives the deck, these tell how it works. */
-.home .deck-controls {
+.home .pager {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -327,7 +327,11 @@
   margin-right: 42px;
 }
 
-.home .deck-controls__arrow {
+.home .steps .pager {
+  margin-right: 0;
+}
+
+.home .pager__arrow {
   display: grid;
   place-items: center;
   width: 44px;
@@ -343,7 +347,7 @@
     opacity 0.2s var(--ease);
 }
 
-.home .deck-controls__arrow svg {
+.home .pager__arrow svg {
   width: 22px;
   height: 22px;
   fill: none;
@@ -353,24 +357,24 @@
   stroke-linejoin: round;
 }
 
-.home .deck-controls__arrow:hover:not(:disabled) {
+.home .pager__arrow:hover:not(:disabled) {
   background: #fff;
   color: var(--blue);
 }
 
-.home .deck-controls__arrow:disabled {
+.home .pager__arrow:disabled {
   opacity: 0.35;
   cursor: default;
 }
 
-.home .deck-controls__dots {
+.home .pager__dots {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.home .deck-controls__dot {
+.home .pager__dot {
   display: grid;
   place-items: center;
   width: 28px;
@@ -380,7 +384,7 @@
   cursor: pointer;
 }
 
-.home .deck-controls__dot::before {
+.home .pager__dot::before {
   content: "";
   width: 10px;
   height: 10px;
@@ -391,7 +395,7 @@
     background-color 0.3s var(--ease);
 }
 
-.home .deck-controls__dot[aria-current="true"]::before {
+.home .pager__dot[aria-current="true"]::before {
   width: 22px;
   background: #fff;
 }
@@ -934,7 +938,7 @@
     padding-block: calc(var(--pill-h) + 32px) 48px;
   }
 
-  .home .deck-controls {
+  .home .pager {
     display: none;
   }
 

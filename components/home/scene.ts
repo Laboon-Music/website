@@ -22,6 +22,7 @@ import {
   ringFlow,
   sstep,
   stepIndex,
+  stepProgressFor,
   wordFill,
   type Rgb,
 } from "@/lib/scene-math";
@@ -62,6 +63,54 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const $$ = <T extends HTMLElement>(name: string) =>
     Array.from(root.querySelectorAll<T>(`[data-scene="${name}"]`));
 
+  /**
+   * Previous / next buttons and dots of a pinned section (`data-scene="<name>-prev|next|dot"`).
+   * The scroll stays the source of truth: a click scrolls to where item `i` rests, and `show`
+   * (called by the frame loop) keeps `aria-current` / `disabled` in sync.
+   */
+  function pager(
+    name: string,
+    section: HTMLElement,
+    count: number,
+    progressFor: (index: number, count: number) => number,
+  ) {
+    const prev = $<HTMLButtonElement>(`${name}-prev`);
+    const next = $<HTMLButtonElement>(`${name}-next`);
+    const dots = $$<HTMLButtonElement>(`${name}-dot`);
+    let current = -1;
+    function goTo(index: number) {
+      const i = Math.min(Math.max(index, 0), count - 1);
+      const y =
+        scrollY +
+        section.getBoundingClientRect().top +
+        progressFor(i, count) * Math.max(section.offsetHeight - innerHeight, 0);
+      scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+    }
+    const onPrev = () => goTo(current - 1);
+    const onNext = () => goTo(current + 1);
+    const onDot = dots.map((_, i) => () => goTo(i));
+    prev.addEventListener("click", onPrev);
+    next.addEventListener("click", onNext);
+    dots.forEach((dot, i) => dot.addEventListener("click", onDot[i]));
+    return {
+      show(index: number) {
+        if (index === current) return;
+        current = index;
+        dots.forEach((dot, i) => {
+          if (i === index) dot.setAttribute("aria-current", "true");
+          else dot.removeAttribute("aria-current");
+        });
+        prev.disabled = index === 0;
+        next.disabled = index === count - 1;
+      },
+      destroy() {
+        prev.removeEventListener("click", onPrev);
+        next.removeEventListener("click", onNext);
+        dots.forEach((dot, i) => dot.removeEventListener("click", onDot[i]));
+      },
+    };
+  }
+
   const hero = $("hero");
   const copy = $("copy");
   const disc = $("disc");
@@ -76,11 +125,13 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   const bgEl = $("bgflow");
   const words = $$("word");
   const cards = $$("card");
-  const deckPrev = $<HTMLButtonElement>("deck-prev");
-  const deckNext = $<HTMLButtonElement>("deck-next");
-  const deckDots = $$<HTMLButtonElement>("deck-dot");
   const stepTexts = $$("step-text");
   const stepIcons = $$("step-icon");
+  const pagers = [
+    pager("deck", values, cards.length, deckProgressFor),
+    pager("steps", steps, stepTexts.length, stepProgressFor),
+  ];
+  const [deckPager, stepsPager] = pagers;
   const field = $<HTMLCanvasElement>("field");
   const dustCv = $<HTMLCanvasElement>("dust");
   const ctx = field.getContext("2d")!;
@@ -376,7 +427,6 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
   let t0 = performance.now();
   let clock = 0;
   let lastDrawKey = "";
-  let deckTop = -1; // card on top of the deck, as last shown by the controls
   let beamOn = false;
   let settleT = 0;
   let stayT = 0;
@@ -452,16 +502,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       card.style.zIndex = String(s.zIndex);
       card.classList.toggle("is-back", s.back);
     });
-    const top = deckIndex(scroll, cards.length);
-    if (top !== deckTop) {
-      deckTop = top;
-      deckDots.forEach((dot, i) => {
-        if (i === top) dot.setAttribute("aria-current", "true");
-        else dot.removeAttribute("aria-current");
-      });
-      deckPrev.disabled = top === 0;
-      deckNext.disabled = top === cards.length - 1;
-    }
+    deckPager.show(deckIndex(scroll, cards.length));
 
     // closing → FAQ: the night background turns into the light FAQ background
     const bgT = sstep(0.2, 0.62, st.cOut);
@@ -517,25 +558,10 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       stepTexts.forEach((el, q) => el.classList.toggle("is-active", q === si));
       stepIcons.forEach((el, q) => el.classList.toggle("is-active", q === si));
     }
+    stepsPager.show(si);
 
     raf = requestAnimationFrame(frame);
   }
-
-  // Deck controls: the scroll stays the source of truth, a click scrolls to the card.
-  function goToCard(index: number) {
-    const i = Math.min(Math.max(index, 0), cards.length - 1);
-    const y =
-      scrollY +
-      values.getBoundingClientRect().top +
-      deckProgressFor(i, cards.length) * Math.max(values.offsetHeight - innerHeight, 0);
-    scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
-  }
-  const onDeckPrev = () => goToCard(deckTop - 1);
-  const onDeckNext = () => goToCard(deckTop + 1);
-  const dotHandlers = deckDots.map((_, i) => () => goToCard(i));
-  deckPrev.addEventListener("click", onDeckPrev);
-  deckNext.addEventListener("click", onDeckNext);
-  deckDots.forEach((dot, i) => dot.addEventListener("click", dotHandlers[i]));
 
   function onResize() {
     size();
@@ -572,9 +598,7 @@ export function startHomeScene(root: HTMLElement, isReduced: () => boolean): Sce
       removeEventListener("keydown", onKey);
       removeEventListener("resize", onResize);
       sizeObserver?.disconnect();
-      deckPrev.removeEventListener("click", onDeckPrev);
-      deckNext.removeEventListener("click", onDeckNext);
-      deckDots.forEach((dot, i) => dot.removeEventListener("click", dotHandlers[i]));
+      pagers.forEach((x) => x.destroy());
       document.body.style.backgroundColor = "";
     },
   };

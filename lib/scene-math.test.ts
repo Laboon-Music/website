@@ -14,6 +14,7 @@ import {
   ringFlow,
   sstep,
   stepIndex,
+  stepProgressFor,
   wordFill,
 } from "./scene-math";
 
@@ -27,6 +28,10 @@ describe("deck navigation", () => {
         ).toBe(i);
       }
     }
+  });
+
+  it("stepProgressFor lands in the middle of each step", () => {
+    for (let i = 0; i < 3; i++) expect(stepIndex(stepProgressFor(i, 3), 3)).toBe(i);
   });
 
   it("deckIndex rounds to the nearest card and stays in range", () => {

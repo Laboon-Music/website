@@ -59,6 +59,12 @@ export const HOME_CONTENT: typeof FrHome = {
   steps: {
     title: "How to find your musicians",
     subtitle: "Three steps between you and your next rehearsal.",
+    controls: {
+      label: "Steps",
+      prev: "Previous step",
+      next: "Next step",
+      goTo: "Go to step {n} of {total}",
+    },
     items: [
       {
         icon: "icon-microphone.webp",

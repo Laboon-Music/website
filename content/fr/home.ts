@@ -60,6 +60,12 @@ export const HOME_CONTENT = {
   steps: {
     title: "Comment trouver tes musiciens",
     subtitle: "Trois étapes entre toi et ta prochaine répète.",
+    controls: {
+      label: "Étapes",
+      prev: "Étape précédente",
+      next: "Étape suivante",
+      goTo: "Aller à l’étape {n} sur {total}",
+    },
     items: [
       {
         icon: "icon-microphone.webp",

@@ -19,21 +19,24 @@ function pinStyle(span: number) {
   return { "--span": span } as React.CSSProperties;
 }
 
-// Previous / next buttons and dots under the card deck. scene.ts wires the clicks (they scroll
+// Previous / next buttons and dots under the card deck and the steps. scene.ts wires the clicks (they scroll
 // to the card) and keeps `aria-current` / `disabled` in sync with the scroll position.
-function DeckControls({
+function PagerControls({
+  name,
   controls,
   count,
 }: {
+  /** `data-scene` prefix: "deck" or "steps". */
+  name: string;
   controls: typeof HOME_CONTENT.values.controls;
   count: number;
 }) {
   return (
-    <div className="deck-controls" role="group" aria-label={controls.label}>
+    <div className="pager" role="group" aria-label={controls.label}>
       <button
         type="button"
-        data-scene="deck-prev"
-        className="deck-controls__arrow"
+        data-scene={`${name}-prev`}
+        className="pager__arrow"
         aria-label={controls.prev}
         disabled
       >
@@ -41,14 +44,14 @@ function DeckControls({
           <path d="M15 5l-7 7 7 7" />
         </svg>
       </button>
-      <ol className="deck-controls__dots">
+      <ol className="pager__dots">
         {Array.from({ length: count }, (_, i) => (
           <li key={i}>
             <button
               type="button"
-              data-scene="deck-dot"
+              data-scene={`${name}-dot`}
               data-index={i}
-              className="deck-controls__dot"
+              className="pager__dot"
               aria-label={controls.goTo
                 .replace("{n}", String(i + 1))
                 .replace("{total}", String(count))}
@@ -59,8 +62,8 @@ function DeckControls({
       </ol>
       <button
         type="button"
-        data-scene="deck-next"
-        className="deck-controls__arrow"
+        data-scene={`${name}-next`}
+        className="pager__arrow"
         aria-label={controls.next}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -259,7 +262,11 @@ export default function HomeScene({
                   </li>
                 ))}
               </ol>
-              <DeckControls controls={values.controls} count={values.items.length} />
+              <PagerControls
+                name="deck"
+                controls={values.controls}
+                count={values.items.length}
+              />
             </div>
           </div>
         </section>
@@ -322,6 +329,11 @@ export default function HomeScene({
                 />
               </div>
             </div>
+            <PagerControls
+              name="steps"
+              controls={steps.controls}
+              count={steps.items.length}
+            />
           </div>
         </section>
 
