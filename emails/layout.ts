@@ -18,8 +18,8 @@ export const COLORS = {
   mist: "#D2D5FF",
 };
 
-/** Logo (white on the blue header): hosted on the site, PNG for mail clients. */
-export const LOGO_URL = `${SITE_URL}/brand/email/wordmark-white.png`;
+/** Images (logo, social icons) are PNG files hosted on the site: mail clients ignore SVG. */
+export const assetUrl = (base: string, file: string) => `${base}/brand/email/${file}`;
 
 const FONT_TEXT =
   "'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -86,16 +86,18 @@ export type Email = {
   footer?: string;
   /** Text shown above the header (e.g. "view in browser"). */
   topLine?: string;
+  /** Where the images are loaded from (default: the production site). */
+  assetsBase?: string;
 };
 
 export function renderEmail(
-  { preheader, body, footer = "", topLine = "" }: Email,
+  { preheader, body, footer = "", topLine = "", assetsBase = SITE_URL }: Email,
   locale: Locale = DEFAULT_LOCALE,
 ): string {
   // Round blue buttons with a white icon (PNG: mail clients ignore SVG): same look in light and dark.
   const socials = SOCIALS.map(
     (s) =>
-      `<td style="padding-right:10px;"><a href="${s.href}" target="_blank"><img src="${SITE_URL}/brand/email/${s.name.toLowerCase()}.png" width="44" height="44" alt="${s.name}" style="display:block;width:44px;height:44px;border-radius:22px;background:${COLORS.blue};color:#FFFFFF;font-family:${FONT_TEXT};font-size:11px;"></a></td>`,
+      `<td style="padding-right:10px;"><a href="${s.href}" target="_blank"><img src="${assetUrl(assetsBase, `${s.name.toLowerCase()}.png`)}" width="44" height="44" alt="${s.name}" style="display:block;width:44px;height:44px;border-radius:22px;background:${COLORS.blue};color:#FFFFFF;font-family:${FONT_TEXT};font-size:11px;"></a></td>`,
   ).join("");
   return `<!doctype html>
 <html lang="${locale}" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -115,7 +117,7 @@ export function renderEmail(
 ${topLine ? `<p class="soft" style="margin:0 0 12px;font-family:${FONT_TEXT};font-size:13px;color:${COLORS.inkSoft};">${topLine}</p>` : ""}
 <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
 <tr><td align="center" bgcolor="${COLORS.blue}" style="background:${COLORS.blue};padding:32px 24px;">
-<a href="${SITE_URL}" target="_blank"><img class="logo" src="${LOGO_URL}" width="190" height="49" alt="Laboon" style="display:block;width:190px;height:auto;color:#FFFFFF;font-family:${FONT_TITLE};font-weight:800;font-size:24px;"></a>
+<a href="${SITE_URL}" target="_blank"><img class="logo" src="${assetUrl(assetsBase, "wordmark-white.png")}" width="190" height="49" alt="Laboon" style="display:block;width:190px;height:auto;color:#FFFFFF;font-family:${FONT_TITLE};font-weight:800;font-size:24px;"></a>
 </td></tr>
 <tr><td class="card px" bgcolor="#FFFFFF" style="background:#FFFFFF;padding:40px 40px 32px;">
 ${body}
