@@ -153,9 +153,15 @@ export default function HomeScene({
       <div data-scene="bgflow" className="bgflow" aria-hidden="true" />
       <div data-scene="disc" className="disc" aria-hidden="true">
         {/* The disc is zoomed up to ~4x by the animation: AVIF keeps it at the full resolution of the
-            artwork (3267 px) for ~600 KB; WebP (lower resolution) is only the fallback for old
+            artwork (3267 px) for ~700 KB. Phones get a lighter 1800 px file (~400 KB, the biggest
+            lever on the mobile load time); WebP (lower resolution) is only the fallback for old
             browsers. A vector version from the designer would be sharper still. */}
         <picture>
+          <source
+            type="image/avif"
+            media="(max-width: 860px)"
+            srcSet="/brand/motif-mobile.avif"
+          />
           <source type="image/avif" srcSet="/brand/motif.avif" />
           <img
             className="disc__motif"

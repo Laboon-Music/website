@@ -54,6 +54,14 @@ describe.each(LOCALES)("home page (%s)", (locale) => {
     }
   });
 
+  it("serves phones a lighter disc image than desktops", async () => {
+    const { container } = await renderHome(locale);
+    const sources = [...container.querySelectorAll("picture source")];
+    expect(sources[0]).toHaveAttribute("media", "(max-width: 860px)");
+    expect(sources[0]).toHaveAttribute("srcset", "/brand/motif-mobile.avif");
+    expect(sources[1]).toHaveAttribute("srcset", "/brand/motif.avif");
+  });
+
   it("reads the manifesto as one sentence, not word by word", async () => {
     await renderHome(locale);
     expect(

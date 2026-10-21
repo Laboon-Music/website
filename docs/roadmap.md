@@ -25,6 +25,7 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
       recorded ([analytics.md](features/analytics.md)) — decide when traffic
       justifies it.
 - [ ] **Vector disc**: the animation zooms the disc up to ~4x, more than any raster of the artwork survives (the source is 3267 px). Ask the designer for an SVG export from Figma (an automatic trace merges the double strokes and changes the look). If it weighs under ~600 KB it replaces `public/brand/motif.avif`.
+- [x] Phones load a lighter disc (`public/brand/motif-mobile.avif`, 1800 px, ~400 KB instead of ~700 KB): the disc is the LCP element of the home page. Check its sharpness during the intro zoom on a real phone; an SVG would replace both files.
 - [x] Image weight: home disc cropped and re-encoded (3.7 MB → 380 KB phones / 870 KB desktop), icons in WebP.
 - [ ] Upgrade to **TypeScript 7** and **ESLint 10** once supported by
       `eslint-config-next`.
