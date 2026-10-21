@@ -49,3 +49,9 @@ would drift away from the middle of the waves. Check it after any change to the 
 
 `app/[lang]/page.test.tsx` (scene mocked), `lib/scene-math.test.ts`. The animation
 itself needs a real browser: check at 375 px and desktop width after any change.
+
+## First frame
+
+The disc is `position: fixed` at `left: 0; top: 0` and `scene.ts` moves it to the centre on every frame. Until
+the first frame (server render, hydration) it would show unscaled in the top-left corner, so `.disc` is
+`opacity: 0` in CSS and `scene.ts` sets its opacity inline. Keep that default when touching the disc.

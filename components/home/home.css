@@ -94,6 +94,9 @@
   pointer-events: none;
   will-change: transform, opacity;
   transform-origin: 50% 50%;
+  /* scene.ts places it (translate + scale) and sets its opacity on every frame. Until its first frame
+     the disc would sit unscaled in the top-left corner: it stays hidden. */
+  opacity: 0;
 }
 
 .home .disc img {
