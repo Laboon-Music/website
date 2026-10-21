@@ -11,7 +11,7 @@ export const HOME_CONTENT = {
   hero: {
     // The wordmark above the title is an image: this is its accessible name.
     wordmarkAlt: "Laboon",
-    title: "Trouve ton band",
+    title: "Trouve ton groupe",
     subtitle:
       "L’appli qui met les musiciens sur la même longueur d’onde : trouve des musiciens près de chez toi et monte ton groupe.",
   },
