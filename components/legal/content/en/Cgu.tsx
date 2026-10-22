@@ -4,8 +4,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 export const CGU_META = {
   title: "Terms of Use",
-  version: "2",
-  effectiveDate: "12 October 2026",
+  version: "1",
+  effectiveDate: "22 October 2026",
 };
 export default function Cgu() {
   return (
@@ -46,13 +46,13 @@ export default function Cgu() {
         </Section>
         <Section title="3. Access to the services">
           <p>
-            Access to the Services is reserved for adults (18 and over). Minors aged 16 to
-            18 may access the Services with the consent of their legal guardians.
+            Access to the Services is reserved for adults (18 and over). By creating an
+            account, you declare that you are at least 18 years old.
           </p>
           <p>
             The Laboon application is available free of charge on the App Store / Google
-            Play. Some advanced features may be offered as a premium plan, the terms of
-            which will be set out in specific Terms of Sale.
+            Play. If a paid plan is offered later, its terms will be set out in specific
+            Terms of Sale, which you will be asked to accept.
           </p>
         </Section>
         <Section title="4. Account creation">
@@ -128,12 +128,21 @@ export default function Cgu() {
         </Section>
         <Section title="8. Reporting and moderation">
           <p>
-            Any User may report inappropriate content or behaviour using the reporting
-            feature in the application.
+            Any User may report an inappropriate user, ad or message using the reporting
+            feature in the application, and may block another User: the ads of a blocked
+            User are no longer shown, and that User can no longer write to the person who
+            blocked them.
+          </p>
+          <p>
+            Laboon may refuse to publish an ad, or remove it, when its content breaches
+            these Terms or the Code of Conduct (abusive or misleading content, commercial
+            solicitation, requests for money).
           </p>
           <p>
             Laboon undertakes to review reports as quickly as possible and to take
-            appropriate measures (warning, suspension, account deletion).
+            appropriate measures (warning, suspension, account deletion). Reports are kept
+            for 12 months at most, without naming the people once their account is deleted
+            (see the Privacy Policy).
           </p>
         </Section>
         <Section title="9. Service availability">
@@ -158,6 +167,8 @@ export default function Cgu() {
         <Section title="11. Suspension and termination">
           <p>
             The User may delete their account at any time from the application settings.
+            The data deleted and the data kept are described in the Privacy Policy,
+            section “Deleting your account”.
           </p>
           <p>
             Laboon may suspend or terminate an account without notice in the event of a

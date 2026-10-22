@@ -49,9 +49,18 @@ export function TodoNote({ children }: { children: ReactNode }) {
   return <p className="border-2 border-white/40 p-4 text-sm">⚠️ {children}</p>;
 }
 
-export function Section({ title, children }: { title: string; children: ReactNode }) {
+export function Section({
+  title,
+  id,
+  children,
+}: {
+  title: string;
+  /** Anchor of the section, for a link straight to it (for example `#suppression-compte`). */
+  id?: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="space-y-3.5">
+    <section id={id} className="scroll-mt-24 space-y-3.5">
       <h2 className="font-title text-[clamp(1.3rem,2vw,1.6rem)] leading-tight font-extrabold tracking-[-0.04em]">
         {title}
       </h2>

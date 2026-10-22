@@ -4,8 +4,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 export const CGU_META = {
   title: "Conditions Générales d'Utilisation",
-  version: "2",
-  effectiveDate: "12/10/2026",
+  version: "1",
+  effectiveDate: "22/10/2026",
 };
 export default function Cgu() {
   return (
@@ -55,14 +55,12 @@ export default function Cgu() {
         <Section title="3. Accès aux services">
           <p>
             L&apos;accès aux Services est réservé aux personnes physiques majeures (18 ans
-            et plus). Les mineurs de 16 à 18 ans peuvent accéder aux Services avec
-            l&apos;accord de leurs représentants légaux.
+            et plus). En créant un compte, vous déclarez avoir au moins 18 ans.
           </p>
           <p>
             L&apos;application Laboon est disponible gratuitement sur App Store / Google
-            Play. Certaines fonctionnalités avancées pourront faire l&apos;objet
-            d&apos;une offre premium dont les conditions seront précisées dans des CGV
-            spécifiques.
+            Play. Si une offre payante est proposée plus tard, ses conditions feront
+            l&apos;objet de CGV spécifiques, que vous serez invité à accepter.
           </p>
         </Section>
         <Section title="4. Création de compte">
@@ -148,13 +146,22 @@ export default function Cgu() {
         </Section>
         <Section title="8. Signalement et modération">
           <p>
-            Tout Utilisateur peut signaler un contenu ou comportement inapproprié via la
-            fonction de signalement dans l&apos;application.
+            Tout Utilisateur peut signaler un utilisateur, une annonce ou un message
+            inapproprié via la fonction de signalement dans l&apos;application, et bloquer
+            un autre Utilisateur : les annonces d&apos;un Utilisateur bloqué ne sont plus
+            affichées, et il ne peut plus écrire à celui qui l&apos;a bloqué.
+          </p>
+          <p>
+            Laboon peut refuser la publication d&apos;une annonce, ou la retirer, lorsque
+            son contenu est contraire aux présentes CGU ou à la Charte de bonne conduite
+            (contenu injurieux ou trompeur, démarchage commercial, demande d&apos;argent).
           </p>
           <p>
             Laboon s&apos;engage à examiner les signalements dans les meilleurs délais et
             à prendre les mesures appropriées (avertissement, suspension, suppression de
-            compte).
+            compte). Les signalements sont conservés 12 mois au plus, sans nommer les
+            personnes une fois leur compte supprimé (voir la politique de
+            confidentialité).
           </p>
         </Section>
         <Section title="9. Disponibilité du service">
@@ -181,7 +188,9 @@ export default function Cgu() {
         <Section title="11. Suspension et résiliation">
           <p>
             L&apos;Utilisateur peut supprimer son compte à tout moment depuis les
-            paramètres de l&apos;application.
+            paramètres de l&apos;application. Les données supprimées et celles qui sont
+            conservées sont décrites dans la politique de confidentialité, section «
+            Suppression du compte ».
           </p>
           <p>
             Laboon peut suspendre ou résilier un compte sans préavis en cas de violation

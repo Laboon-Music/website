@@ -4,8 +4,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 export const MENTIONS_LEGALES_META = {
   title: "Legal Notice",
-  version: "2",
-  effectiveDate: "12 October 2026",
+  version: "1",
+  effectiveDate: "22 October 2026",
 };
 export default function MentionsLegales() {
   return (
