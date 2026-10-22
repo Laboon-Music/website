@@ -4,8 +4,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 export const CHARTE_META = {
   title: "Charte de Bonne Conduite",
-  version: "2",
-  effectiveDate: "12/10/2026",
+  version: "1",
+  effectiveDate: "22/10/2026",
 };
 export default function Charte() {
   return (
@@ -88,6 +88,10 @@ export default function Charte() {
               groupe
             </li>
             <li>Exagérer ou falsifier son niveau ou son expérience musicale</li>
+            <li>
+              Proposer une arnaque : faux cachet, fausse offre de recrutement, demande
+              d&apos;argent ou de virement
+            </li>
             <li>
               Publier du contenu audio/vidéo qui n&apos;est pas le tien sans le mentionner
               clairement
@@ -194,8 +198,12 @@ export default function Charte() {
           <Subheading>Comment signaler ?</Subheading>
           <p>
             Si tu constates un comportement qui viole cette charte, utilise le bouton «
-            Signaler » disponible sur chaque profil et dans chaque conversation. Ton
-            signalement est confidentiel.
+            Signaler » disponible sur chaque annonce, chaque profil et dans chaque
+            conversation. Ton signalement est confidentiel.
+          </p>
+          <p>
+            Tu peux aussi bloquer un membre : ses annonces ne s&apos;affichent plus et il
+            ne peut plus t&apos;écrire.
           </p>
           <Subheading>Ce que Laboon s&apos;engage à faire :</Subheading>
           <List>
