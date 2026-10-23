@@ -318,7 +318,8 @@
 .home .deck-wrap {
   display: grid;
   justify-items: center;
-  gap: 20px;
+  /* the back cards hang 3 × 14 px below the deck box: keep the controls clear of them */
+  gap: calc(42px + 20px);
 }
 
 /* Previous / next buttons and dots: the scroll drives the deck, these tell how it works. */
@@ -328,6 +329,9 @@
   gap: 12px;
   /* the stacked cards stick out 42 px to the right: keep the controls under the top card */
   margin-right: 42px;
+  /* the cards are positioned with a z-index: stay above a card swiped away */
+  position: relative;
+  z-index: 20;
 }
 
 .home .steps .pager {

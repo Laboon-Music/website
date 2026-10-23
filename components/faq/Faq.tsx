@@ -17,7 +17,7 @@ export function FaqGroup({
   embed?: boolean;
 }) {
   return (
-    <section className="space-y-3">
+    <section className="grid gap-3">
       <Heading className="ml-1 font-title text-[13px] font-extrabold tracking-[-0.01em] text-(--faq-cat,#b6bbfe)">
         {group.title}
       </Heading>
