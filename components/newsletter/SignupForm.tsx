@@ -62,7 +62,8 @@ export default function SignupForm({
       className="signup grid w-full max-w-[26rem] justify-items-center gap-4"
     >
       <Honeypot {...form.honeypot} />
-      <div className="grid w-full justify-items-start gap-2">
+      {/* From sm the field has a fixed width: the group shrinks to it so the form centres it. */}
+      <div className="grid w-full justify-items-start gap-2 sm:w-auto">
         <label htmlFor={emailId} className="pl-[22px] text-[15px] font-semibold">
           {T.emailLabel}
         </label>
@@ -92,7 +93,8 @@ export default function SignupForm({
         </div>
       </div>
 
-      <div className="flex flex-col items-start gap-1 self-stretch pl-[22px] text-left">
+      {/* Shrinks to the longest label so the form centres the block; the boxes stay aligned. */}
+      <div className="flex flex-col items-start gap-1 text-left">
         <Checkbox
           label={T.launch}
           checked={wantsLaunch}
