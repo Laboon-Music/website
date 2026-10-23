@@ -46,9 +46,7 @@ export function ResetPasswordView() {
       <>
         <BackLink />
         <PageTitle className={TITLE_CLASS}>{t.newTitle}</PageTitle>
-        <Lede className="max-w-[44ch]">
-          Il remplacera l&apos;ancien sur l&apos;app Laboon.
-        </Lede>
+        <Lede className="max-w-[44ch]">{t.newLede}</Lede>
         <Card className="mt-8 p-6 sm:p-11">
           <NewPasswordForm
             endpoint="/auth/password/reset/confirm"
