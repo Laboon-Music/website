@@ -16,10 +16,15 @@ for (const dir of [OUT, AUTH_OUT]) {
 }
 for (const { file, html } of ALL_EMAILS) writeFileSync(new URL(file, OUT), html);
 mkdirSync(TX_OUT, { recursive: true });
-for (const { file, html } of TRANSACTIONAL_EMAILS) writeFileSync(new URL(file, TX_OUT), html);
+for (const { file, html } of TRANSACTIONAL_EMAILS)
+  writeFileSync(new URL(file, TX_OUT), html);
 writeFileSync(
   new URL("subjects.md", TX_OUT),
-  ["| Template | Subject |", "|---|---|", ...TRANSACTIONAL_EMAILS.map((e) => `| ${e.name}.${e.locale} | ${e.subject} |`)].join("\n") + "\n",
+  [
+    "| Template | Subject |",
+    "|---|---|",
+    ...TRANSACTIONAL_EMAILS.map((e) => `| ${e.name}.${e.locale} | ${e.subject} |`),
+  ].join("\n") + "\n",
 );
 for (const { file, html } of AUTH_EMAILS) writeFileSync(new URL(file, AUTH_OUT), html);
 console.log(
