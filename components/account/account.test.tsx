@@ -42,6 +42,12 @@ describe("ResetPasswordView with a code", () => {
     expect(await screen.findByText("Mot de passe mis à jour")).toBeInTheDocument();
   });
 
+  it("shows the French lede from the dictionary", async () => {
+    visit("?code=lbc_secret");
+    render(<ResetPasswordView />);
+    expect(await screen.findByText(/Il remplacera l.ancien/)).toBeInTheDocument();
+  });
+
   it("checks the rules live and refuses a weak password without calling the API", async () => {
     visit("?code=lbc_secret");
     render(<ResetPasswordView />);
@@ -171,6 +177,17 @@ describe("account pages in English", () => {
       "en",
     );
     expect(await screen.findByText("Password updated")).toBeInTheDocument();
+  });
+
+  it("has no French text left on the new password page", async () => {
+    visit("?code=lbc_secret");
+    render(
+      <LocaleProvider locale="en">
+        <ResetPasswordView />
+      </LocaleProvider>,
+    );
+    expect(await screen.findByText(/replace the old one/)).toBeInTheDocument();
+    expect(screen.queryByText(/remplacera/)).not.toBeInTheDocument();
   });
 
   it("translates API errors to English", async () => {
