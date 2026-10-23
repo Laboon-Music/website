@@ -30,15 +30,17 @@ Set them in Vercel → project → _Settings → Environment Variables_, on **bo
 projects, then **Redeploy** (a variable is only picked up by a new build).
 Full list with comments: [`.env.example`](../.env.example).
 
-| Variable                                                     | Feature         | Notes                                                                   |
-| ------------------------------------------------------------ | --------------- | ----------------------------------------------------------------------- |
-| `BREVO_API_KEY`                                              | signup, contact | [brevo.md](integrations/brevo.md)                                       |
-| `BREVO_LIST_ID_LAUNCH` / `BREVO_LIST_ID_BETA`                | signup          | prod `5`/`6`, staging `7`/`8`                                           |
-| `BREVO_DOI_TEMPLATE_ID`                                      | signup          | `1`                                                                     |
-| `CONTACT_TO_EMAIL`                                           | contact         | inbox receiving messages                                                |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`    | anti-bot        | _Production_ environment only                                           |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | reset password  | same instance as the app                                                |
-| `SENTRY_DSN`                                                 | error alerts    | same value on both projects (environments are told apart automatically) |
+| Variable                                                  | Feature                 | Notes                                                                      |
+| --------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------- |
+| `BREVO_API_KEY`                                           | signup, contact         | [brevo.md](integrations/brevo.md)                                          |
+| `BREVO_LIST_ID_LAUNCH` / `BREVO_LIST_ID_BETA`             | signup                  | prod `5`/`6`, staging `7`/`8`                                              |
+| `BREVO_DOI_TEMPLATE_ID`                                   | signup                  | `1`                                                                        |
+| `BREVO_DOI_TEMPLATE_ID_EN`                                | signup (English)        | optional: English confirmation template (else the French one)              |
+| `CONTACT_TO_EMAIL`                                        | contact                 | inbox receiving messages                                                   |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | anti-bot                | _Production_ environment only                                              |
+| `NEXT_PUBLIC_API_URL`                                     | account links           | Laboon API base URL with `/v1` (+ site origin in the API's `CORS_ORIGINS`) |
+| `NEXT_PUBLIC_API_STAGING_KEY`                             | account links (staging) | value of the `X-Laboon-Staging` header (staging only; empty in production) |
+| `SENTRY_DSN`                                              | error alerts            | same value on both projects (environments are told apart automatically)    |
 
 Online, a missing variable makes the related form show an error (never a
 fake success). Locally, missing Brevo variables = dry run.

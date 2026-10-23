@@ -1,57 +1,52 @@
-// Password recovery helpers for /reset-password. See docs/features/reset-password.md.
+// Password rules and error codes of the account pages (/reset-password,
+// /confirm-email). The rules mirror the API (app/auth/password_policy.ts in
+// Laboon-Music/api): the API is the judge, this only guides the visitor.
+// Texts live in the dictionaries (content/<lang>/ui.ts).
+// See docs/features/account-links.md.
 
 export const MIN_PASSWORD_LENGTH = 12;
 
-export type RecoveryTokens = { accessToken: string; refreshToken: string };
+export type PasswordRuleId = "length" | "upper" | "digit" | "special";
 
-/**
- * Extracts the Supabase recovery tokens from the URL hash
- * (`#access_token=…&refresh_token=…&type=recovery`). Null if not a valid recovery link.
- */
-export function parseRecoveryHash(hash: string): RecoveryTokens | null {
-  const params = new URLSearchParams(hash.replace(/^#/, ""));
-  const accessToken = params.get("access_token");
-  const refreshToken = params.get("refresh_token");
-  if (params.get("type") !== "recovery" || !accessToken || !refreshToken) return null;
-  return { accessToken, refreshToken };
+export const PASSWORD_RULES: {
+  id: PasswordRuleId;
+  test: (password: string) => boolean;
+}[] = [
+  { id: "length", test: (p) => p.length >= MIN_PASSWORD_LENGTH },
+  { id: "upper", test: (p) => /\p{Lu}/u.test(p) },
+  { id: "digit", test: (p) => /\p{Nd}/u.test(p) },
+  { id: "special", test: (p) => /[^\p{L}\p{Nd}]/u.test(p) },
+];
+
+export function isStrongPassword(password: string): boolean {
+  return PASSWORD_RULES.every((rule) => rule.test(password));
 }
 
-/** Returns the French error to display, or null when the new password is acceptable. */
-export function validateNewPassword(password: string, confirm: string): string | null {
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    return `Le mot de passe doit faire au moins ${MIN_PASSWORD_LENGTH} caractères.`;
-  }
-  if (password !== confirm) return "Les mots de passe ne correspondent pas.";
+/** What is wrong with the new password, or null when it is acceptable. */
+export function passwordProblem(
+  password: string,
+  confirm: string,
+): "invalidRules" | "mismatch" | null {
+  if (!isStrongPassword(password)) return "invalidRules";
+  if (password !== confirm) return "mismatch";
   return null;
 }
 
-export const RESET_GENERIC_ERROR =
-  "Impossible de mettre à jour le mot de passe pour le moment. Réessaie plus tard.";
+export type ApiErrorKey =
+  "weakPassword" | "validationFailed" | "rateLimited" | "apiNetwork" | "accountGeneric";
 
-const SESSION_EXPIRED_ERROR =
-  "Ton lien a expiré. Demande un nouveau mail depuis l'app Laboon.";
-
-/** French messages for the Supabase Auth error codes a user can hit here. */
-const SUPABASE_ERRORS: Record<string, string> = {
-  same_password: "Ton nouveau mot de passe doit être différent de l'ancien.",
-  weak_password:
-    "Ce mot de passe est trop faible. Mélange lettres, chiffres et caractères spéciaux.",
-  session_expired: SESSION_EXPIRED_ERROR,
-  session_not_found: SESSION_EXPIRED_ERROR,
-  refresh_token_not_found: SESSION_EXPIRED_ERROR,
-  refresh_token_already_used: SESSION_EXPIRED_ERROR,
-  bad_jwt: SESSION_EXPIRED_ERROR,
-  reauthentication_needed: SESSION_EXPIRED_ERROR,
-  over_request_rate_limit: "Trop de tentatives. Patiente quelques minutes et réessaie.",
-  request_timeout: RESET_GENERIC_ERROR,
+const API_ERROR_KEYS: Record<string, ApiErrorKey> = {
+  weak_password: "weakPassword",
+  validation_failed: "validationFailed",
+  rate_limited: "rateLimited",
+  network: "apiNetwork",
 };
 
 /**
- * Supabase returns English messages: never show them as-is (the site is in
- * French). Known codes get a dedicated message, everything else a generic one.
+ * The API answers with stable codes: they map to a dictionary message
+ * (`ui.errors[key]`); its own (English) messages are never shown as-is.
+ * `invalid_code` is handled by the pages.
  */
-export function supabaseErrorMessage(error: unknown): string {
-  const code =
-    error && typeof error === "object" && "code" in error ? String(error.code) : "";
-  return SUPABASE_ERRORS[code] ?? RESET_GENERIC_ERROR;
+export function apiErrorKey(code: string): ApiErrorKey {
+  return API_ERROR_KEYS[code] ?? "accountGeneric";
 }

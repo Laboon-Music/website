@@ -1,21 +1,21 @@
-import { DocHeader, List, Section } from "../../_shared";
+import { DocBody, DocHeader, List, Section } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export const MENTIONS_LEGALES_META = {
   title: "Mentions Légales",
-  version: "2",
-  effectiveDate: "12/10/2026",
+  version: "1",
+  effectiveDate: "22/10/2026",
 };
 export default function MentionsLegales() {
   return (
     <article className="space-y-8">
       <DocHeader {...MENTIONS_LEGALES_META} locale="fr" />
-      <p className="text-muted">
+      <p className="max-w-[62ch] text-[clamp(1.05rem,1.4vw,1.2rem)] leading-relaxed text-muted">
         Conformément aux articles 6-III et 19 de la Loi n°2004-575 du 21 juin 2004 pour la
         Confiance dans l&apos;Économie Numérique (LCEN).
       </p>
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="1. Éditeur de l'application">
           <List>
             <li>
@@ -58,7 +58,7 @@ export default function MentionsLegales() {
             litige, les tribunaux compétents sont du ressort de Lyon.
           </p>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

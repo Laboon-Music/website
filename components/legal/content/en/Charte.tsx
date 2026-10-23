@@ -1,17 +1,17 @@
-import { DocHeader, List, Section, Subheading } from "../../_shared";
+import { DocBody, DocHeader, List, Section, Subheading } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export const CHARTE_META = {
   title: "Code of Conduct",
-  version: "2",
-  effectiveDate: "12 October 2026",
+  version: "1",
+  effectiveDate: "22 October 2026",
 };
 export default function Charte() {
   return (
     <article className="space-y-8">
       <DocHeader {...CHARTE_META} locale="en" />
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="Our vision">
           <p>
             Laboon was born from a simple belief: finding musicians to play with
@@ -75,6 +75,10 @@ export default function Charte() {
           <List>
             <li>Creating a fake profile or impersonating another artist or band</li>
             <li>Exaggerating or falsifying your musical level or experience</li>
+            <li>
+              Running a scam: a fake gig fee, a fake recruitment offer, a request for
+              money or a transfer
+            </li>
             <li>
               Publishing audio/video content that is not yours without clearly saying so
             </li>
@@ -167,8 +171,12 @@ export default function Charte() {
           <Subheading>How to report?</Subheading>
           <p>
             If you notice behaviour that breaches this code, use the “Report” button
-            available on every profile and in every conversation. Your report is
+            available on every ad, every profile and in every conversation. Your report is
             confidential.
+          </p>
+          <p>
+            You can also block a member: their ads are no longer shown and they can no
+            longer write to you.
           </p>
           <Subheading>What Laboon commits to doing:</Subheading>
           <List>
@@ -207,7 +215,7 @@ export default function Charte() {
             <TextLink href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</TextLink>
           </p>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

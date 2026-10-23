@@ -12,16 +12,11 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 
 ## Brand assets (waiting for a logo)
 
-- [ ] **Favicon & app icons**: `app/icon.png` (or `.svg`), `app/apple-icon.png`
-      (180×180), and a web manifest — Next.js picks them up automatically.
-      Today browsers show a generic icon and `/favicon.ico` returns 404.
-- [ ] Replace the text-only share image (`app/opengraph-image.tsx`) with a
-      designed visual including the logo.
+- [x] Favicon, apple icon and brand fonts (`next/font`) are in place.
 
 ## Technical follow-ups
 
-- [ ] **Content-Security-Policy** header (needs an allowlist for
-      `challenges.cloudflare.com` and Vercel Analytics; test on staging first).
+- [ ] **Enforce the Content-Security-Policy** (sent as report-only today): see [security.md](features/security.md).
 - [ ] **Rate limiting** on `/api/subscribe` and `/api/contact` (e.g. Vercel
       Firewall rule or Upstash) if spam gets past the anti-bot layers.
 - [ ] **E2E tests** (Playwright) for the two forms at mobile and desktop
@@ -29,8 +24,9 @@ Things deliberately left for later. Move an item to `decisions.md` once done.
 - [ ] Conversion events are wired but need the **Vercel Pro** plan to be
       recorded ([analytics.md](features/analytics.md)) — decide when traffic
       justifies it.
-- [ ] Brand **web font** (`next/font`) once the visual identity is set
-      (system fonts today).
+- [ ] **Vector disc**: the animation zooms the disc up to ~4x, more than any raster of the artwork survives (the source is 3267 px). Ask the designer for an SVG export from Figma (an automatic trace merges the double strokes and changes the look). If it weighs under ~600 KB it replaces `public/brand/motif.avif`.
+- [x] Phones load a lighter disc (`public/brand/motif-mobile.avif`, 1800 px, ~400 KB instead of ~700 KB): the disc is the LCP element of the home page. Check its sharpness during the intro zoom on a real phone; an SVG would replace both files.
+- [x] Image weight: home disc cropped and re-encoded (3.7 MB → 380 KB phones / 870 KB desktop), icons in WebP.
 - [ ] Upgrade to **TypeScript 7** and **ESLint 10** once supported by
       `eslint-config-next`.
 

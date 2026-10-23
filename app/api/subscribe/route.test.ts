@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HUMAN, jsonRequest, mockFetch, sentJson, silenceConsole } from "@/tests/helpers";
-import { NO_LIST_ERROR } from "@/lib/newsletter";
+import { UI as FR } from "@/content/fr/ui";
+import { UI as EN } from "@/content/en/ui";
 import { POST } from "./route";
 
 const URL_ = "https://staging.laboon-app.com/api/subscribe";
@@ -26,6 +27,11 @@ beforeEach(() => {
 });
 
 describe("POST /api/subscribe — validation", () => {
+  it("rejects an absurdly long e-mail address", async () => {
+    const res = await post({ ...valid, email: `${"a".repeat(300)}@example.com` });
+    expect(res.status).toBe(400);
+  });
+
   it("rejects a non-JSON body", async () => {
     const res = await post("oops");
     expect(res.status).toBe(400);
@@ -39,7 +45,7 @@ describe("POST /api/subscribe — validation", () => {
 
   it("requires at least one list", async () => {
     const res = await post({ ...valid, wantsLaunch: false });
-    expect(await res.json()).toEqual({ error: NO_LIST_ERROR });
+    expect(await res.json()).toEqual({ error: FR.errors.noList });
   });
 
   it("does not treat truthy non-booleans as a list choice", async () => {
@@ -98,8 +104,28 @@ describe("POST /api/subscribe — Brevo", () => {
       includeListIds: [7, 8],
       templateId: 1,
       redirectionUrl: "https://staging.laboon-app.com/inscription-confirmee",
-      attributes: { SOURCE: "landing" },
+      attributes: { SOURCE: "landing", LANGUAGE: "fr" },
     });
+  });
+
+  it("uses the English template, page and errors for English visitors", async () => {
+    vi.stubEnv("BREVO_DOI_TEMPLATE_ID_EN", "2");
+    const fetchMock = mockFetch(201);
+    await post({ ...valid, locale: "en" });
+
+    expect(sentJson(fetchMock)).toMatchObject({
+      templateId: 2,
+      redirectionUrl: "https://staging.laboon-app.com/en/inscription-confirmee",
+      attributes: { SOURCE: "landing", LANGUAGE: "en" },
+    });
+    const res = await post({ ...valid, locale: "en", email: "nope" });
+    expect(await res.json()).toEqual({ error: EN.errors.invalidEmail });
+  });
+
+  it("falls back to the French template when no English one is configured", async () => {
+    const fetchMock = mockFetch(201);
+    await post({ ...valid, locale: "en" });
+    expect(sentJson(fetchMock)).toMatchObject({ templateId: 1 });
   });
 
   it("returns 502 when Brevo refuses", async () => {

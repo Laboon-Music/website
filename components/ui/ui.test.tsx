@@ -5,11 +5,13 @@ import {
   ButtonLink,
   buttonClass,
   Card,
+  Checkbox,
   Disclosure,
   Field,
   FormError,
   Honeypot,
   Input,
+  Select,
   TextLink,
 } from ".";
 
@@ -18,12 +20,13 @@ describe("design system", () => {
     render(<Button className="mt-2">Go</Button>);
     const button = screen.getByRole("button", { name: "Go" });
     expect(button).toHaveAttribute("type", "button");
-    expect(button.className).toContain("from-brand");
+    expect(button.className).toContain("btn--reverted");
     expect(button.className).toContain("mt-2");
   });
 
   it("buttonClass supports variants and full width", () => {
-    expect(buttonClass({ variant: "outline" })).toContain("border-border");
+    expect(buttonClass({ variant: "outline" })).toContain("btn--stroke");
+    expect(buttonClass({ variant: "text" })).toContain("btn--text");
     expect(buttonClass({ fullWidth: true })).toContain("w-full");
   });
 
@@ -44,9 +47,30 @@ describe("design system", () => {
     expect(screen.getByLabelText("Nom")).toBeInTheDocument();
   });
 
-  it("Input tone switches the background", () => {
-    render(<Input tone="page" aria-label="a" />);
-    expect(screen.getByLabelText("a").className).toContain("bg-surface");
+  it("Input can be joined to a button on its right", () => {
+    render(<Input joined aria-label="a" />);
+    expect(screen.getByLabelText("a").className).toContain("border-r-0");
+  });
+
+  it("Select shows a chevron and keeps the native control", () => {
+    render(
+      <Select aria-label="s">
+        <option>x</option>
+      </Select>,
+    );
+    expect(screen.getByRole("combobox", { name: "s" })).toBeInTheDocument();
+  });
+
+  it("Checkbox is a labelled native checkbox", () => {
+    render(<Checkbox label="Me prévenir" defaultChecked />);
+    expect(screen.getByRole("checkbox", { name: "Me prévenir" })).toBeChecked();
+  });
+
+  it("FormError is announced and can be referenced by a field", () => {
+    render(<FormError id="e">Oups</FormError>);
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Oups");
+    expect(alert).toHaveAttribute("id", "e");
   });
 
   it("FormError renders nothing without a message", () => {
@@ -61,9 +85,9 @@ describe("design system", () => {
     expect(input).toHaveAttribute("aria-hidden", "true");
   });
 
-  it("Card success tone highlights confirmations", () => {
+  it("Card success tone centres confirmations", () => {
     render(<Card tone="success">ok</Card>);
-    expect(screen.getByText("ok").className).toContain("border-accent/40");
+    expect(screen.getByText("ok").className).toContain("text-center");
   });
 });
 
@@ -92,5 +116,37 @@ describe("Disclosure", () => {
     render(<Disclosure summary="Question ?">Réponse</Disclosure>);
     expect(screen.getByText("Question ?").closest("details")).not.toHaveAttribute("open");
     expect(screen.getByText("Réponse")).toBeInTheDocument();
+  });
+
+  it("hides its decorative icon from assistive tech", () => {
+    const { container } = render(<Disclosure summary="Q ?">R</Disclosure>);
+    expect(container.querySelector(".disclosure__icon")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+  });
+});
+
+describe("Button loading state", () => {
+  it("keeps its label (hidden, to keep the width), shows a spinner and is announced", () => {
+    render(
+      <Button loading loadingLabel="Envoi…">
+        M’inscrire
+      </Button>,
+    );
+    const button = screen.getByRole("button", { name: "Envoi…" });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+    expect(button.className).toContain("btn--loading");
+    expect(button.querySelector(".btn__label")).toHaveTextContent("M’inscrire");
+    expect(button.querySelector(".btn__spinner")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("is a plain button when not loading", () => {
+    render(<Button>Go</Button>);
+    const button = screen.getByRole("button", { name: "Go" });
+    expect(button).toBeEnabled();
+    expect(button).not.toHaveAttribute("aria-busy");
+    expect(button.querySelector(".btn__spinner")).toBeNull();
   });
 });

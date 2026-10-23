@@ -1,5 +1,6 @@
-export { Glow, GlowBackground } from "./Glow";
-export { Logo } from "./Logo";
-export { PageShell } from "./PageShell";
+export { CurrentYear } from "./CurrentYear";
+export { MAIN_CONTENT_ID, PageShell } from "./PageShell";
 export { SiteFooter } from "./SiteFooter";
 export { SiteHeader } from "./SiteHeader";
+export { Wordmark } from "./Wordmark";
+export { BackToTop } from "./BackToTop";

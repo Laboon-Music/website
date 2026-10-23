@@ -1,11 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { UI as FR } from "@/content/fr/ui";
 import { mockFetch, sentJson } from "@/tests/helpers";
-import {
-  TURNSTILE_TIMEOUT_ERROR,
-  TURNSTILE_WAIT_MS,
-  useProtectedForm,
-} from "./useProtectedForm";
+import { TURNSTILE_WAIT_MS, useProtectedForm } from "./useProtectedForm";
 
 // Turnstile enabled (site key configured) for this file.
 vi.mock("@/components/antibot/Turnstile", () => ({ turnstileEnabled: true }));
@@ -50,7 +47,7 @@ describe("useProtectedForm with Turnstile", () => {
       await vi.advanceTimersByTimeAsync(TURNSTILE_WAIT_MS);
       expect(await submitted).toBe(false);
     });
-    expect(result.current.error).toBe(TURNSTILE_TIMEOUT_ERROR);
+    expect(result.current.error).toBe(FR.errors.turnstileTimeout);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

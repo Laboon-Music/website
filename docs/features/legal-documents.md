@@ -19,7 +19,7 @@ confidentialité, Mentions légales.
   `components/legal/_shared.tsx` blocks (`DocHeader`, `Section`, `List`, `TodoNote`…).
 - `components/legal/LegalPage.tsx` — `LegalPage` + `legalMetadata(slug)` used
   by each public route (2-line page files).
-- `app/legal/[slug]/page.tsx` — embed route, statically generated for every slug.
+- `app/[lang]/legal/[slug]/page.tsx` — embed route, statically generated for every slug.
 
 ## Contact address
 
@@ -42,7 +42,7 @@ Every document shows a version and an effective date (`*_META` in each
 component). **Bump both in the French and English file whenever the text
 changes** — the app's "documents updated" popup is driven by the version
 published in `legal_document` (Supabase). Versions are **integers**, matching the integer `version` column of
-`legal_document`. Current: version 2, 12/10/2026.
+`legal_document`. Current: the privacy policy is version 3 (20/10/2026: cookies section corrected, no banner); the other documents are version 2, 12/10/2026.
 
 ## Content status
 

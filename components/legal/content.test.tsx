@@ -24,4 +24,25 @@ describe("legal documents content", () => {
       expect(a.getAttribute("href")).toBe(`mailto:${CONTACT_EMAIL}`);
     });
   });
+  it.each(["fr", "en"] as Locale[])(
+    "%s privacy policy has a deletion section with a stable anchor",
+    (locale) => {
+      const { Component } = getLegalDoc(locale, "confidentialite").entry;
+      const { container } = render(<Component />);
+      const section = container.querySelector("section#suppression-compte");
+      expect(section).not.toBeNull();
+      expect(section?.textContent).toContain(CONTACT_EMAIL);
+    },
+  );
+
+  it.each(["fr", "en"] as Locale[])("%s documents all start at version 1", (locale) => {
+    for (const slug of LEGAL_SLUGS) {
+      const { Component } = getLegalDoc(locale, slug).entry;
+      const { container } = render(<Component />);
+      expect(container.querySelector("header")?.textContent).toMatch(/1/);
+      expect(container.querySelector("header")?.textContent).not.toMatch(
+        /(?:Version|version) [2-9]/,
+      );
+    }
+  });
 });

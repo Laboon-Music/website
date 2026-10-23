@@ -1,80 +1,131 @@
 import type { ComponentProps, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 
-// Design system — form controls. See docs/design-system.md.
-// `tone="page"` for a control sitting directly on the page background,
-// `tone="card"` (default) for a control inside a Card.
+// Design system — form controls, drawn for the blue panels: white pill fields
+// with navy text. An invalid field keeps the exact shape of a normal one: only its
+// border turns the error colour (no glow, which changed the silhouette and looked
+// broken next to the joined e-mail + button). See docs/design-system.md.
 
-type Tone = "page" | "card";
+const CONTROL =
+  "w-full border-2 border-white bg-white px-5 text-base font-medium text-ink placeholder:text-[#5a60b0] aria-invalid:border-error-accent";
 
-export function controlClass(tone: Tone = "card") {
-  return cx(
-    "w-full rounded-xl border border-border px-4 py-3 text-base text-text outline-none placeholder:text-muted focus:border-brand focus:ring-2 focus:ring-brand/40",
-    tone === "page" ? "bg-surface" : "bg-bg",
-  );
-}
-
+/**
+ * Pill input. `joined` glues it to a button on its right (e-mail + submit):
+ * square right edge, tucked under the button.
+ */
 export function Input({
-  tone,
+  joined,
   className,
   ...props
-}: ComponentProps<"input"> & { tone?: Tone }) {
-  return <input className={cx(controlClass(tone), className)} {...props} />;
-}
-
-export function Textarea({
-  tone,
-  className,
-  ...props
-}: ComponentProps<"textarea"> & { tone?: Tone }) {
+}: ComponentProps<"input"> & { joined?: boolean }) {
   return (
-    <textarea className={cx(controlClass(tone), "resize-y", className)} {...props} />
+    <input
+      data-joined={joined || undefined}
+      className={cx(
+        CONTROL,
+        "h-[52px]",
+        joined ? "-mr-7 rounded-l-full border-r-0 pr-11" : "rounded-full",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
-export function Select({
-  tone,
-  className,
-  ...props
-}: ComponentProps<"select"> & { tone?: Tone }) {
-  return <select className={cx(controlClass(tone), className)} {...props} />;
+export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
+  return (
+    <textarea
+      className={cx(
+        CONTROL,
+        "min-h-44 resize-y rounded-3xl py-4 leading-normal",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function Select({ className, children, ...props }: ComponentProps<"select">) {
+  return (
+    <div className="relative">
+      <select
+        className={cx(
+          CONTROL,
+          "h-[52px] cursor-pointer appearance-none rounded-full pr-12",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </select>
+      <svg
+        viewBox="0 0 14 9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="pointer-events-none absolute top-1/2 right-5 h-[9px] w-3.5 -translate-y-1/2 text-ink"
+        aria-hidden="true"
+      >
+        <path d="M1 1.5l6 6 6-6" />
+      </svg>
+    </div>
+  );
 }
 
 /** Visible label wrapping its control (no id/htmlFor wiring needed). */
-export function Field({ label, children }: { label: string; children: ReactNode }) {
+export function Field({
+  label,
+  error,
+  errorId,
+  children,
+}: {
+  label: string;
+  /** Message shown right under this field (not inside the label, so it is not part of its name). */
+  error?: ReactNode;
+  errorId?: string;
+  children: ReactNode;
+}) {
   return (
-    <label className="flex flex-col gap-1.5 text-sm font-medium">
-      {label}
-      {children}
-    </label>
+    <div className="grid content-start gap-2">
+      <label className="flex flex-col gap-2 text-[15px] font-semibold">
+        <span className="pl-1">{label}</span>
+        {children}
+      </label>
+      <FormError id={errorId}>{error}</FormError>
+    </div>
   );
 }
 
 export function Checkbox({
   label,
-  accent = "brand",
+  className,
   ...props
-}: Omit<ComponentProps<"input">, "type"> & {
-  label: ReactNode;
-  accent?: "brand" | "brand-2";
-}) {
+}: Omit<ComponentProps<"input">, "type"> & { label: ReactNode }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm text-muted">
-      <input
-        type="checkbox"
-        className={cx("h-4 w-4", accent === "brand" ? "accent-brand" : "accent-brand-2")}
-        {...props}
-      />
+    <label className="flex min-h-8 cursor-pointer items-center gap-2.5 text-[15px] font-medium">
+      <input type="checkbox" className={cx("check-input", className)} {...props} />
       {label}
     </label>
   );
 }
 
-/** Error line under a form; announced by screen readers. */
-export function FormError({ children }: { children: ReactNode }) {
+/** Error line under a form (peach pill, "!" icon); announced by screen readers. */
+export function FormError({ children, id }: { children: ReactNode; id?: string }) {
   if (!children) return null;
   return (
-    <p role="alert" className="text-sm text-brand-2">
+    <p
+      id={id}
+      role="alert"
+      className="flex w-fit max-w-full items-start gap-2 rounded-[18px] bg-error-bg py-1.5 pr-3.5 pl-2 text-left text-sm leading-snug font-semibold text-error"
+    >
+      <span
+        aria-hidden="true"
+        className="mt-px grid size-[18px] flex-none place-items-center rounded-full bg-error-accent text-xs leading-none font-extrabold text-white"
+      >
+        !
+      </span>
       {children}
     </p>
   );

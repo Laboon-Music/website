@@ -1,5 +1,6 @@
 import { readEnv } from "@/lib/env";
 import { jsonError, jsonOk } from "@/lib/http";
+import { bodyLocale, errorsFor } from "@/lib/request-locale";
 import { reportError } from "@/lib/monitoring";
 
 // Anti-bot protections shared by every public form (signup, contact).
@@ -8,16 +9,12 @@ import { reportError } from "@/lib/monitoring";
 // A human needs several seconds to fill a form; a bot a few milliseconds.
 export const MIN_FILL_MS = 3000;
 
-export const TOO_FAST_ERROR =
-  "Oups, c'était un peu rapide ! Réessaie dans quelques secondes.";
-
-export const TURNSTILE_ERROR =
-  "La vérification anti-robot a échoué. Recharge la page et réessaie.";
-
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 /** Fields every protected form sends alongside its own payload. */
 export type AntibotFields = {
+  /** Language of the page: error messages are written in it. */
+  locale?: unknown;
   /** Honeypot: hidden from humans, filled in by naive bots. */
   website?: unknown;
   /** Milliseconds between form display and submit. */
@@ -72,10 +69,11 @@ export async function checkAntibot(
   body: AntibotFields,
   request: Request,
 ): Promise<Response | null> {
+  const errors = errorsFor(bodyLocale(body));
   if (body.website) return jsonOk();
-  if (isTooFast(body.elapsedMs)) return jsonError(TOO_FAST_ERROR, 400);
+  if (isTooFast(body.elapsedMs)) return jsonError(errors.tooFast, 400);
   if (!(await verifyTurnstile(body.turnstileToken, request))) {
-    return jsonError(TURNSTILE_ERROR, 400);
+    return jsonError(errors.turnstile, 400);
   }
   return null;
 }

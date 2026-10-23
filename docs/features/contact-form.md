@@ -2,9 +2,9 @@
 
 ## Where
 
-- Page: `app/contact/page.tsx` (`/contact`, linked from header and footer).
+- Page: `app/[lang]/contact/page.tsx` (`/contact`, linked from header and footer).
 - Form: `components/contact/ContactForm.tsx`.
-- App embed: `app/contact/embed/page.tsx` (`/contact/embed`) — bare page (no site chrome, `noindex`) loaded by the mobile app in a WebView from Profile > Help, same form and same API.
+- App embed: `app/[lang]/contact/embed/page.tsx` (`/contact/embed`) — bare page (no site chrome, `noindex`) loaded by the mobile app in a WebView from Profile > Help, same form and same API.
 - API: `app/api/contact/route.ts` — `POST /api/contact`.
 - Subjects & limits (shared client/server): `lib/contact.ts`.
 
@@ -24,6 +24,11 @@
 Defined once in `CONTACT_SUBJECTS` (`lib/contact.ts`): `question`, `beta`,
 `partenariat`, `bug`, `autre`. Each has a form label and an email label.
 To add one, add an entry there — form and API pick it up.
+
+## Confirmation
+
+Once the message is sent the form is replaced by a short confirmation card. The page scrolls back to
+the top at that moment, otherwise it stays where the send button was and shows the footer.
 
 ## API contract
 

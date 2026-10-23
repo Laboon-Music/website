@@ -33,7 +33,7 @@ mobile-first rule in [conventions.md](conventions.md).
 
 ## Tone & look
 
-Modern, dark, energetic, community-driven. Informal French ("tu").
+Modern, energetic, community-driven; Laboon blue on night blue (see design-system.md). Informal French ("tu").
 Make people want to be part of the adventure from day one.
 
 ## Owner

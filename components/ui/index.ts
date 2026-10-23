@@ -4,7 +4,6 @@ export { Card } from "./Card";
 export { Disclosure } from "./Disclosure";
 export {
   Checkbox,
-  controlClass,
   Field,
   FormError,
   Honeypot,
@@ -12,4 +11,7 @@ export {
   Select,
   Textarea,
 } from "./form-controls";
+export { PasswordInput } from "./PasswordInput";
+export { BackLink } from "./BackLink";
+export { Lede, PageTitle } from "./PageHeading";
 export { TextLink } from "./TextLink";

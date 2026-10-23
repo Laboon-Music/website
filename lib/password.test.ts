@@ -1,57 +1,64 @@
 import { describe, expect, it } from "vitest";
 import {
+  apiErrorKey,
+  isStrongPassword,
   MIN_PASSWORD_LENGTH,
-  parseRecoveryHash,
-  RESET_GENERIC_ERROR,
-  supabaseErrorMessage,
-  validateNewPassword,
+  PASSWORD_RULES,
+  passwordProblem,
 } from "./password";
 
-describe("parseRecoveryHash", () => {
-  it("extracts the tokens of a recovery link", () => {
-    expect(parseRecoveryHash("#access_token=a&refresh_token=r&type=recovery")).toEqual({
-      accessToken: "a",
-      refreshToken: "r",
-    });
+const STRONG = "Un-bon-mot-2-passe";
+
+describe("password rules (mirror of the API policy)", () => {
+  it("accepts 12+ characters with an uppercase letter, a digit and a special character", () => {
+    expect(isStrongPassword(STRONG)).toBe(true);
+    expect(MIN_PASSWORD_LENGTH).toBe(12);
   });
 
   it.each([
-    "",
-    "#access_token=a&refresh_token=r&type=signup",
-    "#refresh_token=r&type=recovery",
-    "#access_token=a&type=recovery",
-  ])("rejects %j", (hash) => {
-    expect(parseRecoveryHash(hash)).toBeNull();
+    ["too short", "Aa1-bcdefg"],
+    ["no uppercase", "un-bon-mot-2-passe"],
+    ["no digit", "Un-bon-mot-de-passe"],
+    ["no special character", "UnBonMotDePasse2"],
+  ])("rejects a password with %s", (_, password) => {
+    expect(isStrongPassword(password)).toBe(false);
+  });
+
+  it("counts accented letters as letters, not special characters", () => {
+    expect(isStrongPassword("Éléphantdorée1")).toBe(false);
+    expect(isStrongPassword("Éléphant-dorée1")).toBe(true);
+  });
+
+  it("lists each rule so the form can show them", () => {
+    expect(PASSWORD_RULES.map((r) => r.id)).toEqual([
+      "length",
+      "upper",
+      "digit",
+      "special",
+    ]);
   });
 });
 
-describe("validateNewPassword", () => {
-  const ok = "x".repeat(MIN_PASSWORD_LENGTH);
-
-  it("accepts a long enough, confirmed password", () => {
-    expect(validateNewPassword(ok, ok)).toBeNull();
+describe("passwordProblem", () => {
+  it("accepts a strong matching password", () => {
+    expect(passwordProblem(STRONG, STRONG)).toBeNull();
   });
 
-  it("rejects a short password", () => {
-    expect(validateNewPassword("short", "short")).toMatch(/au moins 12/);
-  });
-
-  it("rejects a mismatching confirmation", () => {
-    expect(validateNewPassword(ok, `${ok}!`)).toMatch(/ne correspondent pas/);
+  it("flags a weak password first, then a mismatch", () => {
+    expect(passwordProblem("faible", "faible")).toBe("invalidRules");
+    expect(passwordProblem(STRONG, `${STRONG}x`)).toBe("mismatch");
   });
 });
 
-describe("supabaseErrorMessage", () => {
-  it("translates known Supabase codes", () => {
-    expect(supabaseErrorMessage({ code: "weak_password" })).toMatch(/trop faible/);
-    expect(supabaseErrorMessage({ code: "session_expired" })).toMatch(/expiré/);
+describe("apiErrorKey", () => {
+  it("maps the stable API codes to dictionary keys", () => {
+    expect(apiErrorKey("weak_password")).toBe("weakPassword");
+    expect(apiErrorKey("rate_limited")).toBe("rateLimited");
+    expect(apiErrorKey("network")).toBe("apiNetwork");
   });
 
-  it("never leaks an unknown English message", () => {
-    expect(supabaseErrorMessage({ code: "x", message: "Boom" })).toBe(
-      RESET_GENERIC_ERROR,
-    );
-    expect(supabaseErrorMessage(new Error("Failed to fetch"))).toBe(RESET_GENERIC_ERROR);
-    expect(supabaseErrorMessage(null)).toBe(RESET_GENERIC_ERROR);
+  it("never exposes an unknown code or message", () => {
+    expect(apiErrorKey("whatever")).toBe("accountGeneric");
+    expect(apiErrorKey("")).toBe("accountGeneric");
   });
 });

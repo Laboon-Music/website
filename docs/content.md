@@ -4,22 +4,26 @@ The texts of the home page and the site-wide texts are kept in two plain
 files, separate from the code, so they can be changed safely without
 touching the layout.
 
-| File              | Contains                                                                   |
-| ----------------- | -------------------------------------------------------------------------- |
-| `content/home.ts` | Home page: menu, hero, features, "comment ça marche", final call to action |
-| `content/faq.ts`  | FAQ (website and mobile app): questions and answers, grouped by theme      |
-| `content/site.ts` | Browser tab title, Google description, text shown when the link is shared  |
+| File                     | Contains                                                                                                 |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `content/<lang>/home.ts` | Home page: menu, hero, manifesto, values (cards), steps, final call to action, signup form, pause button |
+| `content/<lang>/faq.ts`  | FAQ (website and mobile app): questions and answers, grouped by theme                                    |
+| `content/<lang>/site.ts` | Browser tab title, Google description, text shown when the link is shared                                |
 
 Other texts: forms (`components/newsletter/SignupForm.tsx`,
 `components/contact/ContactForm.tsx`), contact subjects (`lib/contact.ts`),
 legal documents (`components/legal/content/fr/`).
 
-In `content/faq.ts`, a link inside an answer is written `[label](address)`
+Every text exists in **French** (`content/fr/`) and **English** (`content/en/`): change both, with the
+same structure (see [i18n.md](features/i18n.md)). Interface texts (header, footer, forms, error messages,
+account pages) are in `content/<lang>/ui.ts`.
+
+In `content/<lang>/faq.ts`, a link inside an answer is written `[label](address)`
 (internal path like `/contact`, `https://…` or `mailto:…`).
 
 ## How to change a text (without a developer)
 
-1. On GitHub, open the file (e.g. `content/home.ts`) on the **`staging`** branch.
+1. On GitHub, open the file (e.g. `content/fr/home.ts` and `content/en/home.ts`) on the **`staging`** branch.
 2. Click the ✏️ pencil (_Edit this file_).
 3. Change **only the text between quotes** `"…"`. Keep the quotes, commas and
    brackets. An apostrophe inside the text is fine (`"c'est"`).
@@ -31,6 +35,6 @@ In `content/faq.ts`, a link inside an answer is written `[label](address)`
 
 ## Rules
 
-- French, informal "tu", inclusive writing as already used ("prévenu·e").
+- French: informal "tu", inclusive writing as already used ("prévenu·e"). English: friendly, informal, "you".
 - Keep titles short: they must fit on a phone screen.
-- The share image (`app/opengraph-image.tsx`) reuses the hero title and badge.
+- The share image (`app/[lang]/opengraph-image.tsx`) reuses the hero title and subtitle of each language.

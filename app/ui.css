@@ -1,0 +1,526 @@
+/* Design-system styles that Tailwind utilities cannot express cleanly: the
+   button (gradient halos on hover), the custom checkbox and the decorative
+   disc. Used through components/ui (Button, Checkbox) and components/layout.
+   See docs/design-system.md. */
+
+/* ------------------------------------------------------------------ button */
+/* Three variants, two states (idle, hover/focus), taken from the Figma
+   component "Bouton":
+     .btn--text      white fill, navy text; hover: blue halo, white text
+     .btn--stroke    white fill, blue asymmetric outline; hover: blue halo
+     .btn--reverted  blue fill, white asymmetric outline; hover: white halo
+   Halos live on a ::before whose opacity/scale is animated (a gradient cannot
+   be transitioned). Touch target: 44 px minimum. */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-height: 44px;
+  padding: 13px 16px;
+  border: 0 solid transparent;
+  border-radius: 200px;
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-variation-settings:
+    "opsz" 14,
+    "wdth" 100;
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 0.35s var(--ease),
+    background-color 0.35s var(--ease),
+    text-shadow 0.35s var(--ease),
+    scale 0.35s var(--ease);
+  /* Contrast: over the light part of the halo, white text keeps a blue glow
+     under each letter (≥ 5.3:1). */
+  --btn-glow: 0 0 1px #4753ff, 0 0 3px #4753ff, 0 0 6px #4753ff, 0 0 10px #4753ff;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.35s var(--ease),
+    scale 0.5s var(--ease);
+}
+
+.btn:hover::before,
+.btn:focus-visible::before {
+  opacity: 1;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  scale: 1.05;
+  text-shadow: var(--btn-glow);
+}
+
+.btn:active {
+  scale: 0.98;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--btn-ring, #4753ff);
+  outline-offset: 3px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Loading: a spinner replaces the label, the button keeps its size and its colours
+   (hover/focus effects are switched off: a tapped button stays "hovered" on phones,
+   which would turn a white label and spinner white on white). The spinner only
+   appears after 150 ms, so an instant answer does not flash. */
+.btn--loading,
+.btn--loading:hover,
+.btn--loading:focus-visible,
+.btn--loading:active {
+  scale: 1;
+  cursor: progress;
+  text-shadow: none;
+}
+
+.btn--loading:disabled {
+  opacity: 1;
+}
+
+.btn--loading::before,
+.btn--loading:hover::before,
+.btn--loading:focus-visible::before {
+  opacity: 0;
+}
+
+.btn--reverted.btn--loading,
+.btn--reverted.btn--loading:hover,
+.btn--reverted.btn--loading:focus-visible {
+  background-color: #4753ff;
+  color: #fff;
+}
+
+.btn--stroke.btn--loading,
+.btn--stroke.btn--loading:hover,
+.btn--stroke.btn--loading:focus-visible,
+.btn--text.btn--loading,
+.btn--text.btn--loading:hover,
+.btn--text.btn--loading:focus-visible {
+  background-color: #fff;
+  color: var(--color-ink);
+}
+
+.btn--loading .btn__label {
+  animation: btn-label-out 0s 0.15s forwards;
+}
+
+.btn__spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border: 3px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  animation:
+    btn-spinner-in 0.15s linear 0.15s forwards,
+    btn-spin 0.75s linear infinite;
+}
+
+@keyframes btn-label-out {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes btn-spinner-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes btn-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Reduced motion: a still ring (the label for assistive tech says "loading"). */
+@media (prefers-reduced-motion: reduce) {
+  .btn__spinner {
+    animation: btn-spinner-in 0.01s linear 0.15s forwards;
+  }
+}
+
+.btn--text::before {
+  scale: 0.9;
+  background: radial-gradient(
+    closest-side,
+    #4753ff 0%,
+    #4753ff 36%,
+    #5863ff 45%,
+    #eaecff 84%,
+    #fff 100%
+  );
+}
+
+.btn--text:hover,
+.btn--text:focus-visible {
+  color: #fff;
+}
+
+.btn--text:hover::before,
+.btn--text:focus-visible::before {
+  scale: 1;
+}
+
+/* Outlines sit outside the 44 px box: visible height 44 + 2 + 2 = 48 px. */
+.btn--stroke,
+.btn--reverted {
+  min-height: 48px;
+  border-width: 2px 8px 2px 12px;
+}
+
+.btn--stroke {
+  border-color: #4753ff;
+}
+
+.btn--stroke::before {
+  scale: 0.35;
+  background: radial-gradient(
+    closest-side,
+    #babeff 27.9%,
+    #8089ff 52.4%,
+    #646eff 64.7%,
+    #4753ff 76.9%
+  );
+  transition:
+    scale 0.42s cubic-bezier(0.5, 0, 0.75, 0),
+    opacity 0.16s linear 0.26s;
+}
+
+.btn--stroke:hover,
+.btn--stroke:focus-visible {
+  color: #fff;
+  background-color: #4753ff;
+}
+
+.btn--stroke:hover::before,
+.btn--stroke:focus-visible::before {
+  scale: 1;
+  transition:
+    opacity 0.3s var(--ease),
+    scale 0.55s var(--ease);
+}
+
+.btn--reverted {
+  --btn-ring: #fff;
+  background: #4753ff;
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn--reverted::before {
+  background: radial-gradient(
+    closest-side,
+    #4753ff 48%,
+    #6670ff 56%,
+    #848cff 64%,
+    #c1c5ff 78%,
+    #fff 100%
+  );
+}
+
+.btn--reverted:hover,
+.btn--reverted:focus-visible {
+  background-color: #fff;
+}
+
+@media (max-width: 860px) {
+  .btn {
+    font-size: 13px;
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn::before {
+    transition: none;
+  }
+
+  .btn:hover,
+  .btn:focus-visible,
+  .btn:active {
+    scale: 1;
+  }
+}
+
+/* ------------------------------------------------------------ invalid field */
+/* Joined e-mail + button is ONE white pill: when the e-mail is invalid the whole outline
+   (the button's border included) turns the error colour, so the pill never looks cut in two. */
+.field-row:has(input[aria-invalid="true"]) .btn--reverted {
+  border-color: var(--color-error-accent);
+}
+
+/* Small "!" inside an invalid field (not the joined one: its right end is under the button). */
+input[aria-invalid="true"]:not([data-joined]),
+textarea[aria-invalid="true"] {
+  padding-right: 48px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23E8461E'/%3E%3Cpath d='M10 5.5v5.5' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='14.5' r='1.2' fill='white'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 20px 20px;
+}
+
+textarea[aria-invalid="true"] {
+  background-position: right 16px top 16px;
+}
+
+/* ---------------------------------------------------------------- checkbox */
+/* White outline, filled white with a navy tick when checked (sits on blue). */
+.check-input {
+  appearance: none;
+  display: grid;
+  flex: none;
+  place-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.14s ease;
+}
+
+.check-input::after {
+  content: "";
+  width: 14px;
+  height: 11px;
+  scale: 0;
+  transition: scale 0.14s ease;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='11' viewBox='0 0 14 11'%3E%3Cpath d='M1.5 5.5l3.8 3.8L12.5 1.8' fill='none' stroke='%23000873' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 14px 11px no-repeat;
+}
+
+.check-input:checked {
+  background: #fff;
+}
+
+.check-input:checked::after {
+  scale: 1;
+}
+
+@media (forced-colors: active) {
+  .check-input:checked {
+    background: CanvasText;
+  }
+}
+
+/* -------------------------------------------------------------------- disc */
+/* Decorative wave disc behind inner pages: white, faint, slowly turning. */
+.bg-disc {
+  position: fixed;
+  z-index: 0;
+  left: 50%;
+  top: 58%;
+  width: max(1500px, 150vmax);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+  background: url("/brand/cd.webp") center / contain no-repeat;
+  filter: brightness(0) invert(1);
+  opacity: 0.05;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bg-disc {
+    animation: bg-disc-spin 120s linear infinite;
+  }
+
+  @keyframes bg-disc-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+}
+
+/* Entrance of the main content of inner pages. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 0.8s var(--ease) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 20px;
+    }
+
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+}
+
+/* -------------------------------------------------------------- disclosure */
+/* FAQ row: "+" turning into "×", blue when open. Native <details>, so it works
+   without JavaScript; the height animation is progressive enhancement. */
+.disclosure {
+  overflow: hidden;
+  background: #fff;
+  color: var(--color-ink);
+  transition:
+    background-color 0.35s var(--ease),
+    color 0.35s var(--ease);
+  interpolate-size: allow-keywords;
+}
+
+.disclosure[open] {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.disclosure:hover:not([open]) {
+  background: #eef0ff;
+}
+
+.disclosure::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.4s var(--ease),
+    content-visibility 0.4s allow-discrete;
+}
+
+.disclosure[open]::details-content {
+  block-size: auto;
+}
+
+.disclosure__summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 16px 18px 50px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.disclosure__summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure__summary:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+  border-radius: 0;
+}
+
+.disclosure[open] .disclosure__summary:focus-visible {
+  outline-color: #fff;
+}
+
+.disclosure__icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  transition: transform 0.4s var(--ease);
+}
+
+.disclosure__icon::before,
+.disclosure__icon::after {
+  content: "";
+  position: absolute;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.disclosure__icon::before {
+  left: 0;
+  top: 7px;
+  width: 16px;
+  height: 2px;
+}
+
+.disclosure__icon::after {
+  left: 7px;
+  top: 0;
+  width: 2px;
+  height: 16px;
+}
+
+.disclosure[open] .disclosure__icon {
+  transform: rotate(45deg);
+}
+
+.disclosure__answer {
+  padding: 0 18px 20px 50px;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+
+.disclosure[open] .disclosure__answer {
+  color: #fff;
+}
+
+@media (min-width: 861px) {
+  .disclosure__summary {
+    padding: 20px 20px 20px 56px;
+    font-size: 16px;
+  }
+
+  .disclosure__icon {
+    left: 22px;
+  }
+
+  .disclosure__answer {
+    padding: 0 24px 22px 56px;
+  }
+}
+
+/* ------------------------------------------------- joined field focus ring */
+/* The joined input runs under its button, so its own outline would be cut off there. The
+   ring is drawn around the whole e-mail + button pill instead. */
+.field-row {
+  border-radius: 9999px;
+}
+
+.field-row:has(input[data-joined]:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.field-row input[data-joined]:focus-visible {
+  outline: none;
+}

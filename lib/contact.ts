@@ -1,16 +1,16 @@
 // Contact form configuration shared by the form (client) and the API (server).
 
-/** Subjects offered in the form; the label ends up in the email subject. */
+/**
+ * Subjects offered in the form. The label shown to the visitor is in the
+ * dictionary (ui.contact.subjects); `emailLabel` (French, read by the team)
+ * ends up in the email subject.
+ */
 export const CONTACT_SUBJECTS = [
-  { value: "question", label: "Une question", emailLabel: "Question" },
-  { value: "beta", label: "Beta / tests", emailLabel: "Beta / tests" },
-  {
-    value: "partenariat",
-    label: "Partenariat / presse",
-    emailLabel: "Partenariat / presse",
-  },
-  { value: "bug", label: "Signaler un problème", emailLabel: "Signaler un problème" },
-  { value: "autre", label: "Autre", emailLabel: "Autre" },
+  { value: "question", emailLabel: "Question" },
+  { value: "beta", emailLabel: "Beta / tests" },
+  { value: "partenariat", emailLabel: "Partenariat / presse" },
+  { value: "bug", emailLabel: "Signaler un problème" },
+  { value: "autre", emailLabel: "Autre" },
 ] as const;
 
 export type ContactSubject = (typeof CONTACT_SUBJECTS)[number]["value"];

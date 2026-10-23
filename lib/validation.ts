@@ -3,8 +3,11 @@
 // Pragmatic email check: something@something.tld, no whitespace.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Longest valid e-mail address (RFC 5321). */
+export const MAX_EMAIL_LENGTH = 254;
+
 export function isValidEmail(value: string): boolean {
-  return EMAIL_RE.test(value);
+  return value.length <= MAX_EMAIL_LENGTH && EMAIL_RE.test(value);
 }
 
 /** Trims and lowercases an untrusted email value (non-strings become ""). */

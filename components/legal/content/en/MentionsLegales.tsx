@@ -1,21 +1,21 @@
-import { DocHeader, List, Section } from "../../_shared";
+import { DocBody, DocHeader, List, Section } from "../../_shared";
 import { TextLink } from "@/components/ui";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export const MENTIONS_LEGALES_META = {
   title: "Legal Notice",
-  version: "2",
-  effectiveDate: "12 October 2026",
+  version: "1",
+  effectiveDate: "22 October 2026",
 };
 export default function MentionsLegales() {
   return (
     <article className="space-y-8">
       <DocHeader {...MENTIONS_LEGALES_META} locale="en" />
-      <p className="text-muted">
+      <p className="max-w-[62ch] text-[clamp(1.05rem,1.4vw,1.2rem)] leading-relaxed text-muted">
         In accordance with Articles 6-III and 19 of French Law No. 2004-575 of 21 June
         2004 on Confidence in the Digital Economy (LCEN).
       </p>
-      <div className="space-y-6 text-muted">
+      <DocBody>
         <Section title="1. Publisher of the application">
           <List>
             <li>Name: Lopez Mathieu</li>
@@ -50,7 +50,7 @@ export default function MentionsLegales() {
             competent courts are those of Lyon.
           </p>
         </Section>
-      </div>
+      </DocBody>
     </article>
   );
 }

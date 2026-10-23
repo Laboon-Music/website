@@ -1,8 +1,9 @@
 # Analytics & conversion events
 
 **Vercel Web Analytics** (`<Analytics />` from `@vercel/analytics/next` in
-`app/layout.tsx`).
+`app/[lang]/layout.tsx`).
 
+- Query strings and hashes are removed from every URL before sending (`SiteAnalytics`): account links carry one-time codes.
 - Cookieless, anonymous, aggregated → no consent banner required.
 - Dashboard: Vercel → project → _Analytics_ (enable it per project).
 - Page views work on every plan.

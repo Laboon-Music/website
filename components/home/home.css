@@ -1,0 +1,1015 @@
+/* Home page ("Ondes porteuses"): a fixed wave field that each act modulates.
+   Scoped under .home; the markup is components/home/HomeScene.tsx and the
+   motion is driven by components/home/scene.ts. See docs/features/home-scene.md. */
+
+.home {
+  --blue: var(--color-brand);
+  --deep: var(--color-bg);
+  --navy: var(--color-ink);
+  --ink-soft: var(--color-ink-soft);
+  --subtitle-dark: #d2d5ff; /* on night blue: 9.3:1 */
+  --subtitle-blue: #edeeff; /* on Laboon blue: 4.6:1 */
+  --focus: var(--color-brand);
+  color: var(--navy);
+}
+
+.home .on-dark {
+  --focus: #fff;
+}
+
+.home :where(h1, h2, h3, p) {
+  margin: 0;
+}
+
+/* Titles: Sora ExtraBold. Text: Bricolage Grotesque (page font). */
+.home .display {
+  font-family: var(--font-title);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+/* ---------------------------------------------------------- wave field */
+.home .field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Backdrop of the hero + manifesto (stops placed in px by scene.ts). It sits in
+   the document, under the wave field, so it scrolls while the manifesto is pinned. */
+.home .bgflow {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 420vh;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    #fefeff 0,
+    #d2d5ff 100vh,
+    #4753ff 300vh,
+    #161a8f 420vh
+  );
+}
+
+.home main {
+  position: relative;
+  z-index: 1;
+  outline: none;
+}
+
+/* Pinned section: `--span` screens of scroll, the stage stays on screen. */
+.home .pin {
+  position: relative;
+  height: calc(var(--span) * 100vh);
+}
+
+.home .pin > .stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: clip;
+}
+
+/* ---------------------------------------------------------------- hero */
+/* The visitor lands on the wordmark and its disc. The disc turns, then grows
+   until its blue core holds the title and the signup (frame 2). On scroll it
+   keeps growing: its core floods the screen and becomes the manifesto's blue. */
+.home .disc {
+  position: fixed;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  width: 1000px;
+  height: 1000px;
+  margin: -500px 0 0 -500px;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+  /* scene.ts places it (translate + scale) and sets its opacity on every frame. Until its first frame
+     the disc would sit unscaled in the top-left corner: it stays hidden. */
+  opacity: 0;
+}
+
+.home .disc img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The motif image is cropped to the disc (public/brand/motif-*.webp): it fills the box. */
+.home .disc picture {
+  display: contents;
+}
+
+.home .disc img.disc__dot {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 2.144%;
+  height: 2.144%;
+  translate: -50% -50%;
+}
+
+.home .intro-mark {
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  width: min(788px, 86vw);
+  translate: -50% -50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.home .hero {
+  position: relative;
+  min-height: 100svh;
+  padding: calc(var(--pill-h) + 40px) var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  overflow: clip;
+}
+
+.home .hero__copy {
+  width: min(100%, 40rem);
+  min-width: 0;
+  will-change: transform, opacity;
+}
+
+.home .hero__reveal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+  color: #fff;
+  --focus: #fff;
+}
+
+.home .hero__mark {
+  display: block;
+  width: min(510px, 82vw);
+  height: auto;
+  margin-bottom: 5px;
+}
+
+.home .hero h1 {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.home .hero__lede {
+  margin-top: 16px;
+  font-weight: 400;
+  font-variation-settings: "opsz" 14;
+  font-size: 16px;
+  letter-spacing: -0.04em;
+  line-height: 1.3;
+  max-width: 24em;
+  text-wrap: balance;
+  color: var(--subtitle-blue);
+}
+
+.home .hero .signup {
+  margin-top: clamp(32px, 5.5vh, 48px);
+}
+
+@media (min-width: 861px) {
+  .home .hero h1 {
+    font-size: clamp(2rem, 2.8vw, 2.5rem);
+  }
+
+  .home .hero__lede {
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  }
+}
+
+/* Reveal: the intro hides the hero content (and the header) until the disc has
+   opened. Only when scripts run (.js is set by app/layout.tsx), and never for
+   good: after 8 s everything shows even if the scene failed to start. */
+.js .home:not(.is-revealed) .hero__reveal {
+  visibility: hidden;
+}
+
+.js .home .hero__reveal > * {
+  opacity: 0;
+  translate: 0 18px;
+  transition:
+    opacity 0.7s var(--ease),
+    translate 0.9s var(--ease);
+}
+
+.js .home.is-revealed .hero__reveal > * {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.js .home.is-revealed .hero__reveal > :nth-child(2) {
+  transition-delay: 0.08s;
+}
+
+.js .home.is-revealed .hero__reveal > :nth-child(3) {
+  transition-delay: 0.16s;
+}
+
+.js .home.is-revealed .hero__reveal > :nth-child(4) {
+  transition-delay: 0.24s;
+}
+
+.home .bar {
+  transition: opacity 0.6s var(--ease);
+}
+
+.js .home:not(.is-revealed) .bar {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Failsafe: .reveal-failsafe is set on <html> 8 s after load (app/[lang]/layout.tsx), so a scene
+   that failed to start never leaves the page empty. (Not a CSS animation: animating
+   `visibility` is not composited.) */
+.reveal-failsafe .home .hero__reveal {
+  visibility: visible;
+}
+
+.reveal-failsafe .home .hero__reveal > * {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.reveal-failsafe .home .bar {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ----------------------------------------------------------- manifesto */
+.home .manifesto .stage {
+  display: grid;
+  place-items: center;
+  padding-inline: var(--gutter);
+}
+
+.home .manifesto__line {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  max-width: 15ch;
+  text-align: center;
+  color: rgb(255 255 255 / 0.2);
+}
+
+.home .manifesto__line .w {
+  display: inline-block;
+}
+
+@media (min-width: 861px) {
+  .home .manifesto__line {
+    font-size: clamp(2.2rem, 5.6vw, 5.75rem);
+  }
+}
+
+/* -------------------------------------------------------------- values */
+/* Explicit background: it must not depend on a colour fade (white at load). */
+.home .values {
+  color: #fff;
+  background: var(--deep);
+}
+
+.home .values .stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: center;
+  gap: 28px;
+  text-align: center;
+  padding: calc(var(--pill-h) + 40px) var(--gutter) 40px;
+}
+
+.home .values__intro h2 {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.home .values__intro p {
+  margin: 16px auto 0;
+  max-width: 32ch;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.04em;
+  line-height: 1.3;
+  color: var(--subtitle-dark);
+}
+
+.home .deck-wrap {
+  display: grid;
+  justify-items: center;
+  /* the back cards hang 3 × 14 px below the deck box: keep the controls clear of them */
+  gap: calc(42px + 20px);
+}
+
+/* Previous / next buttons and dots: the scroll drives the deck, these tell how it works. */
+.home .pager {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* the stacked cards stick out 42 px to the right: keep the controls under the top card */
+  margin-right: 42px;
+  /* the cards are positioned with a z-index: stay above a card swiped away */
+  position: relative;
+  z-index: 20;
+}
+
+.home .steps .pager {
+  margin-right: 0;
+}
+
+.home .pager__arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid rgb(255 255 255 / 0.6);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease),
+    opacity 0.2s var(--ease);
+}
+
+.home .pager__arrow svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home .pager__arrow:hover:not(:disabled) {
+  background: #fff;
+  color: var(--blue);
+}
+
+.home .pager__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.home .pager__dots {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home .pager__dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.home .pager__dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.4);
+  transition:
+    width 0.3s var(--ease),
+    background-color 0.3s var(--ease);
+}
+
+.home .pager__dot[aria-current="true"]::before {
+  width: 22px;
+  background: #fff;
+}
+
+/* The deck: each back card is shifted by 14 px and more transparent. */
+.home .deck {
+  position: relative;
+  justify-self: center;
+  width: min(340px, calc(100% - 42px));
+  height: min(420px, 50svh);
+  list-style: none;
+  margin: 0 42px 0 0;
+  padding: 0;
+}
+
+.home .deck-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  padding: clamp(28px, 5svh, 44px) clamp(22px, 2.4vw, 32px);
+  background: var(--blue);
+  color: #fff;
+  will-change: transform, opacity;
+  transform-origin: 50% 120%;
+}
+
+.home .deck-card h3 {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: -0.04em;
+  line-height: 1.25;
+  max-width: 12ch;
+  text-wrap: balance;
+}
+
+.home .deck-card > * {
+  transition: opacity 0.35s var(--ease);
+}
+
+.home .deck-card.is-back > * {
+  opacity: 0;
+}
+
+.home .deck-card__icon {
+  align-self: center;
+  width: clamp(90px, 16svh, 140px);
+  height: auto;
+}
+
+.home .deck-card p {
+  align-self: center;
+  max-width: 28ch;
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+@media (min-width: 861px) {
+  .home .values .stage {
+    grid-template-columns: minmax(0, 480px) auto;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(40px, 7vw, 120px);
+    text-align: left;
+  }
+
+  .home .values__intro h2 {
+    font-size: clamp(2rem, 2.8vw, 2.5rem);
+  }
+
+  .home .values__intro p {
+    margin: 16px 0 0;
+    font-size: clamp(1.15rem, 1.67vw, 1.5rem);
+  }
+
+  .home .deck {
+    width: min(400px, 80vw);
+    height: min(490px, 60svh);
+  }
+
+  .home .deck-card h3 {
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+  }
+
+  .home .deck-card__icon {
+    width: clamp(100px, 22svh, 200px);
+  }
+
+  .home .deck-card p {
+    font-size: clamp(1.05rem, 1.55vw, 1.4rem);
+  }
+}
+
+/* -------------------------------------------------------------- steps */
+.home .steps {
+  background: linear-gradient(to bottom, var(--deep), #0f127a);
+  color: #fff;
+}
+
+.home .steps .stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: center;
+  gap: 28px;
+  text-align: center;
+  padding: calc(var(--pill-h) + 40px) var(--gutter) 40px;
+}
+
+.home .steps__intro h2 {
+  font-size: 28px;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.home .steps__intro p {
+  margin: 16px auto 0;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.04em;
+  line-height: 1.3;
+  color: var(--subtitle-dark);
+}
+
+.home .stepper {
+  display: grid;
+  justify-items: center;
+  gap: clamp(24px, 4.5vh, 40px);
+  text-align: center;
+}
+
+.home .stepper__texts {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: min(400px, 100%);
+}
+
+.home .stepper__text {
+  grid-area: 1 / 1;
+  opacity: 0;
+  translate: 0 16px;
+  transition:
+    opacity 0.5s var(--ease),
+    translate 0.7s var(--ease);
+}
+
+.home .stepper__text.is-active {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 0.12s;
+}
+
+.home .stepper__label {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+}
+
+.home .stepper__body {
+  margin-top: 16px;
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.home .stepper__visual {
+  --plate-w: min(450px, 86vw);
+  position: relative;
+  isolation: isolate;
+  width: var(--plate-w);
+  display: grid;
+  justify-items: center;
+}
+
+/* Spotlight: a cone of light falls from the top of the stage onto the white
+   disc. Two layers (wide haze + sharp core, blurred after the cut), a pool of
+   light on the disc, dust drifting in the beam (canvas), a slight sway, a
+   flicker on arrival and a pulse at each new step. */
+.home .beam {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  bottom: calc(var(--plate-w) * 0.116);
+  width: calc(var(--plate-w) * 0.95);
+  height: 140vh;
+  translate: -50% 0;
+  transform-origin: 50% 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease);
+}
+
+.home .beam > * {
+  position: absolute;
+  inset: 0;
+}
+
+.home .beam__haze {
+  filter: blur(30px);
+  mix-blend-mode: screen;
+}
+
+.home .beam__haze::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
+  background: linear-gradient(
+    to bottom,
+    rgb(140 150 255 / 0.4) 0%,
+    rgb(120 130 255 / 0.1) 50%,
+    rgb(120 130 255 / 0.08) 68%,
+    rgb(205 210 255 / 0.32) 100%
+  );
+}
+
+.home .beam__core {
+  filter: blur(9px);
+  mix-blend-mode: screen;
+}
+
+.home .beam__core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(47% 0, 53% 0, 79% 100%, 21% 100%);
+  background: linear-gradient(
+    to bottom,
+    rgb(236 238 255 / 0.6) 0%,
+    rgb(196 202 255 / 0.12) 38%,
+    rgb(196 202 255 / 0.07) 66%,
+    rgb(232 235 255 / 0.42) 86%,
+    rgb(244 245 255 / 0.62) 100%
+  );
+}
+
+.home .beam__dust {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(46% 0, 54% 0, 80% 100%, 20% 100%);
+  mix-blend-mode: screen;
+}
+
+.home .beam__pool {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: calc(var(--plate-w) * 0.116);
+  width: calc(var(--plate-w) * 0.62);
+  height: calc(var(--plate-w) * 0.16);
+  translate: -50% 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  filter: blur(8px);
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.95),
+    rgb(214 218 255 / 0.55) 45%,
+    rgb(160 168 255 / 0) 100%
+  );
+  transition:
+    opacity 0.6s var(--ease),
+    scale 0.6s var(--ease);
+}
+
+/* Nothing shows until the visitor stops on the section: the disc appears, then
+   the light, then the icon. */
+.home .stepper__plate,
+.home .stepper__icons {
+  z-index: 2;
+  opacity: 0;
+  translate: 0 12px;
+  transition:
+    opacity 0.45s var(--ease),
+    translate 0.6s var(--ease);
+}
+
+.home .steps.is-lit .stepper__plate {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.home .steps.is-lit .beam {
+  opacity: 1;
+  transition-delay: 0.08s;
+}
+
+.home .steps.is-lit .beam__pool {
+  opacity: 0.85;
+  transition-delay: 0.15s;
+}
+
+.home .steps.is-lit .stepper__icons {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 0.22s;
+}
+
+.home .steps.is-pulse .beam__pool {
+  scale: 1.18;
+  opacity: 1;
+}
+
+.home .steps.is-pulse .beam__core {
+  animation: beam-pulse 0.7s var(--ease);
+}
+
+.home .stepper__plate {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 450.66 / 104.75;
+  object-fit: fill;
+}
+
+.home .stepper__icons {
+  position: relative;
+  width: 150px;
+  aspect-ratio: 1;
+}
+
+.home .stepper__icons img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  translate: 0 36px;
+  scale: 0.86;
+  filter: drop-shadow(0 26px 22px hsl(238 90% 6% / 0.35));
+  transition:
+    opacity 0.45s var(--ease),
+    translate 0.8s var(--ease),
+    scale 0.8s var(--ease);
+}
+
+.home .stepper__icons img.is-active {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+}
+
+@media (min-width: 861px) {
+  .home .steps .stage {
+    grid-template-columns: minmax(0, 480px) minmax(0, 520px);
+    justify-content: center;
+    align-items: center;
+    gap: clamp(40px, 7vw, 120px);
+    text-align: left;
+  }
+
+  /* Text on the left over both rows; the stepper and its controls stack on the right. */
+  .home .steps__intro {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .home .stepper {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .home .steps .pager {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: center;
+  }
+
+  .home .steps__intro h2 {
+    font-size: clamp(2rem, 2.8vw, 2.5rem);
+  }
+
+  .home .steps__intro p {
+    margin-inline: 0;
+    font-size: clamp(1.15rem, 1.67vw, 1.5rem);
+  }
+
+  .home .stepper__label {
+    font-size: clamp(1.6rem, 2.2vw, 2rem);
+  }
+
+  .home .stepper__body {
+    margin-top: 24px;
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  }
+
+  .home .stepper__icons {
+    width: clamp(140px, 15vw, 216px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home:not(.is-paused) .steps.is-lit .beam {
+    animation: beam-sway 11s ease-in-out infinite;
+  }
+
+  .home:not(.is-paused) .stepper__icons {
+    animation: levitate 3.6s ease-in-out infinite;
+  }
+
+  .home:not(.is-paused) .stepper__plate {
+    animation: breathe 3.6s ease-in-out infinite;
+  }
+
+  @keyframes beam-sway {
+    0%,
+    100% {
+      rotate: -1.4deg;
+    }
+
+    50% {
+      rotate: 1.4deg;
+    }
+  }
+
+  @keyframes levitate {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scaleX(1);
+    }
+
+    50% {
+      transform: scaleX(0.94);
+    }
+  }
+}
+
+@keyframes beam-pulse {
+  0% {
+    filter: blur(9px) brightness(1);
+  }
+
+  35% {
+    filter: blur(7px) brightness(1.45);
+  }
+
+  100% {
+    filter: blur(9px) brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home .stepper__plate,
+  .home .stepper__icons,
+  .home .beam,
+  .home .beam__pool {
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
+    translate: none !important;
+  }
+}
+
+/* ----------------------------------------------------------------- end */
+.home .home-close {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--pill-h) + 60px) var(--gutter) 80px;
+}
+
+/* A solid Laboon-blue panel keeps the text away from the waves. */
+.home .home-close__inner {
+  /* Anchor target: stop under the floating header, not behind it. */
+  scroll-margin-top: calc(var(--pill-h) + 48px);
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  width: min(720px, 100%);
+  padding: clamp(36px, 6vw, 72px) 16px;
+  background: var(--blue);
+  color: #fff;
+  box-shadow:
+    0 2px 4px hsl(238 90% 8% / 0.2),
+    0 30px 70px -30px hsl(238 90% 6% / 0.6);
+}
+
+.home .home-close h2 {
+  font-size: 30px;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.home .home-close__lede {
+  margin-top: 16px;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  max-width: 30ch;
+  color: var(--subtitle-blue);
+}
+
+.home .home-close .signup {
+  margin-top: clamp(32px, 5vh, 48px);
+}
+
+@media (min-width: 401px) {
+  .home .home-close__inner {
+    padding-inline: clamp(20px, 5vw, 64px);
+  }
+}
+
+@media (min-width: 861px) {
+  .home .home-close h2 {
+    font-size: clamp(2.2rem, 4.4vw, 3.75rem);
+  }
+
+  .home .home-close__lede {
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  }
+}
+
+/* ------------------------------------------------------------------ FAQ */
+/* No background of its own: the page colour goes from night to light while the
+   visitor leaves the closing section (scene.ts). */
+.home .faq {
+  --focus: var(--color-brand);
+}
+
+/* ------------------------------------------- short screens / 200 % zoom */
+/* Cards and steps no longer fit in a pinned screen: stack them instead. */
+@media (max-height: 620px) {
+  .home .values {
+    height: auto;
+  }
+
+  .home .values .stage {
+    position: relative;
+    height: auto;
+    overflow: visible;
+    padding-block: calc(var(--pill-h) + 32px) 48px;
+  }
+
+  .home .pager {
+    display: none;
+  }
+
+  .home .deck {
+    height: auto;
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    width: min(340px, 100%);
+  }
+
+  .home .deck .deck-card {
+    position: relative;
+    inset: auto;
+    transform: none !important;
+    opacity: 1 !important;
+    gap: 16px;
+  }
+
+  .home .deck .deck-card.is-back > * {
+    opacity: 1;
+  }
+
+  .home .deck-card__icon {
+    display: none;
+  }
+
+  .home .stepper {
+    gap: 16px;
+  }
+
+  .home .stepper__icons {
+    width: 96px;
+  }
+
+  .home .stepper__visual {
+    --plate-w: min(300px, 70vw);
+  }
+
+  .home .stepper__body {
+    margin-top: 10px;
+  }
+}
+
+/* Animations paused by the visitor (button in the footer): everything freezes. */
+.home.is-paused *,
+.home.is-paused *::before,
+.home.is-paused *::after {
+  animation: none !important;
+}

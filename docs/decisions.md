@@ -112,3 +112,49 @@ changes the stack, the architecture or a convention.
 - The `Laboon-` prefix is redundant inside the `Laboon-Music` organization.
   GitHub redirects the old `Laboon-website` URL, so existing links, PRs and
   clones keep working. The `laboon-website` npm package name is unchanged.
+
+## 2026-10-20 — New brand design (product designer)
+
+- **Single light/blue brand theme** replaces the dark violet/pink one: tokens
+  redefined in `app/globals.css` (same names, so components keep working);
+  inner pages = night-blue gradient + solid blue panel, home = animated scene.
+- **Fonts via `next/font`** (Bricolage Grotesque + Sora), self-hosted: no
+  request to Google from visitors (GDPR), replaces the designer's CDN link.
+- **No Lenis** (inertial scroll from a CDN): native scroll kept — less scroll
+  hijacking, no third-party script. The scroll engine of the mockup
+  (`scrollcraft.js`, 62 KB) was replaced by a small typed module
+  (`components/home/scene.ts` + tested maths in `lib/scene-math.ts`).
+- **Mockup forms were simulated**: replaced by our real forms (API, double
+  opt-in, anti-bot). Password: only the look of the mockup is applied to
+  `/reset-password`. See the last entry for the switch to the Laboon API.
+- **Accessibility fixes over the mockup**: skip link, content visible without
+  JavaScript (intro hide has an 8 s failsafe), keyboard Tab ends the intro,
+  "pause animations" button (WCAG 2.2.2), FAQ structured data generated from
+  `content/faq.ts`.
+- Kept from our site (absent in the mockup): FAQ group "Lancement et
+  disponibilité", Facebook link, embed pages for the app, 404/error pages.
+
+## 2026-10-20 — Account links move from Supabase to the Laboon API
+
+- **Supabase removed from the website** (dependency, `lib/supabase.ts`, env vars): the new
+  Laboon API ([Laboon-Music/api](https://github.com/Laboon-Music/api)) e-mails
+  `/reset-password?code=…` and `/confirm-email?code=…`; the site sends the code and the
+  password to it. One-time code in the query string instead of tokens in the URL fragment.
+- **`/reset-password` without a code is now the "forgot password" page** (the API answers the
+  same for every address, so nothing leaks), and **`/confirm-email` is new**.
+- **Password rules follow the API** (12 characters, uppercase, digit, special character).
+- **Exception to "every public form is anti-bot protected server-side"**: these forms call the
+  API from the browser, protected by its rate limits (see account-links.md).
+
+## 2026-10-20 — English version
+
+- **French stays the default without a prefix, English under `/en`**: no existing address changes
+  (app links, e-mails, search engines). Everything lives in `app/[lang]`; `proxy.ts` rewrites.
+- **No automatic redirection by browser language**: the visitor chooses with the footer link
+  (avoids surprising people and search-engine duplicates); `hreflang` tells Google the pairs.
+- **No i18n library**: dictionaries are plain typed objects (`content/<lang>/`), the English ones are typed
+  on the French ones, so a missing translation does not compile (+ a parity test). Server code uses
+  `getContent(locale)`, client code `useUi()`.
+- **Same legal slugs in both languages** (they are shared with the app).
+- **Brevo**: one confirmation template per language (`BREVO_DOI_TEMPLATE_ID_EN`, French fallback) and a
+  `LANGUAGE` attribute.

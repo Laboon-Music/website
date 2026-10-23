@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocale, useUi } from "@/components/i18n/LocaleProvider";
 import { turnstileEnabled, type TurnstileHandle } from "@/components/antibot/Turnstile";
 
 // Client side of the anti-bot protection + submit lifecycle shared by every
@@ -8,14 +9,13 @@ import { turnstileEnabled, type TurnstileHandle } from "@/components/antibot/Tur
 
 export type FormStatus = "idle" | "loading" | "success" | "error";
 
-export const GENERIC_ERROR = "Une erreur est survenue.";
-export const TURNSTILE_TIMEOUT_ERROR =
-  "La vérification anti-robot n'a pas abouti. Recharge la page et réessaie.";
-
 /** How long a submit waits for the Turnstile token before giving up. */
 export const TURNSTILE_WAIT_MS = 15_000;
 
 export function useProtectedForm(endpoint: string) {
+  const locale = useLocale();
+  const ui = useUi();
+  const { generic: GENERIC_ERROR, turnstileTimeout: TURNSTILE_TIMEOUT_ERROR } = ui.errors;
   const [status, setStatus] = useState<FormStatus>("idle");
   const [error, setError] = useState("");
   // Honeypot value: stays empty for humans.
@@ -80,6 +80,7 @@ export function useProtectedForm(endpoint: string) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...payload,
+          locale,
           website: honeypot,
           elapsedMs: Date.now() - startedAt.current,
           turnstileToken,

@@ -21,7 +21,13 @@ describe("robotsFor", () => {
   it("keeps technical pages out of the index in production", () => {
     const rules = robotsFor("www.laboon-app.com").rules as { disallow: string[] };
     expect(rules.disallow).toEqual(
-      expect.arrayContaining(["/api/", "/legal/", "/faq/embed", "/reset-password"]),
+      expect.arrayContaining([
+        "/api/",
+        "/emails/",
+        "/legal/",
+        "/faq/embed",
+        "/reset-password",
+      ]),
     );
   });
 });

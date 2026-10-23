@@ -29,14 +29,16 @@ plan, campaigns can be sent from the same tool later.
 - API key "laboon-website".
 - ⚠️ Do **not** enable "block unauthorised IPs" on API keys: Vercel has no
   fixed IPs, every call would fail.
-- Optional: create text contact attribute `SOURCE` (the site sends `landing`).
+- Optional: create text contact attributes `SOURCE` (the site sends `landing`) and `LANGUAGE` (`fr` / `en`).
+- English confirmation template: duplicate template 1 with `emails/dist/double-optin.en.html` and set its ID in `BREVO_DOI_TEMPLATE_ID_EN`.
 
 ## Environment variables
 
-| Variable                | Prod       | Staging    |
-| ----------------------- | ---------- | ---------- |
-| `BREVO_API_KEY`         | key        | key        |
-| `BREVO_LIST_ID_LAUNCH`  | `5`        | `7`        |
-| `BREVO_LIST_ID_BETA`    | `6`        | `8`        |
-| `BREVO_DOI_TEMPLATE_ID` | `1`        | `1`        |
-| `CONTACT_TO_EMAIL`      | team inbox | team inbox |
+| Variable                   | Prod       | Staging    |
+| -------------------------- | ---------- | ---------- |
+| `BREVO_API_KEY`            | key        | key        |
+| `BREVO_LIST_ID_LAUNCH`     | `5`        | `7`        |
+| `BREVO_LIST_ID_BETA`       | `6`        | `8`        |
+| `BREVO_DOI_TEMPLATE_ID`    | `1`        | `1`        |
+| `BREVO_DOI_TEMPLATE_ID_EN` | optional   | optional   |
+| `CONTACT_TO_EMAIL`         | team inbox | team inbox |
