@@ -3,11 +3,12 @@
 Branded HTML e-mails (blue header with the wordmark, card, social links),
 readable in **light and dark mode** and on **phones**. French (informal "tu") and English, one file per language.
 
-| Template       | File                                                           | Used for                                                                                    |
-| -------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Double opt-in  | `emails/dist/double-optin.fr.html` / `.en.html`                | Brevo confirmation template (`BREVO_DOI_TEMPLATE_ID` / `_EN`), button `{{ doubleoptin }}`   |
-| Campaign frame | `emails/dist/campaign.fr.html` / `.en.html`                    | Newsletters (launch, beta invitation): edit title and text in Brevo                         |
-| App auth mails | `public/emails/auth/{confirmation,recovery,email_change}.html` | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue) |
+| Template          | File                                                           | Used for                                                                                                                                                                                                                                                  |
+| ----------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Double opt-in     | `emails/dist/double-optin.fr.html` / `.en.html`                | Brevo confirmation template (`BREVO_DOI_TEMPLATE_ID` / `_EN`), button `{{ doubleoptin }}`                                                                                                                                                                 |
+| Campaign frame    | `emails/dist/campaign.fr.html` / `.en.html`                    | Newsletters (launch, beta invitation): edit title and text in Brevo                                                                                                                                                                                       |
+| API transactional | `emails/dist/transactional/<email>.fr.html` / `.en.html`       | Laboon API mails (api#99), `{{ params.* }}` only; subjects in `transactional/subjects.md`. Brevo IDs: confirm_signup 3/4, account_exists 5/6, password_reset 7/8, password_changed 9/10, sign_in_method_added 11/12, sign_in_method_removed 13/14 (FR/EN) |
+| App auth mails    | `public/emails/auth/{confirmation,recovery,email_change}.html` | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue)                                                                                                                                                               |
 
 ## Code
 
