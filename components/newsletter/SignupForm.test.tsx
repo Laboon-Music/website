@@ -110,4 +110,23 @@ describe("SignupForm", () => {
     expect(screen.getByLabelText("Me prévenir du lancement")).toBeChecked();
     expect(screen.getByLabelText("Tester la bêta en avant-première")).not.toBeChecked();
   });
+
+  it("shrinks the e-mail group to the field from sm so the form centres it", () => {
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
+    // Label + field row: full width on mobile, as wide as the fixed-width field from sm.
+    const group = screen
+      .getByLabelText("Ton e-mail")
+      .closest(".field-row")!.parentElement!;
+    expect(group.className).toContain("w-full");
+    expect(group.className).toContain("sm:w-auto");
+  });
+
+  it("centres the checkbox block without an offset", () => {
+    render(<SignupForm texts={HOME_CONTENT.signup} />);
+    // The block is centred by the form: a side padding would push it off-centre.
+    const block = screen
+      .getByLabelText("Me prévenir du lancement")
+      .closest("label")!.parentElement!;
+    expect(block.className).not.toMatch(/\bp[lrx]-/);
+  });
 });
