@@ -1,12 +1,15 @@
 // The transactional e-mails sent by the Laboon API through Brevo templates (one template per e-mail and language,
-// api#99). Only the `{{ params.… }}` variables the API sends are used: no contact attributes, no `safe` filter (Brevo
+// api#99), also generated for listmonk (`{{ .Tx.Data.… }}`, escaped by its Go templates). Only the variables the API
+// sends are used: no contact attributes, no `safe` filter (Brevo
 // escapes params, so a first name holding HTML shows as text), no tracking pixel. Links come only from
 // `{{ params.link }}`. Wording from the API's resources/lang/{fr,en}/emails.json. See docs/features/emails.md.
 
 import { LOCALES, type Locale } from "../lib/i18n.ts";
 import { COLORS, button, p, renderEmail, small, title } from "./layout.ts";
+import { BREVO, LISTMONK, type Syntax } from "./syntax.ts";
 
-const v = (name: string) => `{{ params.${name} }}`;
+// The texts are written once with this marker, replaced by the syntax of the tool when the e-mail is rendered.
+const v = (name: string) => `%%${name}%%`;
 const gap = `<div style="height:20px;line-height:20px;">&nbsp;</div>`;
 
 type Texts = {
@@ -171,7 +174,11 @@ export const TRANSACTIONAL_PARAMS: Record<TransactionalName, string[]> = {
   sign_in_method_removed: ["firstName", "providerName", "date"],
 };
 
-export function transactional(name: TransactionalName, locale: Locale): string {
+export function transactional(
+  name: TransactionalName,
+  locale: Locale,
+  syntax: Syntax = BREVO,
+): string {
   const t: Texts = TEXTS[locale][name];
   const c = COMMON[locale];
   const link = v("link");
@@ -189,7 +196,7 @@ export function transactional(name: TransactionalName, locale: Locale): string {
   const warning = t.warningLead
     ? [p(`<strong>${t.warningLead}</strong>${t.warning}`)]
     : [];
-  return renderEmail(
+  const html = renderEmail(
     {
       preheader: t.preheader,
       body: [
@@ -206,6 +213,7 @@ export function transactional(name: TransactionalName, locale: Locale): string {
     },
     locale,
   );
+  return html.replace(/%%(\w+)%%/g, (_, param: string) => syntax.param(param));
 }
 
 export const transactionalSubject = (name: TransactionalName, locale: Locale) =>
@@ -215,13 +223,19 @@ export const TRANSACTIONAL_NAMES = Object.keys(
   TRANSACTIONAL_PARAMS,
 ) as TransactionalName[];
 
+const transactionalEmails = (syntax: Syntax) =>
+  LOCALES.flatMap((locale) =>
+    TRANSACTIONAL_NAMES.map((name) => ({
+      file: `${name}.${locale}.html`,
+      name,
+      locale,
+      subject: transactionalSubject(name, locale),
+      html: transactional(name, locale, syntax),
+    })),
+  );
+
 /** emails/dist/transactional/<name>.<lang>.html, to paste in Brevo with the subject from subjects.md. */
-export const TRANSACTIONAL_EMAILS = LOCALES.flatMap((locale) =>
-  TRANSACTIONAL_NAMES.map((name) => ({
-    file: `${name}.${locale}.html`,
-    name,
-    locale,
-    subject: transactionalSubject(name, locale),
-    html: transactional(name, locale),
-  })),
-);
+export const TRANSACTIONAL_EMAILS = transactionalEmails(BREVO);
+
+/** emails/dist/listmonk/transactional/<name>.<lang>.html, listmonk "transactional" templates. */
+export const LISTMONK_TRANSACTIONAL_EMAILS = transactionalEmails(LISTMONK);
