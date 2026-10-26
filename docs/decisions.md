@@ -158,3 +158,11 @@ changes the stack, the architecture or a convention.
 - **Same legal slugs in both languages** (they are shared with the app).
 - **Brevo**: one confirmation template per language (`BREVO_DOI_TEMPLATE_ID_EN`, French fallback) and a
   `LANGUAGE` attribute.
+
+## 2026-10-26 — E-mail templates for listmonk
+
+- **One source for Brevo and listmonk**: the texts and the layout are shared, only the variables differ
+  (`emails/syntax.ts`). The Brevo files are unchanged; listmonk ones go to `emails/dist/listmonk/`.
+- **listmonk's opt-in e-mail picks its language from the `language` attribute** (it has one system template for every
+  language), French by default like the site.
+- **Greeting from a `first_name` attribute**, not listmonk's name, which defaults to the e-mail address.
