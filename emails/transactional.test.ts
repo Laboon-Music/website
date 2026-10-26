@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { LOCALES } from "../lib/i18n";
 import {
+  LISTMONK_TRANSACTIONAL_EMAILS,
   TRANSACTIONAL_EMAILS,
   TRANSACTIONAL_NAMES,
   TRANSACTIONAL_PARAMS,
@@ -54,6 +55,29 @@ describe("transactional templates", () => {
           expect(html).toContain(`>{{ params.link }}</a>`);
         });
       }
+    },
+  );
+});
+
+describe("listmonk transactional templates", () => {
+  it("are the Brevo ones with listmonk variables", () => {
+    expect(LISTMONK_TRANSACTIONAL_EMAILS).toHaveLength(TRANSACTIONAL_EMAILS.length);
+    LISTMONK_TRANSACTIONAL_EMAILS.forEach((lm, i) => {
+      const brevo = TRANSACTIONAL_EMAILS[i];
+      expect(lm.file).toBe(brevo.file);
+      expect(lm.subject).toBe(brevo.subject);
+      expect(lm.html).toBe(
+        brevo.html.replace(/\{\{ params\.(\w+) \}\}/g, "{{ .Tx.Data.$1 }}"),
+      );
+    });
+  });
+
+  it.each(LISTMONK_TRANSACTIONAL_EMAILS)(
+    "$name ($locale) uses only .Tx.Data",
+    ({ html }) => {
+      const used = [...html.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)].map((m) => m[1]);
+      expect(used.length).toBeGreaterThan(0);
+      for (const v of used) expect(v).toMatch(/^\.Tx\.Data\.\w+$/);
     },
   );
 });
