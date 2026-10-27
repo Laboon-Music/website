@@ -77,4 +77,17 @@ change. It can only load a template **from a URL**, so the site serves them: `em
 
 ## Tests
 
-`emails/emails.test.ts`, `emails/transactional.test.ts`, `emails/auth.test.ts`. The visual check (375 px / 600 px, light / dark) is manual.
+`emails/emails.test.ts`, `emails/transactional.test.ts`, `emails/auth.test.ts`, and `emails/compat.test.ts` for every
+generated e-mail:
+
+- **Client support**: each e-mail is checked against the [caniemail](https://www.caniemail.com) database
+  (`doiuse-email`, Gmail, Apple Mail, Outlook, Yahoo, Samsung). A feature some client does not support fails the test,
+  unless it is in `ACCEPTED` with the reason the e-mail stays readable there (e.g. square buttons in Outlook on
+  Windows). Add a feature there only after checking it degrades gracefully. The package's data dates from 2023.
+- **Size**: under 102 KB, the size above which Gmail clips the message.
+- **Spam filters**: no text SpamAssassin counts as invisible (`color:transparent` or a tiny font before text): the hidden
+  preheader relies on `display:none`, `max-height:0`, `opacity:0` and `mso-hide:all` instead. It cost 2.5 points on
+  mail-tester.
+
+The visual check (375 px / 600 px, light / dark) stays manual: send a test from listmonk to Gmail (web + app) and
+Apple Mail, and run one send through [mail-tester.com](https://www.mail-tester.com) for SPF, DKIM, DMARC and spam score.
