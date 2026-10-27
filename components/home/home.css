@@ -364,9 +364,11 @@
   stroke-linejoin: round;
 }
 
-.home .pager__arrow:hover:not(:disabled) {
-  background: #fff;
-  color: var(--blue);
+@media (hover: hover) {
+  .home .pager__arrow:hover:not(:disabled) {
+    background: #fff;
+    color: var(--blue);
+  }
 }
 
 .home .pager__arrow:disabled {

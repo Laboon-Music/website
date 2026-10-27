@@ -72,6 +72,12 @@ The site **must work on mobile and desktop** (see [conventions.md](conventions.m
   `grid sm:grid-cols-2 lg:grid-cols-4`).
 - Font size of inputs ≥ 16 px (`text-base`) to avoid iOS zoom on focus.
 - Tap targets ≥ 40 px; no hover-only interactions.
+- **Hover effects only where a pointer hovers**: a touch browser keeps `:hover` on
+  the last tapped element (a button pressed then released outside stayed lit). In
+  CSS files, put every `:hover` rule inside `@media (hover: hover)`, the condition
+  Tailwind's `hover:` already uses; keep `:focus-visible` outside it for the
+  keyboard. `app/hover.test.ts` fails on a `:hover` rule left outside, except an
+  override that also targets the element without `:hover` (e.g. the loading button).
 - **No horizontal scroll** at 375 px: long words/emails use `break-words`.
 - Check every UI change at **375 px** and **≥ 1280 px** before merging.
 
