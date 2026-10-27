@@ -34,6 +34,7 @@
     "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-v8": "^5.0.5",
     "axe-core": "^4.14.0",
+    "doiuse-email": "0.4.1",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.2",
     "eslint-config-prettier": "^10.1.8",
