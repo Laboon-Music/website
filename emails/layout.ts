@@ -109,7 +109,7 @@ export function renderEmail(
 <style>${css}</style>
 </head>
 <body class="bg" style="margin:0;padding:0;background:${COLORS.paper};">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;mso-hide:all;">${preheader}&#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${preheader}&#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;</div>
 <table role="presentation" class="bg" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${COLORS.paper}" style="background:${COLORS.paper};">
 <tr><td align="center" style="padding:24px 12px;">
 ${topLine ? `<p class="soft" style="margin:0 0 12px;font-family:${FONT_TEXT};font-size:13px;color:${COLORS.inkSoft};">${topLine}</p>` : ""}

@@ -23,10 +23,17 @@ const ACCEPTED: Record<string, string> = {
   "role attribute": "accessibility hint only",
   "word-break": "the fallback link may overflow instead of wrapping",
   "display:none":
-    "hidden preheader: also hidden by max-height:0, mso-hide:all and a transparent colour",
+    "hidden preheader: also hidden by max-height:0, opacity:0 and mso-hide:all",
   overflow: "hidden preheader, see display:none",
   opacity: "hidden preheader, see display:none",
 };
+
+/**
+ * SpamAssassin's __FONT_INVIS (rulesrc/sandbox/jhardin/20_misc_testing.cf): a tiny font or `color:transparent` before
+ * text. Combined with other signals it costs up to 3 points (FONT_INVIS_MSGID scored -2.5 on mail-tester).
+ */
+const SA_FONT_INVIS =
+  /<(?!style)[a-z]+\s[^>]{1,80}(?:font(?:-size)?\s*:\s*(?:0*[01](?:\.\d+)?(?:px|pt|Q|vw|vh|vmin)|0+(?:\.\d+)?(?:cm|mm|pc|ch|rem|lh|vmax|%)|0+(?:\.0\d*)(?:em|ex|in))(?:\s[a-z]|\s*[;'])|['"\s;]color\s*:\s*transparent\s*[;'])[^>]{0,80}>[a-z0-9]/i;
 
 /** Gmail cuts an e-mail above 102 KB ("[Message clipped]"), hiding the links at the bottom. */
 const GMAIL_CLIP_BYTES = 102 * 1024;
@@ -48,6 +55,10 @@ describe.each(EMAILS)("$name", ({ html }) => {
     const errors = result.success ? [] : result.errors;
     const features = errors.map((e) => /^`([^`]+)`/.exec(e)?.[1] ?? e);
     expect([...new Set(features)].filter((f) => !(f in ACCEPTED))).toEqual([]);
+  });
+
+  it("has no text SpamAssassin counts as invisible", () => {
+    expect(html).not.toMatch(SA_FONT_INVIS);
   });
 
   it("stays under the size Gmail clips at", () => {
