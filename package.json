@@ -17,7 +17,7 @@
     "emails": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON emails/build.ts"
   },
   "dependencies": {
-    "@sentry/nextjs": "^11.9.0",
+    "@sentry/nextjs": "^11.10.0",
     "@vercel/analytics": "^2.0.1",
     "next": "^16.4.3",
     "react": "^19.3.1",
