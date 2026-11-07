@@ -18,8 +18,6 @@ explicit yes before pushing or creating anything**, even if the user said
 - Any other branch → base `staging`.
 - Uncommitted changes (`git status --short`): tell the user and ask whether
   to commit them first (conventional commit) or leave them out.
-- `gh auth status` must show the **Algodrill** account active. Otherwise stop
-  and tell the user (`gh auth switch`) — never use the work account.
 - An open PR already exists for the branch (`gh pr view --json url`)? Show
   its URL and offer to update its description instead.
 
