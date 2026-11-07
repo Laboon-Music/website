@@ -19,13 +19,3 @@ export function normalizeEmail(value: unknown): string {
 export function cleanText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
-
-/** Escapes user input before inserting it into an HTML email. */
-export function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}

@@ -24,7 +24,7 @@ No personal data is ever sent in events.
 
 ⚠️ **Custom events require the Vercel Pro plan.** On the free Hobby plan they
 are silently ignored (page views still work). Until then, conversion can be
-read from Brevo: list sizes = confirmed signups.
+read from listmonk: confirmed subscriptions of the website lists = confirmed signups.
 
 ## Tests
 

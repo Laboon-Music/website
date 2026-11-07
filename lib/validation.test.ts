@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanText, escapeHtml, isValidEmail, normalizeEmail } from "./validation";
+import { cleanText, isValidEmail, normalizeEmail } from "./validation";
 
 describe("isValidEmail", () => {
   it.each(["a@b.co", "jane.doe+tag@laboon-app.com"])("accepts %s", (email) => {
@@ -26,13 +26,5 @@ describe("cleanText", () => {
   it("trims strings and ignores other types", () => {
     expect(cleanText("  hi ")).toBe("hi");
     expect(cleanText({})).toBe("");
-  });
-});
-
-describe("escapeHtml", () => {
-  it("escapes every HTML-significant character", () => {
-    expect(escapeHtml(`<a href="x">'&'</a>`)).toBe(
-      "&lt;a href=&quot;x&quot;&gt;&#39;&amp;&#39;&lt;/a&gt;",
-    );
   });
 });

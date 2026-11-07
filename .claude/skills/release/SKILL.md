@@ -49,7 +49,7 @@ number,title,body,author`.
 From each shipped PR's **Deploy notes** section (and `.env.example` /
 `docs/deployment.md` changes in `git diff origin/main...origin/staging`),
 collect what must be done in production: env variables to set on the
-**production** Vercel project, Brevo / Supabase / Cloudflare steps. Ignore
+**production** Vercel project, listmonk / Supabase / Cloudflare steps. Ignore
 "None." notes.
 
 ## Step 3 — Title and description

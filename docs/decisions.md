@@ -166,3 +166,18 @@ changes the stack, the architecture or a convention.
 - **listmonk's opt-in e-mail picks its language from the `language` attribute** (it has one system template for every
   language), French by default like the site.
 - **Greeting from a `first_name` attribute**, not listmonk's name, which defaults to the e-mail address.
+
+## 2026-11-07 — listmonk replaces Brevo on the website
+
+- **Newsletter signup and contact form go through listmonk** (self-hosted, already used by the API), as planned in the
+  infra repo (`docs/email.md`): one tool for contacts and campaigns, Brevo is cancelled once the contacts are imported.
+- **Admin API to create, public API when the e-mail exists**: only `POST /api/subscribers` sets attributes (`language`
+  picks the opt-in e-mail language), but it answers 409 for a known address. The public `/api/public/subscription`
+  then adds the lists and resends the opt-in without touching the attributes, and needs no extra permission to look the
+  subscriber up (`subscribers:get_all` would expose every contact to a token stored on Vercel). Cost: the website
+  lists are public.
+- **One API user `laboon-website`**, `subscribers:manage` + `tx:send`, limited to the four website lists.
+- **Contact form via `/api/tx` in `external` mode** with a template holding the subject: the visitor's text only
+  travels as data, escaped by listmonk, never parsed as a template. `escapeHtml` is gone with Brevo.
+- **The opt-in click ends on listmonk's page**: listmonk cannot redirect to `/inscription-confirmee`, so the
+  `signup_confirmed` event no longer fires. Kept the page for now (follow-up: link to it from listmonk's page).

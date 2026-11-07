@@ -5,11 +5,11 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 
 | Template          | File                                                           | Used for                                                                                                                                                                                                                                                  |
 | ----------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Double opt-in     | `emails/dist/double-optin.fr.html` / `.en.html`                | Brevo confirmation template (`BREVO_DOI_TEMPLATE_ID` / `_EN`), button `{{ doubleoptin }}`                                                                                                                                                                 |
+| Double opt-in     | `emails/dist/double-optin.fr.html` / `.en.html`                | Former Brevo confirmation template, button `{{ doubleoptin }}` (the site now uses listmonk's)                                                                                                                                                             |
 | Campaign frame    | `emails/dist/campaign.fr.html` / `.en.html`                    | Newsletters (launch, beta invitation): edit title and text in Brevo                                                                                                                                                                                       |
 | API transactional | `emails/dist/transactional/<email>.fr.html` / `.en.html`       | Laboon API mails (api#99), `{{ params.* }}` only; subjects in `transactional/subjects.md`. Brevo IDs: confirm_signup 3/4, account_exists 5/6, password_reset 7/8, password_changed 9/10, sign_in_method_added 11/12, sign_in_method_removed 13/14 (FR/EN) |
 | App auth mails    | `public/emails/auth/{confirmation,recovery,email_change}.html` | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue)                                                                                                                                                               |
-| listmonk          | `emails/dist/listmonk/`                                        | The same e-mails for listmonk (not wired yet), see [Put it in listmonk](#put-it-in-listmonk)                                                                                                                                                              |
+| listmonk          | `emails/dist/listmonk/`                                        | The same e-mails for listmonk + the contact form message, see [Put it in listmonk](#put-it-in-listmonk)                                                                                                                                                   |
 
 ## Code
 
@@ -43,19 +43,23 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 
 ## Put it in listmonk
 
-Prepared for the move from Brevo to listmonk; nothing sends through listmonk yet. Files in `emails/dist/listmonk/`:
+The website's newsletter signup and contact form send through listmonk ([listmonk.md](../integrations/listmonk.md)). Files in `emails/dist/listmonk/`:
 
-| File                                         | Where in listmonk                                                                                                         |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `campaign.fr.html` / `.en.html`              | _Campaigns → Templates_ → new template, type **Campaign**                                                                 |
-| `campaign-content.fr.html` / `.en.html`      | Starter body: paste it in a new campaign, format **Raw HTML**, then write the message                                     |
-| `subscriber-optin.html`                      | Not in the interface: system template, file `static/email-templates/subscriber-optin.html` on the server (`--static-dir`) |
-| `transactional/<email>.fr.html` / `.en.html` | _Campaigns → Templates_ → type **Transactional**, subject from `transactional/subjects.md`                                |
+| File                                         | Where in listmonk                                                                                                                                                          |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `campaign.fr.html` / `.en.html`              | _Campaigns → Templates_ → new template, type **Campaign**                                                                                                                  |
+| `campaign-content.fr.html` / `.en.html`      | Starter body: paste it in a new campaign, format **Raw HTML**, then write the message                                                                                      |
+| `subscriber-optin.html`                      | Not in the interface: system template, file `static/email-templates/subscriber-optin.html` on the server (`--static-dir`)                                                  |
+| `contact-message.html`                       | _Campaigns → Templates_ → type **Transactional** `contact-message`, subject in [listmonk.md](../integrations/listmonk.md#setup-in-listmonk-one-time) (`emails/contact.ts`) |
+| `transactional/<email>.fr.html` / `.en.html` | _Campaigns → Templates_ → type **Transactional**, subject from `transactional/subjects.md`                                                                                 |
 
 - Variables: `{{ .OptinURL }}`, `{{ MessageURL }}`, `{{ UnsubscribeURL }}`, `{{ .Tx.Data.* }}` (the API's params, same
   names). listmonk escapes them (Go `html/template`), so a first name holding HTML shows as text.
 - **One opt-in template for both languages**: listmonk has a single system opt-in e-mail. It sends English when the
   subscriber's `language` attribute is `en`, French otherwise: the site must set `attribs.language` when it subscribes.
+  The **subject** follows too: listmonk takes it from `<title data-i18n>` in the rendered template
+  ([knadh/listmonk#1727](https://github.com/knadh/listmonk/issues/1727)), instead of its own subject, which exists in
+  one language only (the instance's).
 - **Greeting**: `first_name` attribute, `musicien·ne` / `musician` when empty (the site collects no name, as with Brevo).
 - **No tracking pixel** (`{{ TrackView }}` left out): no open tracking, as with Brevo today.
 - A campaign template must hold `{{ template "content" . }}` exactly once: it is where the body of the campaign goes.

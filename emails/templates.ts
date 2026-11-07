@@ -7,6 +7,7 @@ import { BREVO, LISTMONK, LISTMONK_CONTENT, type Syntax } from "./syntax.ts";
 const TEXTS = {
   fr: {
     optin: {
+      subject: "Confirme ton inscription à Laboon",
       preheader: "Confirme ton adresse pour rejoindre Laboon.",
       title: "Presque fini !",
       intro:
@@ -32,6 +33,7 @@ const TEXTS = {
   },
   en: {
     optin: {
+      subject: "Confirm your Laboon sign-up",
       preheader: "Confirm your address to join Laboon.",
       title: "Almost done!",
       intro: "Thanks for signing up to Laboon, the app to find musicians near you.",
@@ -112,11 +114,18 @@ export function campaign(locale: Locale, syntax: Syntax = BREVO): string {
 /**
  * listmonk's opt-in e-mail is a system template (`subscriber-optin.html` in its static directory), one for every
  * language: English when the subscriber's `language` attribute is `en`, French otherwise (like the site's default).
+ * The subject comes from `<title data-i18n>` (knadh/listmonk#1727): listmonk reads it in the rendered branch and
+ * removes the tag; without it, listmonk would use its own subject, in the instance's single language.
  */
 export function listmonkOptin(): string {
+  const branch = (locale: Locale) =>
+    doubleOptin(locale, LISTMONK).replace(
+      "<title>Laboon</title>",
+      `<title data-i18n>${TEXTS[locale].optin.subject}</title>`,
+    );
   return `{{ define "subscriber-optin" }}{{ if eq (.Subscriber.Attribs.language | default "fr" | toString) "en" }}
-${doubleOptin("en", LISTMONK)}{{ else }}
-${doubleOptin("fr", LISTMONK)}{{ end }}{{ end }}
+${branch("en")}{{ else }}
+${branch("fr")}{{ end }}{{ end }}
 `;
 }
 

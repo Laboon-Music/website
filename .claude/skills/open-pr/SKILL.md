@@ -70,7 +70,7 @@ Read the template and fill it in **as-is** — same sections, same order:
   change → mobile/desktop). Warn the user about any box that looks like it
   will fail (behaviour change without tests, new env variable without
   `.env.example` / `docs/deployment.md`, feature without `docs/` update).
-- **Deploy notes**: env variables to set on Vercel (prod + staging), Brevo /
+- **Deploy notes**: env variables to set on Vercel (prod + staging), listmonk /
   Supabase / Cloudflare steps — from the diff (`.env.example`, `lib/env.ts`,
   docs). `None.` if nothing.
 - Strip the template's HTML comments.

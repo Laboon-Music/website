@@ -27,6 +27,7 @@ export default async function OpenGraphImage() {
         background: "#ffffff",
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain HTML: next/image does not work here */}
       <img src={logo} width={LOGO_WIDTH} height={LOGO_HEIGHT} alt="Laboon" />
     </div>,
     size,
