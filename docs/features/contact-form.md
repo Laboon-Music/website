@@ -14,10 +14,14 @@
 2. `POST /api/contact` + anti-bot fields ([antibot.md](antibot.md)).
 3. Validation: name required (truncated to 100 chars), valid email, message
    10–5000 chars. Unknown subjects fall back to "Autre".
-4. Brevo transactional email (`/v3/smtp/email`) from
-   `Laboon - Contact <noreply@laboon-app.com>` to `CONTACT_TO_EMAIL`, with
-   **`replyTo` = the visitor**: hitting _Reply_ answers them directly.
-   User content is HTML-escaped. Tag `contact`.
+4. listmonk transactional e-mail (`POST /api/tx`, mode `external`) to
+   `CONTACT_TO_EMAIL`, from listmonk's default sender, with header
+   **`Reply-To` = the visitor**: hitting _Reply_ answers them directly.
+   The site sends the fields as data (`CONTACT_EMAIL_FIELDS`, `lib/contact.ts`);
+   the template `contact-message` (`emails/contact.ts` →
+   `emails/dist/listmonk/contact-message.html`) lays them out and builds the
+   subject `[Contact Laboon] <subject> — <name>`. listmonk escapes them, and
+   nothing the visitor typed is parsed as a template.
 
 ## Subjects
 
@@ -35,13 +39,14 @@ the top at that moment, otherwise it stays where the send button was and shows t
 Same shape as [newsletter-signup](newsletter-signup.md#api-contract):
 200 `{ ok }`, 200 `{ ok, dryRun }` locally without config, 400 `{ error }`
 for validation / anti-bot, 500 missing config online or network error, 502
-Brevo refused.
+listmonk refused.
 
 ## Configuration
 
-`BREVO_API_KEY`, `CONTACT_TO_EMAIL`.
+`LISTMONK_URL`, `LISTMONK_API_USER`, `LISTMONK_API_TOKEN`,
+`LISTMONK_CONTACT_TEMPLATE_ID`, `CONTACT_TO_EMAIL` — see [listmonk.md](../integrations/listmonk.md).
 
 ## Tests
 
 `app/api/contact/route.test.ts`, `components/contact/ContactForm.test.tsx`,
-`lib/contact.test.ts`.
+`lib/contact.test.ts`, `emails/contact.test.ts`.

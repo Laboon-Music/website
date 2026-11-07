@@ -6,7 +6,7 @@
 | ---------------- | ---------------------------------------------------------------------- |
 | Framework        | **Next.js 16** (App Router, React 19, TypeScript, Turbopack)           |
 | Styling          | **Tailwind CSS v4** (tokens in `app/globals.css`, no config file)      |
-| Email / contacts | **Brevo** REST API (no SDK, see `lib/brevo.ts`)                        |
+| Email / contacts | **listmonk** REST API (self-hosted, no SDK, see `lib/listmonk.ts`)     |
 | Anti-bot         | Honeypot + minimum delay + **Cloudflare Turnstile**                    |
 | Account links    | **Laboon API** (fetch from the browser), see account-links.md          |
 | Analytics        | **Vercel Web Analytics** (cookieless)                                  |
@@ -30,8 +30,8 @@ app/                         Routes (App Router). Pages are thin: they compose c
 ├── cgu|cgv|charte|confidentialite|mentions-legales/   Public legal pages
 ├── legal/[slug]/            Bare legal pages for the app WebView (noindex)
 ├── .well-known/             iOS / Android deep link association files
-├── api/subscribe/           POST — newsletter signup (Brevo double opt-in)
-├── api/contact/             POST — contact message (Brevo transactional email)
+├── api/subscribe/           POST — newsletter signup (listmonk double opt-in)
+├── api/contact/             POST — contact message (listmonk transactional email)
 ├── not-found.tsx, error.tsx, global-error.tsx   French error pages
 ├── opengraph-image.tsx      Generated social share image
 ├── robots.ts, sitemap.ts    SEO
@@ -60,7 +60,7 @@ lib/                         Framework-agnostic logic (pure, unit-tested)
 ├── monitoring.ts            reportError() → Vercel logs + Sentry; Sentry init
 ├── analytics.ts             trackEvent() — conversion event names
 ├── antibot.ts               Honeypot / delay / Turnstile checks (server)
-├── brevo.ts                 Brevo API client
+├── listmonk.ts              listmonk API client
 ├── contact.ts               Contact subjects & limits (shared client/server)
 ├── newsletter.ts            Signup messages (shared client/server)
 ├── http.ts                  JSON response helpers, body parsing
@@ -97,10 +97,11 @@ docs/                        This documentation
 ### Newsletter signup
 
 ```
-SignupForm ──POST /api/subscribe──▶ checkAntibot ─▶ validate ─▶ Brevo /contacts/doubleOptinConfirmation
+SignupForm ──POST /api/subscribe──▶ checkAntibot ─▶ validate ─▶ listmonk /api/subscribers
+                                                   (409, already known ─▶ /api/public/subscription)
                                                                      │
-visitor clicks link in Brevo email ◀──────────────────────────────────┘
-        └──▶ added to lists ─▶ redirected to /inscription-confirmee
+visitor clicks link in listmonk email ◀───────────────────────────────┘
+        └──▶ subscription confirmed ─▶ listmonk confirmation page
 ```
 
 Details: [features/newsletter-signup.md](features/newsletter-signup.md).
@@ -108,8 +109,8 @@ Details: [features/newsletter-signup.md](features/newsletter-signup.md).
 ### Contact
 
 ```
-ContactForm ──POST /api/contact──▶ checkAntibot ─▶ validate ─▶ Brevo /smtp/email ─▶ CONTACT_TO_EMAIL
-                                                              (replyTo = visitor)
+ContactForm ──POST /api/contact──▶ checkAntibot ─▶ validate ─▶ listmonk /api/tx ─▶ CONTACT_TO_EMAIL
+                                                              (Reply-To = visitor)
 ```
 
 Details: [features/contact-form.md](features/contact-form.md).
@@ -118,18 +119,18 @@ Details: [features/contact-form.md](features/contact-form.md).
 
 Both API routes follow the same rule:
 
-- **Locally** (`npm run dev`, tests): missing Brevo config → _dry run_ (payload
+- **Locally** (`npm run dev`, tests): missing listmonk config → _dry run_ (payload
   logged in the terminal, success returned) so forms can be tried without keys.
 - **Online** (`NODE_ENV=production`): missing config → visible error. The site
   must **never** show a success message when nothing was saved or sent.
 
 ## Environments
 
-| Env        | Branch    | Vercel project           | Brevo lists (launch / beta) |
-| ---------- | --------- | ------------------------ | --------------------------- |
-| Local      | any       | —                        | dry run                     |
-| Staging    | `staging` | `laboon-website-staging` | 7 / 8                       |
-| Production | `main`    | `laboon-website`         | 5 / 6                       |
+| Env        | Branch    | Vercel project           | listmonk lists (launch / beta)        |
+| ---------- | --------- | ------------------------ | ------------------------------------- |
+| Local      | any       | —                        | dry run                               |
+| Staging    | `staging` | `laboon-website-staging` | `Website staging — launch` / `— beta` |
+| Production | `main`    | `laboon-website`         | `Website — launch` / `Website — beta` |
 
 Environment variables are listed in [`.env.example`](../.env.example) and
 explained in [deployment.md](deployment.md).

@@ -17,7 +17,7 @@
 - [ ] Tested on **staging.laboon-app.com**, mobile and desktop
 - [ ] Forms tested on staging (signup, contact, reset password if touched)
 - [ ] New env variables set on the **production** Vercel project
-- [ ] Outside steps done in production (Brevo, Supabase, Cloudflare…), or none
+- [ ] Outside steps done in production (listmonk, Supabase, Cloudflare…), or none
 - [ ] CI green
 
 ## 🔁 After merging

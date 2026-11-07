@@ -1,10 +1,11 @@
 // Writes the e-mails: emails/dist/<name>.<lang>.html and emails/dist/transactional/ (paste them in Brevo),
-// emails/dist/listmonk/ (the same e-mails for listmonk) and public/emails/auth/<name>.html (loaded by the auth server,
+// emails/dist/listmonk/ (the same e-mails for listmonk, plus the contact form message) and public/emails/auth/<name>.html (loaded by the auth server,
 // served by the site).
 // Run: npm run emails
 
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { AUTH_EMAILS } from "./auth.ts";
+import { CONTACT_MESSAGE_HTML } from "./contact.ts";
 import { ALL_EMAILS, LISTMONK_EMAILS } from "./templates.ts";
 import { LISTMONK_TRANSACTIONAL_EMAILS, TRANSACTIONAL_EMAILS } from "./transactional.ts";
 
@@ -34,12 +35,14 @@ for (const [dir, emails] of [
   );
 }
 for (const { file, html } of LISTMONK_EMAILS) writeFileSync(new URL(file, LM_OUT), html);
+writeFileSync(new URL("contact-message.html", LM_OUT), CONTACT_MESSAGE_HTML);
 for (const { file, html } of AUTH_EMAILS) writeFileSync(new URL(file, AUTH_OUT), html);
 console.log(
   [
     ...ALL_EMAILS.map((e) => `emails/dist/${e.file}`),
     ...TRANSACTIONAL_EMAILS.map((e) => `emails/dist/transactional/${e.file}`),
     ...LISTMONK_EMAILS.map((e) => `emails/dist/listmonk/${e.file}`),
+    "emails/dist/listmonk/contact-message.html",
     ...LISTMONK_TRANSACTIONAL_EMAILS.map(
       (e) => `emails/dist/listmonk/transactional/${e.file}`,
     ),
