@@ -23,31 +23,52 @@ The website calls the **public** address (`https://lists.laboon-app.com`): Verce
 
 Log in to `https://lists.laboon-app.com/admin` with your own account.
 
-1. **Settings → General**: tick **Enable public subscription page** (needed by `/api/public/subscription`) and keep
-   **Send opt-in confirmation** ticked. _Save_.
-2. **Lists → New**, four times. Type **Public**, opt-in **Double**, tag `website`:
+Labels in English, then French (the admin follows the instance language).
 
-   | Name                       | Variable on Vercel        | Project    |
-   | -------------------------- | ------------------------- | ---------- |
-   | `Website — launch`         | `LISTMONK_LIST_ID_LAUNCH` | production |
-   | `Website — beta`           | `LISTMONK_LIST_ID_BETA`   | production |
-   | `Website staging — launch` | `LISTMONK_LIST_ID_LAUNCH` | staging    |
-   | `Website staging — beta`   | `LISTMONK_LIST_ID_BETA`   | staging    |
+1. **Settings → General** (_Paramètres → Général_), then _Save_:
+   - tick **Enable public subscription page** (_Activer la page d'abonnement publique_): needed by
+     `/api/public/subscription`;
+   - keep **Send opt-in confirmation** (_Envoyez une confirmation d'adhésion_) ticked: listmonk sends the opt-in e-mail
+     as soon as the site creates the subscriber;
+   - keep **Ask for double opt-in confirmation** (_Demander une confirmation double opt-in_) ticked: the link opens a
+     page with a button instead of confirming at once, so mail scanners that open links do not confirm for people.
+2. **Lists → New**, four times. Type **Public** (_Publique_), opt-in **Double** (_Opt-in double_), tag `website`:
 
-   The ID is the number in the list's address (`/admin/lists/<id>`).
+   | Variable on Vercel        | Production project: ID of   | Staging project: ID of   |
+   | ------------------------- | --------------------------- | ------------------------ |
+   | `LISTMONK_LIST_ID_LAUNCH` | `website-production-launch` | `website-staging-launch` |
+   | `LISTMONK_LIST_ID_BETA`   | `website-production-beta`   | `website-staging-beta`   |
 
-3. **Opt-in e-mail**: install `emails/dist/listmonk/subscriber-optin.html` as the system template
-   `static/email-templates/subscriber-optin.html` on the server ([emails.md](../features/emails.md#put-it-in-listmonk)).
-   It writes English, subject included, when the subscriber's `language` attribute is `en` (set by the site), French
-   otherwise. The opt-in e-mail cannot be edited in the admin, and the language chosen in _Settings_ applies to the
-   whole instance, not per subscriber: this file is what makes the e-mail follow the visitor's language. In Coolify, it
-   lives in a volume of its own, `listmonk-templates` mounted on `/listmonk/static` (it survives redeploys and is not
-   served publicly), written from the container's terminal at `/listmonk/static/email-templates/subscriber-optin.html`.
-   The last `./listmonk` command of the compose ends with `--static-dir=/listmonk/static`. This one file is enough:
-   listmonk overlays the folder file by file on its built-in templates (`initFS` in `cmd/init.go`, v6.2.0). The log
-   then shows `loading static files from: /listmonk/static`. The volume is not backed up: after a server rebuild, write
-   the file again (it is generated from this repository). After every `npm run emails` that changes it, write it again
-   and restart listmonk (templates are read at start-up).
+   Two variables, each with a different value per Vercel project. The staging lists keep test addresses out of the
+   real audience (one listmonk instance serves both environments). The ID is the number, not the UUID: open the
+   list, it ends the address (`/admin/lists/<id>`). The site creates subscribers by list ID and reads the UUID itself
+   when it needs it.
+
+3. **Opt-in e-mail** (done on 2026-11-07): listmonk's opt-in is a system template, not editable in the admin, and its
+   own text and subject come in the instance's single language. `emails/dist/listmonk/subscriber-optin.html` replaces
+   it: English, subject included (`<title data-i18n>`), when the subscriber's `language` attribute is `en` (set by the
+   site), French otherwise. In Coolify:
+   - the compose mounts a volume of its own, `listmonk-templates:/listmonk/static` (survives redeploys, not served
+     publicly), and the last `./listmonk` command ends with `--static-dir=/listmonk/static`;
+   - the file is written from the service's terminal (Coolify → listmonk → _Terminal_):
+
+     ```sh
+     mkdir -p /listmonk/static/email-templates && cat > /listmonk/static/email-templates/subscriber-optin.html <<'LABOON_EOF'
+     <paste the whole content of emails/dist/listmonk/subscriber-optin.html here>
+     LABOON_EOF
+     wc -c /listmonk/static/email-templates/subscriber-optin.html
+     ```
+
+     The size shown must match the file's (`13325` today); otherwise the paste was cut, run it again;
+
+   - restart listmonk (it reads the templates at start-up): the log shows
+     `loading static files from: /listmonk/static`.
+
+   This one file is enough: listmonk overlays the folder file by file on its built-in templates (`initFS` in
+   `cmd/init.go`, v6.2.0). Write it again and restart after every `npm run emails` that changes it, and after a
+   server rebuild (the volume is not backed up). Test: subscribe from `/en` and from the French page, check language
+   and subject.
+
 4. **Campaigns → Templates → New**, type **Transactional**, name `contact-message`:
    - Subject: `[Contact Laboon] {{ .Tx.Data.subject }} — {{ .Tx.Data.name }}`
    - Body: the content of `emails/dist/listmonk/contact-message.html`.
@@ -88,5 +109,5 @@ lives on Vercel.
 
 1. Brevo → _Contacts_ → filter on lists 5 and 6 (production) → _Export_ (CSV).
 2. listmonk → _Subscribers → Import_: mode **Subscribe**, subscription status **Confirmed** (they already confirmed in
-   Brevo), lists `Website — launch` / `Website — beta` (one import per list).
+   Brevo), lists `website-production-launch` / `-beta` (one import per list).
 3. Once signups and contact messages work in production, cancel Brevo (the infra repo removes its DKIM).
