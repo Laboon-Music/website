@@ -1,26 +1,21 @@
 import { checkAntibot, type AntibotFields } from "@/lib/antibot";
-import { brevoPost } from "@/lib/brevo";
 import { FEATURE_ENV, missingEnv, readEnv, readIdEnv } from "@/lib/env";
-import { localePath } from "@/lib/i18n";
 import { bodyLocale, errorsFor } from "@/lib/request-locale";
 import { isProduction, jsonError, jsonOk, readJsonBody } from "@/lib/http";
+import { listmonkCall } from "@/lib/listmonk";
 import { reportError } from "@/lib/monitoring";
 import { isValidEmail, normalizeEmail } from "@/lib/validation";
 
-// POST /api/subscribe — newsletter signup (launch and/or beta lists) with Brevo
+// POST /api/subscribe — newsletter signup (launch and/or beta lists) with listmonk
 // double opt-in. See docs/features/newsletter-signup.md.
-
-/** Brevo template of the confirmation e-mail: one per language (English falls back to French). */
-function confirmationTemplateId(locale: string): number | null {
-  const french = readIdEnv("BREVO_DOI_TEMPLATE_ID");
-  return locale === "en" ? (readIdEnv("BREVO_DOI_TEMPLATE_ID_EN") ?? french) : french;
-}
 
 type SubscribeBody = AntibotFields & {
   email: unknown;
   wantsLaunch: unknown;
   wantsBeta: unknown;
 };
+
+const FEATURE = "subscribe";
 
 export async function POST(request: Request) {
   const body = await readJsonBody<SubscribeBody>(request);
@@ -38,11 +33,11 @@ export async function POST(request: Request) {
   if (!isValidEmail(email)) return jsonError(errors.invalidEmail, 400);
   if (!wantsLaunch && !wantsBeta) return jsonError(errors.noList, 400);
 
-  // Locally, without a Brevo key, the signup is a "dry run" (logged in the
-  // terminal). Online, or with a half-configured Brevo, it is a real error:
+  // Locally, without a listmonk token, the signup is a "dry run" (logged in the
+  // terminal). Online, or with a half-configured listmonk, it is a real error:
   // never show "Merci" when nothing was saved.
-  if (!readEnv("BREVO_API_KEY") && !isProduction()) {
-    console.log("[subscribe] dry run (Brevo not configured):", {
+  if (!readEnv("LISTMONK_API_TOKEN") && !isProduction()) {
+    console.log("[subscribe] dry run (listmonk not configured):", {
       email,
       wantsLaunch,
       wantsBeta,
@@ -51,42 +46,64 @@ export async function POST(request: Request) {
   }
   const missing = missingEnv(FEATURE_ENV["newsletter signup"]);
   if (missing.length) {
-    reportError("subscribe", "Brevo is not configured", { missing });
+    reportError(FEATURE, "listmonk is not configured", { missing });
     return jsonError(errors.subscribeFailed, 500);
   }
 
-  const apiKey = readEnv("BREVO_API_KEY")!;
-  const templateId = confirmationTemplateId(locale);
-  const launchListId = readIdEnv("BREVO_LIST_ID_LAUNCH");
-  const betaListId = readIdEnv("BREVO_LIST_ID_BETA");
-  if (templateId === null || launchListId === null || betaListId === null) {
-    reportError("subscribe", "Brevo list/template id is not a positive integer");
+  const launchListId = readIdEnv("LISTMONK_LIST_ID_LAUNCH");
+  const betaListId = readIdEnv("LISTMONK_LIST_ID_BETA");
+  if (launchListId === null || betaListId === null) {
+    reportError(FEATURE, "listmonk list id is not a positive integer");
     return jsonError(errors.subscribeFailed, 500);
   }
-  // Brevo lists matching the ticked boxes.
+  // listmonk lists matching the ticked boxes.
   const listIds = [wantsLaunch && launchListId, wantsBeta && betaListId].filter(
     (id): id is number => typeof id === "number",
   );
 
   try {
-    // Double opt-in: Brevo emails a confirmation link. The contact joins the
-    // lists only after clicking it, then lands on /inscription-confirmee of the
-    // same site (prod or staging).
-    const sent = await brevoPost(
-      "/contacts/doubleOptinConfirmation",
-      apiKey,
-      {
+    // Double opt-in lists: listmonk e-mails a confirmation link and the
+    // subscription stays "unconfirmed" until it is clicked. `language` picks
+    // the language of that e-mail (emails/dist/listmonk/subscriber-optin.html).
+    const created = await listmonkCall(FEATURE, "/api/subscribers", {
+      body: {
         email,
-        includeListIds: listIds,
-        templateId,
-        redirectionUrl: `${new URL(request.url).origin}${localePath(locale, "/inscription-confirmee")}`,
-        attributes: { SOURCE: "landing", LANGUAGE: locale },
+        status: "enabled",
+        lists: listIds,
+        attribs: { language: locale, source: "landing" },
+        preconfirm_subscriptions: false,
       },
-      "subscribe",
-    );
-    return sent ? jsonOk() : jsonError(errors.subscribeFailed, 502);
+      expected: [409],
+    });
+    if (created.ok) return jsonOk();
+    if (created.status !== 409) return jsonError(errors.subscribeFailed, 502);
+
+    // Already a subscriber (other list, app account, second try): the public
+    // endpoint adds the lists, keeps the attributes and sends the opt-in again.
+    const added = await addToLists(email, listIds);
+    return added ? jsonOk() : jsonError(errors.subscribeFailed, 502);
   } catch (err) {
-    reportError("subscribe", "Brevo unreachable", {}, err);
+    reportError(FEATURE, "listmonk unreachable", {}, err);
     return jsonError(errors.network, 500);
   }
+}
+
+/** Subscribes an existing contact through `/api/public/subscription`, which takes list UUIDs. */
+async function addToLists(email: string, listIds: number[]): Promise<boolean> {
+  const uuids: string[] = [];
+  for (const id of listIds) {
+    const list = await listmonkCall(FEATURE, `/api/lists/${id}`, { method: "GET" });
+    const uuid = (list.data as { data?: { uuid?: unknown } } | null)?.data?.uuid;
+    if (!list.ok) return false;
+    if (typeof uuid !== "string") {
+      reportError(FEATURE, "listmonk list has no uuid", { listId: id });
+      return false;
+    }
+    uuids.push(uuid);
+  }
+  const res = await listmonkCall(FEATURE, "/api/public/subscription", {
+    body: { email, list_uuids: uuids },
+    auth: false,
+  });
+  return res.ok;
 }

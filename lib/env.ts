@@ -2,11 +2,12 @@
 // See .env.example and docs/deployment.md.
 
 export const ENV_NAMES = [
-  "BREVO_API_KEY",
-  "BREVO_LIST_ID_LAUNCH",
-  "BREVO_LIST_ID_BETA",
-  "BREVO_DOI_TEMPLATE_ID",
-  "BREVO_DOI_TEMPLATE_ID_EN",
+  "LISTMONK_URL",
+  "LISTMONK_API_USER",
+  "LISTMONK_API_TOKEN",
+  "LISTMONK_LIST_ID_LAUNCH",
+  "LISTMONK_LIST_ID_BETA",
+  "LISTMONK_CONTACT_TEMPLATE_ID",
   "CONTACT_TO_EMAIL",
   "TURNSTILE_SECRET_KEY",
   "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
@@ -33,7 +34,7 @@ export function readEnv(name: EnvName): string | undefined {
   return process.env[name]?.trim() || undefined;
 }
 
-/** Positive integer id (Brevo list, template); null if missing or invalid. */
+/** Positive integer id (listmonk list, template); null if missing or invalid. */
 export function readIdEnv(name: EnvName): number | null {
   const id = Number(readEnv(name));
   return Number.isInteger(id) && id > 0 ? id : null;
@@ -44,15 +45,13 @@ export function missingEnv(names: readonly EnvName[]): EnvName[] {
   return names.filter((name) => readEnv(name) === undefined);
 }
 
+/** Variables every listmonk call needs: the instance and its API user. */
+const LISTMONK = ["LISTMONK_URL", "LISTMONK_API_USER", "LISTMONK_API_TOKEN"] as const;
+
 /** Variables each feature needs to run for real (not dry run / disabled). */
 export const FEATURE_ENV: Record<string, readonly EnvName[]> = {
-  "newsletter signup": [
-    "BREVO_API_KEY",
-    "BREVO_LIST_ID_LAUNCH",
-    "BREVO_LIST_ID_BETA",
-    "BREVO_DOI_TEMPLATE_ID",
-  ],
-  "contact form": ["BREVO_API_KEY", "CONTACT_TO_EMAIL"],
+  "newsletter signup": [...LISTMONK, "LISTMONK_LIST_ID_LAUNCH", "LISTMONK_LIST_ID_BETA"],
+  "contact form": [...LISTMONK, "LISTMONK_CONTACT_TEMPLATE_ID", "CONTACT_TO_EMAIL"],
   "Turnstile anti-bot": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "TURNSTILE_SECRET_KEY"],
   "account links (password reset, e-mail confirmation)": ["NEXT_PUBLIC_API_URL"],
   "error monitoring": ["SENTRY_DSN"],

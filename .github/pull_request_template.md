@@ -40,6 +40,6 @@
 ## 🚚 Deploy notes
 
 <!-- Anything to do outside the code before/after merging: Vercel env variables
-     (prod + staging), Brevo / Supabase / Cloudflare settings… -->
+     (prod + staging), listmonk / Supabase / Cloudflare settings… -->
 
 None.

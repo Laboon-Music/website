@@ -11,17 +11,17 @@ link association files).
 
 ## Start here
 
-| Page                                 | What it covers                                        |
-| ------------------------------------ | ----------------------------------------------------- |
-| [product.md](product.md)             | Product vision, goals, audience, tone                 |
-| [architecture.md](architecture.md)   | Stack, folder layout, request flows, environments     |
-| [design-system.md](design-system.md) | Theme tokens, UI primitives, layout, responsive rules |
-| [conventions.md](conventions.md)     | Language, code style, responsive, tests, git workflow |
-| [content.md](content.md)             | How to edit the website texts (no code needed)        |
-| [testing.md](testing.md)             | How to run and write unit tests                       |
-| [deployment.md](deployment.md)       | Vercel, Brevo, DNS, Turnstile, Search Console setup   |
-| [decisions.md](decisions.md)         | Architecture decision log                             |
-| [roadmap.md](roadmap.md)             | Known gaps, TODOs and follow-ups                      |
+| Page                                 | What it covers                                         |
+| ------------------------------------ | ------------------------------------------------------ |
+| [product.md](product.md)             | Product vision, goals, audience, tone                  |
+| [architecture.md](architecture.md)   | Stack, folder layout, request flows, environments      |
+| [design-system.md](design-system.md) | Theme tokens, UI primitives, layout, responsive rules  |
+| [conventions.md](conventions.md)     | Language, code style, responsive, tests, git workflow  |
+| [content.md](content.md)             | How to edit the website texts (no code needed)         |
+| [testing.md](testing.md)             | How to run and write unit tests                        |
+| [deployment.md](deployment.md)       | Vercel, listmonk, DNS, Turnstile, Search Console setup |
+| [decisions.md](decisions.md)         | Architecture decision log                              |
+| [roadmap.md](roadmap.md)             | Known gaps, TODOs and follow-ups                       |
 
 ## Features
 
@@ -45,7 +45,7 @@ link association files).
 
 ## Integrations
 
-- [Brevo](integrations/brevo.md) — contact storage, double opt-in, transactional email
+- [listmonk](integrations/listmonk.md) — contact storage, double opt-in, contact form e-mail
 - Cloudflare Turnstile — see [antibot.md](features/antibot.md)
 - Laboon API — see [account-links.md](features/account-links.md)
 - Vercel — see [deployment.md](deployment.md)

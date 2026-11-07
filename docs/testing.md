@@ -29,12 +29,12 @@ Shared setup and helpers are in `tests/`:
 
 ## What to test
 
-| Layer               | How                                                                                                                                                              |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lib/*`             | Pure functions: inputs → outputs, edge cases                                                                                                                     |
-| API routes          | Call the exported `POST` with a `Request`; stub env with `vi.stubEnv` and network with `mockFetch`; assert status, JSON and the payload sent to Brevo/Cloudflare |
-| Components          | Render, interact with `userEvent`, assert what the user sees (roles, labels, text) and what is sent                                                              |
-| SEO / static routes | Call `sitemap()`, `robotsFor()`, `GET()` and assert their output                                                                                                 |
+| Layer               | How                                                                                                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/*`             | Pure functions: inputs → outputs, edge cases                                                                                                                        |
+| API routes          | Call the exported `POST` with a `Request`; stub env with `vi.stubEnv` and network with `mockFetch`; assert status, JSON and the payload sent to listmonk/Cloudflare |
+| Components          | Render, interact with `userEvent`, assert what the user sees (roles, labels, text) and what is sent                                                                 |
+| SEO / static routes | Call `sitemap()`, `robotsFor()`, `GET()` and assert their output                                                                                                    |
 
 Rules:
 

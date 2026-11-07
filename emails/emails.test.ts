@@ -144,6 +144,13 @@ describe("listmonk e-mails", () => {
       expect(fr).toContain('<html lang="fr"');
     });
 
+    it("sets the subject of each language through <title data-i18n>", () => {
+      const [en, fr] = optin.split("{{ else }}");
+      expect(en).toContain("<title data-i18n>Confirm your Laboon sign-up</title>");
+      expect(fr).toContain("<title data-i18n>Confirme ton inscription à Laboon</title>");
+      expect(optin).not.toContain("<title>Laboon</title>");
+    });
+
     it("carries the confirmation link on the button and as a fallback in both languages", () => {
       expect(optin.match(/href="\{\{ \.OptinURL \}\}"/g)).toHaveLength(4);
     });

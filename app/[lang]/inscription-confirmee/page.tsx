@@ -12,9 +12,9 @@ export async function generateMetadata({ params }: LangParams): Promise<Metadata
   return { title: getContent(locale).ui.confirmed.metaTitle, robots: NOINDEX };
 }
 
-// Landing page after clicking the link in the Brevo confirmation email (double
-// opt-in). Brevo redirects here once the contact is added to the lists, to the
-// page of the language of the signup. See docs/features/newsletter-signup.md.
+// "You're in" page of the signup funnel. listmonk does not redirect here after
+// the opt-in click (it shows its own page), so nothing links here for now.
+// See docs/features/newsletter-signup.md.
 export default async function InscriptionConfirmeePage({ params }: LangParams) {
   const locale = await resolveLocale(params);
   const { confirmed } = getContent(locale).ui;

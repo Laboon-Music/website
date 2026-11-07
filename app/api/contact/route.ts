@@ -1,15 +1,15 @@
 import { checkAntibot, type AntibotFields } from "@/lib/antibot";
-import { BREVO_SENDER_EMAIL, brevoPost } from "@/lib/brevo";
-import { CONTACT_LIMITS, subjectEmailLabel } from "@/lib/contact";
-import { FEATURE_ENV, missingEnv, readEnv } from "@/lib/env";
+import { CONTACT_LIMITS, subjectEmailLabel, type ContactEmailData } from "@/lib/contact";
+import { FEATURE_ENV, missingEnv, readEnv, readIdEnv } from "@/lib/env";
 import { bodyLocale, errorsFor } from "@/lib/request-locale";
 import { isProduction, jsonError, jsonOk, readJsonBody } from "@/lib/http";
 import { fmt } from "@/lib/i18n";
+import { listmonkCall } from "@/lib/listmonk";
 import { reportError } from "@/lib/monitoring";
-import { cleanText, escapeHtml, isValidEmail, normalizeEmail } from "@/lib/validation";
+import { cleanText, isValidEmail, normalizeEmail } from "@/lib/validation";
 
 // POST /api/contact — sends the contact form message to the team by email
-// (Brevo transactional email). See docs/features/contact-form.md.
+// (listmonk transactional e-mail). See docs/features/contact-form.md.
 
 type ContactBody = AntibotFields & {
   name: unknown;
@@ -45,13 +45,13 @@ export async function POST(request: Request) {
     return jsonError(fmt(errors.messageLong, { max: CONTACT_LIMITS.messageMax }), 400);
   }
 
-  // Locally, a missing Brevo config is a "dry run" (logged in the terminal) so
-  // the form can be tested without an API key. Online it is a real error: never
+  // Locally, a missing listmonk config is a "dry run" (logged in the terminal)
+  // so the form can be tested without a token. Online it is a real error: never
   // show "Message envoyé" when the message went nowhere.
   const missing = missingEnv(FEATURE_ENV["contact form"]);
   if (missing.length) {
     if (!isProduction()) {
-      console.log("[contact] dry run (Brevo not configured):", {
+      console.log("[contact] dry run (listmonk not configured):", {
         name,
         email,
         subject,
@@ -59,39 +59,35 @@ export async function POST(request: Request) {
       });
       return jsonOk({ dryRun: true });
     }
-    reportError("contact", "Brevo is not configured", { missing });
+    reportError("contact", "listmonk is not configured", { missing });
     return jsonError(errors.sendFailed, 500);
   }
 
-  const apiKey = readEnv("BREVO_API_KEY")!;
-  const to = readEnv("CONTACT_TO_EMAIL")!;
+  const templateId = readIdEnv("LISTMONK_CONTACT_TEMPLATE_ID");
+  if (templateId === null) {
+    reportError("contact", "listmonk template id is not a positive integer");
+    return jsonError(errors.sendFailed, 500);
+  }
+
+  // listmonk escapes the data in the template (emails/contact.ts) and builds
+  // the subject from it: user content is never parsed as a template.
+  const data: ContactEmailData = { name, email, subject, message, locale };
 
   try {
-    // replyTo = the visitor: hitting "Reply" in the mailbox answers them directly.
-    const sent = await brevoPost(
-      "/smtp/email",
-      apiKey,
-      {
-        sender: { name: "Laboon - Contact", email: BREVO_SENDER_EMAIL },
-        to: [{ email: to }],
-        replyTo: { email, name },
-        subject: `[Contact Laboon] ${subject} — ${name}`,
-        htmlContent: `
-          <p><strong>Nom :</strong> ${escapeHtml(name)}</p>
-          <p><strong>Email :</strong> ${escapeHtml(email)}</p>
-          <p><strong>Sujet :</strong> ${escapeHtml(subject)}</p>
-          <p><strong>Langue :</strong> ${locale}</p>
-          <hr />
-          <p style="white-space: pre-wrap">${escapeHtml(message)}</p>
-        `,
-        textContent: `Nom : ${name}\nEmail : ${email}\nSujet : ${subject}\nLangue : ${locale}\n\n${message}`,
-        tags: ["contact"],
+    // "external": the team inbox does not have to be a listmonk subscriber.
+    // Reply-To = the visitor: hitting "Reply" in the mailbox answers them directly.
+    const { ok } = await listmonkCall("contact", "/api/tx", {
+      body: {
+        subscriber_mode: "external",
+        subscriber_emails: [readEnv("CONTACT_TO_EMAIL")],
+        template_id: templateId,
+        data,
+        headers: [{ "Reply-To": email }],
       },
-      "contact",
-    );
-    return sent ? jsonOk() : jsonError(errors.sendFailed, 502);
+    });
+    return ok ? jsonOk() : jsonError(errors.sendFailed, 502);
   } catch (err) {
-    reportError("contact", "Brevo unreachable", {}, err);
+    reportError("contact", "listmonk unreachable", {}, err);
     return jsonError(errors.network, 500);
   }
 }
