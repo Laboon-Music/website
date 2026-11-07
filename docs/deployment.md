@@ -52,8 +52,9 @@ fake success). Locally, missing listmonk variables = dry run.
 
 Step by step in [integrations/listmonk.md](integrations/listmonk.md#setup-in-listmonk-one-time).
 
-- [ ] listmonk: public subscription page on, four double opt-in lists, opt-in system template,
-      `contact-message` template, API user `laboon-website`.
+- [x] listmonk: opt-in system template, FR/EN (volume `listmonk-templates`, `--static-dir`, 2026-11-07).
+- [ ] listmonk: public subscription page on, four double opt-in lists, `contact-message` template, API user
+      `laboon-website`.
 - [ ] Vercel staging: `LISTMONK_*` variables (staging lists), remove the `BREVO_*` ones, redeploy.
       Test: sign up (new address, then the same one with the other box), confirm, send a contact message and
       answer it from the inbox.
