@@ -129,8 +129,8 @@ Both API routes follow the same rule:
 | Env        | Branch    | Vercel project           | listmonk lists (launch / beta)        |
 | ---------- | --------- | ------------------------ | ------------------------------------- |
 | Local      | any       | —                        | dry run                               |
-| Staging    | `staging` | `laboon-website-staging` | `Website staging — launch` / `— beta` |
-| Production | `main`    | `laboon-website`         | `Website — launch` / `Website — beta` |
+| Staging    | `staging` | `laboon-website-staging` | `website-staging-launch` / `-beta`    |
+| Production | `main`    | `laboon-website`         | `website-production-launch` / `-beta` |
 
 Environment variables are listed in [`.env.example`](../.env.example) and
 explained in [deployment.md](deployment.md).

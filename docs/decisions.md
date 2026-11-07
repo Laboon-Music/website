@@ -179,5 +179,9 @@ changes the stack, the architecture or a convention.
 - **One API user `laboon-website`**, `subscribers:manage` + `tx:send`, limited to the four website lists.
 - **Contact form via `/api/tx` in `external` mode** with a template holding the subject: the visitor's text only
   travels as data, escaped by listmonk, never parsed as a template. `escapeHtml` is gone with Brevo.
+- **listmonk sends its own opt-in, in the visitor's language**: one system template switches body and subject
+  (`<title data-i18n>`, knadh/listmonk#1727) on the `language` attribute. Rejected: listmonk's automatic opt-in turned
+  off and the site triggering FR/EN opt-ins through `/api/tx` (owner's choice: listmonk's own workflow sends it). The file lives in a dedicated Coolify volume read with
+  `--static-dir`, not in the uploads volume (served publicly) nor inline in the compose (13 KB of HTML in the YAML).
 - **The opt-in click ends on listmonk's page**: listmonk cannot redirect to `/inscription-confirmee`, so the
   `signup_confirmed` event no longer fires. Kept the page for now (follow-up: link to it from listmonk's page).

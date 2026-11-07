@@ -49,7 +49,7 @@ The website's newsletter signup and contact form send through listmonk ([listmon
 | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `campaign.fr.html` / `.en.html`              | _Campaigns → Templates_ → new template, type **Campaign**                                                                                                                  |
 | `campaign-content.fr.html` / `.en.html`      | Starter body: paste it in a new campaign, format **Raw HTML**, then write the message                                                                                      |
-| `subscriber-optin.html`                      | Not in the interface: system template, file `static/email-templates/subscriber-optin.html` on the server (`--static-dir`)                                                  |
+| `subscriber-optin.html`                      | Not in the interface: system template, volume + `--static-dir`, see [listmonk.md](../integrations/listmonk.md) step 3                                                      |
 | `contact-message.html`                       | _Campaigns → Templates_ → type **Transactional** `contact-message`, subject in [listmonk.md](../integrations/listmonk.md#setup-in-listmonk-one-time) (`emails/contact.ts`) |
 | `transactional/<email>.fr.html` / `.en.html` | _Campaigns → Templates_ → type **Transactional**, subject from `transactional/subjects.md`                                                                                 |
 
