@@ -59,6 +59,7 @@ Step by step in [integrations/listmonk.md](integrations/listmonk.md#setup-in-lis
       Test: sign up (new address, then the same one with the other box), confirm, send a contact message and
       answer it from the inbox.
 - [ ] Vercel production: same with the production lists, after the release.
+- [ ] listmonk: Laboon theme on the public pages, logo and favicon ([listmonk-theme.md](features/listmonk-theme.md#put-it-in-listmonk)).
 - [ ] Import the Brevo contacts, then cancel Brevo ([Leaving Brevo](integrations/listmonk.md#leaving-brevo)).
 
 ## 2. GitHub — ✅ done (2026-06-14, moved 2026-10-05)

@@ -1,0 +1,407 @@
+/* Laboon look for listmonk's public pages: opt-in confirmation, unsubscribe / preferences,
+   subscription form, archive and the admin login. Pasted in listmonk → Settings → Appearance →
+   Public; it loads after listmonk's own style.css and overrides it. Mirrors the site's inner
+   pages: night-blue page, Laboon-blue panel, white pill fields and buttons.
+   Colours are the site's tokens (app/globals.css, checked by public.test.ts). Fonts are served by
+   the production site (public/fonts, CORS allowed in next.config.ts). See docs/features/listmonk-theme.md. */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("https://www.laboon-app.com/fonts/bricolage-grotesque-latin.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Sora";
+  font-style: normal;
+  font-weight: 600 800;
+  font-display: swap;
+  src: url("https://www.laboon-app.com/fonts/sora-latin.woff2") format("woff2");
+}
+
+:root {
+  --color-bg: #161a8f;
+  --color-bg-soft: #0f127a;
+  --color-surface: #4753ff;
+  --color-border: rgb(255 255 255 / 0.22);
+  --color-text: #ffffff;
+  --color-muted: #edeeff;
+  --color-ink: #000873;
+  --color-error: #b93815;
+  --color-error-bg: #fff1ec;
+  --font-sans:
+    "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-title: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Captcha widget (ALTCHA) on the subscription form. */
+  --altcha-color-base: #ffffff;
+  --altcha-color-text: var(--color-ink);
+  --altcha-color-border: #ffffff;
+  --altcha-color-border-focus: var(--color-ink);
+  --altcha-color-active: var(--color-surface);
+  --altcha-border-radius: 16px;
+  --altcha-max-width: 100%;
+  color-scheme: light;
+}
+
+/* ------------------------------------------------------------------ page */
+body {
+  min-height: 100svh;
+  background: linear-gradient(to bottom, var(--color-bg), var(--color-bg-soft) 70%) fixed;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  margin: clamp(32px, 8vh, 80px) auto 16px;
+  max-width: 560px;
+}
+
+/* The panel: solid Laboon blue, square corners, soft shadow (Card on the site). */
+.wrap {
+  padding: 40px;
+  background: var(--color-surface);
+  border: 0;
+  box-shadow:
+    0 2px 4px rgb(8 10 66 / 0.2),
+    0 30px 70px -30px rgb(6 8 50 / 0.6);
+}
+
+.header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header .logo img {
+  display: block;
+  height: 40px;
+  max-width: 180px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 16px;
+  font-family: var(--font-title);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin: 0 0 16px;
+}
+
+/* Links in text: white, underlined (TextLink on the site). */
+a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 0.5);
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--color-text);
+  text-decoration-color: currentColor;
+}
+
+:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- fields */
+label {
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* listmonk puts the label and its field in one <p>: the label sits on its own line. */
+.form p > label {
+  display: block;
+  margin: 0 0 8px 4px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  height: 52px;
+  padding: 0 20px;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: none;
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 16px; /* 16 px: iOS does not zoom into the field. */
+  font-weight: 500;
+}
+
+input::placeholder {
+  color: #5a60b0;
+}
+
+input:focus {
+  border-color: #ffffff;
+}
+
+/* ------------------------------------------------------------ checkboxes */
+/* White outline, filled white with a navy tick when checked (Checkbox on the site). */
+.lists {
+  margin: 24px 0 0;
+}
+
+.lists h2 {
+  font-size: 1.25rem;
+}
+
+.lists li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  margin: 0 0 8px;
+}
+
+.lists label {
+  font-weight: 500;
+}
+
+.lists .description {
+  flex-basis: 100%;
+  margin: 0 0 8px 32px;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+input[type="checkbox"]:not(.altcha input),
+input[type="radio"] {
+  appearance: none;
+  display: grid;
+  flex: none;
+  place-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border: 2px solid #ffffff;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input[type="checkbox"]:not(.altcha input)::after {
+  content: "";
+  width: 14px;
+  height: 11px;
+  scale: 0;
+  transition: scale 0.14s ease;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='11' viewBox='0 0 14 11'%3E%3Cpath d='M1.5 5.5l3.8 3.8L12.5 1.8' fill='none' stroke='%23000873' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 14px 11px no-repeat;
+}
+
+input[type="radio"]::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  scale: 0;
+  transition: scale 0.14s ease;
+  background: var(--color-ink);
+}
+
+input[type="checkbox"]:not(.altcha input):checked,
+input[type="radio"]:checked {
+  background: #ffffff;
+}
+
+input[type="checkbox"]:not(.altcha input):checked::after,
+input[type="radio"]:checked::after {
+  scale: 1;
+}
+
+@media (forced-colors: active) {
+  input[type="checkbox"]:not(.altcha input):checked,
+  input[type="radio"]:checked {
+    background: CanvasText;
+  }
+}
+
+/* --------------------------------------------------------------- captcha */
+.form .captcha {
+  margin: 24px 0;
+}
+
+/* White box: navy text (the page's white labels and links would vanish in it). */
+.altcha,
+.altcha label,
+.altcha a {
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.altcha-footer {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------- buttons */
+/* White pill, navy uppercase label; hover: blue halo with a white label (.btn--text on the site).
+   Outline variant: blue fill, white outline (.btn--reverted). */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 48px;
+  padding: 13px 24px;
+  border: 0;
+  border-radius: 200px;
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color 0.35s var(--ease),
+    background-color 0.35s var(--ease),
+    scale 0.35s var(--ease);
+}
+
+.button:hover,
+.button:focus-visible {
+  scale: 1.05;
+  background: radial-gradient(
+    closest-side,
+    #4753ff 0%,
+    #4753ff 36%,
+    #5863ff 45%,
+    #eaecff 84%,
+    #fff 100%
+  );
+  color: #ffffff;
+  /* White label over the light edge of the halo keeps a blue glow (contrast). */
+  text-shadow:
+    0 0 1px #4753ff,
+    0 0 3px #4753ff,
+    0 0 6px #4753ff,
+    0 0 10px #4753ff;
+}
+
+.button:active {
+  scale: 0.98;
+}
+
+.button.button-outline {
+  border: 2px solid #ffffff;
+  background: var(--color-surface);
+  color: #ffffff;
+}
+
+.button.button-outline:hover,
+.button.button-outline:focus-visible {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: var(--color-ink);
+  text-shadow: none;
+}
+
+/* ------------------------------------------------------- other elements */
+.unsub-all {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+
+.error {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.archive .date {
+  color: var(--color-muted);
+}
+
+.pg-page {
+  color: var(--color-text);
+}
+
+footer.container {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+footer a,
+footer a:hover {
+  color: var(--color-muted);
+}
+
+/* ---------------------------------------------------------------- phones */
+@media screen and (max-width: 650px) {
+  body {
+    padding: 0 16px;
+  }
+
+  .wrap {
+    margin: 24px 0 0;
+    padding: 24px;
+  }
+
+  .header .logo img {
+    height: 32px;
+  }
+
+  .button {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .right {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+
+  .button:hover,
+  .button:focus-visible,
+  .button:active {
+    scale: 1;
+  }
+}

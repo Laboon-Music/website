@@ -42,6 +42,7 @@ link association files).
 | Analytics & conversion events                       | all pages                                                                           | [analytics.md](features/analytics.md)                 |
 | Monitoring & alerting (Sentry)                      | server                                                                              | [monitoring.md](features/monitoring.md)               |
 | Error pages (404 / 500)                             | any                                                                                 | [error-pages.md](features/error-pages.md)             |
+| listmonk public pages theme                         | `lists.laboon-app.com` (opt-in, unsubscribe, login)                                 | [listmonk-theme.md](features/listmonk-theme.md)       |
 
 ## Integrations
 

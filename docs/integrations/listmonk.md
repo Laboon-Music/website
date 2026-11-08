@@ -77,6 +77,8 @@ Labels in English, then French (the admin follows the instance language).
    `website-lists`: the four lists above, with **Get** and **Manage**.
 6. **Users → New**, type **API**, name `laboon-website`, roles `website` + `website-lists`. Copy the token now (it
    is shown once) into the team password manager.
+7. **Look of the public pages** (confirmation, unsubscribe, login): paste the site's theme, see
+   [listmonk-theme.md](../features/listmonk-theme.md#put-it-in-listmonk).
 
 Never give this user `subscribers:get_all`, `subscribers:sql_query`, `lists:manage_all` or the settings: the token
 lives on Vercel.
