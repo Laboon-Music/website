@@ -11,8 +11,6 @@ it**. Merging stays with the user — never merge the release PR yourself.
 
 ## Step 0 — Preconditions
 
-- `gh auth status`: the **Algodrill** account must be active. Otherwise stop
-  and tell the user (`gh auth switch`) — never use the work account.
 - `git fetch origin main staging`.
 - Nothing to release (`git log --oneline origin/main..origin/staging` is
   empty)? Say so and stop.
