@@ -9,11 +9,11 @@ noticed within minutes, not weeks. Server failures are reported to
 Everything goes through `reportError(feature, message, context, error?)`
 (`lib/monitoring.ts`), which logs to the Vercel logs **and** sends to Sentry:
 
-| Feature tag | When                                                          |
-| ----------- | ------------------------------------------------------------- |
-| `subscribe` | Brevo not configured online, Brevo refused, Brevo unreachable |
-| `contact`   | same, for the contact form                                    |
-| `turnstile` | Cloudflare verification endpoint unreachable                  |
+| Feature tag | When                                                                   |
+| ----------- | ---------------------------------------------------------------------- |
+| `subscribe` | listmonk not configured online, listmonk refused, listmonk unreachable |
+| `contact`   | same, for the contact form                                             |
+| `turnstile` | Cloudflare verification endpoint unreachable                           |
 
 Plus every unhandled server error (`onRequestError` in `instrumentation.ts`).
 Validation errors (bad email, too fast…) are visitor mistakes, not reported.
@@ -23,7 +23,7 @@ Validation errors (bad email, too fast…) are visitor mistakes, not reported.
 Sentry is configured to collect **no personal data**: no request bodies
 (they contain emails, names, messages), headers, cookies, query strings, user
 info or stack variables. Only what `reportError` passes explicitly is sent,
-and callers must never pass personal data (Brevo error codes, statuses and
+and callers must never pass personal data (listmonk paths and statuses, never its messages, and
 names of missing variables only). Server-side only: no Sentry script is
 loaded in visitors' browsers.
 
@@ -39,4 +39,4 @@ Without `SENTRY_DSN`, errors are only logged (nothing breaks).
 
 ## Tests
 
-`lib/monitoring.test.ts`, `lib/env.test.ts`, `lib/brevo.test.ts`.
+`lib/monitoring.test.ts`, `lib/env.test.ts`, `lib/listmonk.test.ts`.

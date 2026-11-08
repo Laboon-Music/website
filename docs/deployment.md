@@ -1,4 +1,4 @@
-# Deployment — Vercel, Brevo, domain, Turnstile, Search Console
+# Deployment — Vercel, listmonk, domain, Turnstile, Search Console
 
 Step-by-step guide for the manual setup (accounts, DNS, env variables) plus
 the day-to-day release workflow. Checkbox states reflect the last update of
@@ -30,32 +30,36 @@ Set them in Vercel → project → _Settings → Environment Variables_, on **bo
 projects, then **Redeploy** (a variable is only picked up by a new build).
 Full list with comments: [`.env.example`](../.env.example).
 
-| Variable                                                  | Feature                 | Notes                                                                      |
-| --------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------- |
-| `BREVO_API_KEY`                                           | signup, contact         | [brevo.md](integrations/brevo.md)                                          |
-| `BREVO_LIST_ID_LAUNCH` / `BREVO_LIST_ID_BETA`             | signup                  | prod `5`/`6`, staging `7`/`8`                                              |
-| `BREVO_DOI_TEMPLATE_ID`                                   | signup                  | `1`                                                                        |
-| `BREVO_DOI_TEMPLATE_ID_EN`                                | signup (English)        | optional: English confirmation template (else the French one)              |
-| `CONTACT_TO_EMAIL`                                        | contact                 | inbox receiving messages                                                   |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | anti-bot                | _Production_ environment only                                              |
-| `NEXT_PUBLIC_API_URL`                                     | account links           | Laboon API base URL with `/v1` (+ site origin in the API's `CORS_ORIGINS`) |
-| `NEXT_PUBLIC_API_STAGING_KEY`                             | account links (staging) | value of the `X-Laboon-Staging` header (staging only; empty in production) |
-| `SENTRY_DSN`                                              | error alerts            | same value on both projects (environments are told apart automatically)    |
+| Variable                                                    | Feature                 | Notes                                                                      |
+| ----------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------- |
+| `LISTMONK_URL` / `LISTMONK_API_USER` / `LISTMONK_API_TOKEN` | signup, contact         | [listmonk.md](integrations/listmonk.md)                                    |
+| `LISTMONK_LIST_ID_LAUNCH` / `LISTMONK_LIST_ID_BETA`         | signup                  | one pair of lists per environment                                          |
+| `LISTMONK_CONTACT_TEMPLATE_ID`                              | contact                 | transactional template `contact-message`                                   |
+| `CONTACT_TO_EMAIL`                                          | contact                 | inbox receiving messages                                                   |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`   | anti-bot                | _Production_ environment only                                              |
+| `NEXT_PUBLIC_API_URL`                                       | account links           | Laboon API base URL with `/v1` (+ site origin in the API's `CORS_ORIGINS`) |
+| `NEXT_PUBLIC_API_STAGING_KEY`                               | account links (staging) | value of the `X-Laboon-Staging` header (staging only; empty in production) |
+| `SENTRY_DSN`                                                | error alerts            | same value on both projects (environments are told apart automatically)    |
 
 Online, a missing variable makes the related form show an error (never a
-fake success). Locally, missing Brevo variables = dry run.
+fake success). Locally, missing listmonk variables = dry run.
 
 **After each deploy**, Vercel → project → _Logs_: lines starting with
 `[env]` list the features that are missing variables (e.g.
 `[env] contact form: missing CONTACT_TO_EMAIL`). No `[env]` line = all set.
 
-## 1. Brevo — ✅ done (2026-09-27)
+## 1. listmonk — to do (replaces Brevo, 2026-11-07)
 
-Account, domain, lists, template and API key are set up — details in
-[integrations/brevo.md](integrations/brevo.md).
+Step by step in [integrations/listmonk.md](integrations/listmonk.md#setup-in-listmonk-one-time).
 
-- [x] Brevo variables on the staging project, tested (signup → lists 7 and 8).
-- [ ] Confirm Brevo variables on the production project (lists 5 and 6).
+- [x] listmonk: opt-in system template, FR/EN (volume `listmonk-templates`, `--static-dir`, 2026-11-07).
+- [ ] listmonk: public subscription page on, four double opt-in lists, `contact-message` template, API user
+      `laboon-website`.
+- [ ] Vercel staging: `LISTMONK_*` variables (staging lists), remove the `BREVO_*` ones, redeploy.
+      Test: sign up (new address, then the same one with the other box), confirm, send a contact message and
+      answer it from the inbox.
+- [ ] Vercel production: same with the production lists, after the release.
+- [ ] Import the Brevo contacts, then cancel Brevo ([Leaving Brevo](integrations/listmonk.md#leaving-brevo)).
 
 ## 2. GitHub — ✅ done (2026-06-14, moved 2026-10-05)
 
@@ -174,7 +178,7 @@ Free plan is enough. Sentry emails you when a signup or contact message fails.
 - [x] After deploying to staging, check the Vercel logs show no
       `[env] error monitoring: missing SENTRY_DSN` line. ✅ Staging OK (2026-10-05):
       no `[env]` line at all, every feature is configured.
-- [ ] Test on staging: temporarily set a wrong `BREVO_API_KEY`, sign up,
+- [ ] Test on staging: temporarily set a wrong `LISTMONK_API_TOKEN`, sign up,
       check the issue appears in Sentry (environment `staging`), restore the key.
 
 ## GDPR / legal

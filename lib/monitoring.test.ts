@@ -63,10 +63,10 @@ describe("initMonitoring", () => {
 describe("reportError", () => {
   it("logs and sends a message to Sentry", () => {
     const { error } = silenceConsole();
-    reportError("subscribe", "Brevo is not configured", { missing: ["X"] });
+    reportError("subscribe", "listmonk is not configured", { missing: ["X"] });
     expect(error).toHaveBeenCalled();
     expect(Sentry.captureMessage).toHaveBeenCalledWith(
-      "[subscribe] Brevo is not configured",
+      "[subscribe] listmonk is not configured",
       "error",
     );
   });
@@ -74,7 +74,7 @@ describe("reportError", () => {
   it("sends exceptions as exceptions", () => {
     silenceConsole();
     const err = new Error("down");
-    reportError("contact", "Brevo unreachable", {}, err);
+    reportError("contact", "listmonk unreachable", {}, err);
     expect(Sentry.captureException).toHaveBeenCalledWith(err);
   });
 });

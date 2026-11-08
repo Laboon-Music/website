@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="fr">
+<body style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#000873;">
+<p><strong>Nom :</strong> {{ .Tx.Data.name }}</p>
+<p><strong>Email :</strong> {{ .Tx.Data.email }}</p>
+<p><strong>Sujet :</strong> {{ .Tx.Data.subject }}</p>
+<p><strong>Langue :</strong> {{ .Tx.Data.locale }}</p>
+<hr>
+<p style="white-space:pre-wrap;">{{ .Tx.Data.message }}</p>
+</body>
+</html>

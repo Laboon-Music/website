@@ -28,7 +28,7 @@ npm run dev          # http://localhost:3000
 
 ## Features
 
-Newsletter signup (launch / beta, Brevo double opt-in) · contact form ·
+Newsletter signup (launch / beta, listmonk double opt-in) · contact form ·
 invisible anti-bot protection · social links · legal documents (+ app
 WebView embed) · password reset fallback · iOS/Android deep links · SEO &
 share image · analytics & conversion events · error monitoring (Sentry) ·

@@ -61,15 +61,28 @@
     scale 0.5s var(--ease);
 }
 
-.btn:hover::before,
+/* Hover styles only apply where the pointer can really hover (same condition as
+   Tailwind's `hover:`). A touch browser keeps :hover on the last tapped element, so a
+   button pressed then released outside stayed lit until the next tap elsewhere. Each
+   hover rule stays at its place in the cascade, inside its own media block. */
 .btn:focus-visible::before {
   opacity: 1;
 }
 
-.btn:hover,
 .btn:focus-visible {
   scale: 1.05;
   text-shadow: var(--btn-glow);
+}
+
+@media (hover: hover) {
+  .btn:hover::before {
+    opacity: 1;
+  }
+
+  .btn:hover {
+    scale: 1.05;
+    text-shadow: var(--btn-glow);
+  }
 }
 
 .btn:active {
@@ -182,14 +195,22 @@
   );
 }
 
-.btn--text:hover,
 .btn--text:focus-visible {
   color: #fff;
 }
 
-.btn--text:hover::before,
 .btn--text:focus-visible::before {
   scale: 1;
+}
+
+@media (hover: hover) {
+  .btn--text:hover {
+    color: #fff;
+  }
+
+  .btn--text:hover::before {
+    scale: 1;
+  }
 }
 
 /* Outlines sit outside the 44 px box: visible height 44 + 2 + 2 = 48 px. */
@@ -217,18 +238,30 @@
     opacity 0.16s linear 0.26s;
 }
 
-.btn--stroke:hover,
 .btn--stroke:focus-visible {
   color: #fff;
   background-color: #4753ff;
 }
 
-.btn--stroke:hover::before,
 .btn--stroke:focus-visible::before {
   scale: 1;
   transition:
     opacity 0.3s var(--ease),
     scale 0.55s var(--ease);
+}
+
+@media (hover: hover) {
+  .btn--stroke:hover {
+    color: #fff;
+    background-color: #4753ff;
+  }
+
+  .btn--stroke:hover::before {
+    scale: 1;
+    transition:
+      opacity 0.3s var(--ease),
+      scale 0.55s var(--ease);
+  }
 }
 
 .btn--reverted {
@@ -249,9 +282,14 @@
   );
 }
 
-.btn--reverted:hover,
 .btn--reverted:focus-visible {
   background-color: #fff;
+}
+
+@media (hover: hover) {
+  .btn--reverted:hover {
+    background-color: #fff;
+  }
 }
 
 @media (max-width: 860px) {
@@ -267,6 +305,7 @@
     transition: none;
   }
 
+  .btn,
   .btn:hover,
   .btn:focus-visible,
   .btn:active {
@@ -401,8 +440,10 @@ textarea[aria-invalid="true"] {
   color: #fff;
 }
 
-.disclosure:hover:not([open]) {
-  background: #eef0ff;
+@media (hover: hover) {
+  .disclosure:hover:not([open]) {
+    background: #eef0ff;
+  }
 }
 
 .disclosure::details-content {

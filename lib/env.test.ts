@@ -16,20 +16,23 @@ describe("readEnv", () => {
 
 describe("readIdEnv", () => {
   it("reads a positive integer", () => {
-    vi.stubEnv("BREVO_LIST_ID_BETA", "8");
-    expect(readIdEnv("BREVO_LIST_ID_BETA")).toBe(8);
+    vi.stubEnv("LISTMONK_LIST_ID_BETA", "8");
+    expect(readIdEnv("LISTMONK_LIST_ID_BETA")).toBe(8);
   });
 
   it.each(["", "abc", "0", "-3", "1.5"])("returns null for %j", (value) => {
-    vi.stubEnv("BREVO_LIST_ID_BETA", value);
-    expect(readIdEnv("BREVO_LIST_ID_BETA")).toBeNull();
+    vi.stubEnv("LISTMONK_LIST_ID_BETA", value);
+    expect(readIdEnv("LISTMONK_LIST_ID_BETA")).toBeNull();
   });
 });
 
 describe("missingEnv / envReport", () => {
   it("lists missing variables per feature", () => {
     clearAll();
-    vi.stubEnv("BREVO_API_KEY", "key");
+    vi.stubEnv("LISTMONK_URL", "https://lists.example.com");
+    vi.stubEnv("LISTMONK_API_USER", "website");
+    vi.stubEnv("LISTMONK_API_TOKEN", "token");
+    vi.stubEnv("LISTMONK_CONTACT_TEMPLATE_ID", "20");
     expect(missingEnv(FEATURE_ENV["contact form"])).toEqual(["CONTACT_TO_EMAIL"]);
     expect(envReport()).toContain("contact form: missing CONTACT_TO_EMAIL");
   });

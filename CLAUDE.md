@@ -9,7 +9,7 @@ before changing a feature. Act as **tech lead / architect**: keep the codebase
 simple, consistent and clean; challenge changes that add duplication.
 
 The project owner is **not a developer**: explain manual steps (Vercel,
-Brevo, Cloudflare…) step by step, and automate whatever can be automated.
+listmonk, Cloudflare…) step by step, and automate whatever can be automated.
 
 ## Non-negotiable rules
 
@@ -49,7 +49,7 @@ Brevo, Cloudflare…) step by step, and automate whatever can be automated.
 ## Stack
 
 Next.js 16 (App Router, React 19, TypeScript strict) · Tailwind CSS v4 ·
-Brevo (emails) · Cloudflare Turnstile (anti-bot) · Laboon API (account links) ·
+listmonk (emails, self-hosted) · Cloudflare Turnstile (anti-bot) · Laboon API (account links) ·
 Vercel (hosting + analytics) · Sentry (server error alerts) · Vitest · Prettier.
 
 ## Layout

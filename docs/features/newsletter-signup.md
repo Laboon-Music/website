@@ -21,35 +21,44 @@ Once the API accepts the signup, the visitor is sent to **`/inscription-envoyee`
    lancement_ (ticked by default) and/or _Devenir beta testeur·euse_.
 2. `POST /api/subscribe` with `{ email, wantsLaunch, wantsBeta }` + anti-bot
    fields ([antibot.md](antibot.md)).
-3. The API validates, then calls Brevo **double opt-in**
-   (`/v3/contacts/doubleOptinConfirmation`) with the matching list ids and
-   template `BREVO_DOI_TEMPLATE_ID`.
-4. Brevo emails a confirmation link. The contact joins the lists **only after
-   clicking it** (GDPR, prevents signing someone up without consent).
-5. Brevo redirects to `/inscription-confirmee` **on the same origin** as the
-   form (prod → prod, staging → staging).
+3. The API validates, then creates the subscriber in listmonk
+   (`POST /api/subscribers`) on the matching **double opt-in** lists, with
+   `preconfirm_subscriptions: false`.
+4. listmonk emails a confirmation link (system template, from
+   `emails/dist/listmonk/subscriber-optin.html`). The subscription stays
+   _unconfirmed_ **until the link is clicked** (GDPR, prevents signing someone
+   up without consent); campaigns only reach confirmed subscriptions.
+5. The click lands on listmonk's confirmation page (`lists.laboon-app.com`):
+   listmonk does not redirect to the site, so `/inscription-confirmee` (and the
+   `signup_confirmed` event) is not reached any more.
 
-The contact gets attribute `SOURCE=landing`.
+Already in listmonk (other list, app account, second try): listmonk answers 409,
+the API reads the UUIDs of the lists (`GET /api/lists/{id}`) and calls the
+public `POST /api/public/subscription`, which adds the lists, keeps the
+attributes and sends the confirmation again.
+
+The subscriber gets attributes `language` (`fr` / `en`, picks the language of
+the confirmation e-mail) and `source: "landing"`.
 
 ## API contract
 
 | Case                                                         | Status | Body                           |
 | ------------------------------------------------------------ | ------ | ------------------------------ |
 | Success                                                      | 200    | `{ ok: true }`                 |
-| Local dry run (no `BREVO_API_KEY`)                           | 200    | `{ ok: true, dryRun: true }`   |
+| Local dry run (no `LISTMONK_API_TOKEN`)                      | 200    | `{ ok: true, dryRun: true }`   |
 | Honeypot filled                                              | 200    | `{ ok: true }` (nothing saved) |
 | Invalid JSON / email / no list / too fast / Turnstile failed | 400    | `{ error }` (French)           |
 | Missing config online                                        | 500    | `{ error }`                    |
-| Brevo refused                                                | 502    | `{ error }`                    |
-| Brevo unreachable                                            | 500    | `{ error }`                    |
+| listmonk refused                                             | 502    | `{ error }`                    |
+| listmonk unreachable                                         | 500    | `{ error }`                    |
 
 `wantsLaunch` / `wantsBeta` must be real booleans (`true`).
 
 ## Configuration
 
-`BREVO_API_KEY`, `BREVO_LIST_ID_LAUNCH`, `BREVO_LIST_ID_BETA`,
-`BREVO_DOI_TEMPLATE_ID` — see [brevo.md](../integrations/brevo.md).
+`LISTMONK_URL`, `LISTMONK_API_USER`, `LISTMONK_API_TOKEN`,
+`LISTMONK_LIST_ID_LAUNCH`, `LISTMONK_LIST_ID_BETA` — see [listmonk.md](../integrations/listmonk.md).
 
 ## Tests
 
-`app/api/subscribe/route.test.ts`, `components/newsletter/SignupForm.test.tsx`.
+`app/api/subscribe/route.test.ts`, `components/newsletter/SignupForm.test.tsx`, `lib/listmonk.test.ts`.
