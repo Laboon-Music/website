@@ -194,3 +194,10 @@ changes the stack, the architecture or a convention.
 - **Fonts served by the site** (`public/fonts`, open to other origins) rather than Google Fonts: no visitor request
   to Google, as on the site.
 - **Colours copied, not generated**: a hand-written file stays readable to paste; a test keeps it equal to the tokens.
+
+## 2026-11-09 — Brevo templates removed
+
+- **listmonk is the only target of `emails/`**: neither the website nor the API sends through Brevo any more, so the
+  Brevo files and the `Syntax` switch of 2026-10-26 are gone. `emails/dist/listmonk/` keeps its address and its content.
+  The migration steps stay until the contacts are imported and Brevo is cancelled
+  ([Leaving Brevo](integrations/listmonk.md#leaving-brevo)).

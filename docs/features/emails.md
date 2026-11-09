@@ -3,24 +3,24 @@
 Branded HTML e-mails (blue header with the wordmark, card, social links),
 readable in **light and dark mode** and on **phones**. French (informal "tu") and English, one file per language.
 
-| Template          | File                                                           | Used for                                                                                                                                                                                                                                                  |
-| ----------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Double opt-in     | `emails/dist/double-optin.fr.html` / `.en.html`                | Former Brevo confirmation template, button `{{ doubleoptin }}` (the site now uses listmonk's)                                                                                                                                                             |
-| Campaign frame    | `emails/dist/campaign.fr.html` / `.en.html`                    | Newsletters (launch, beta invitation): edit title and text in Brevo                                                                                                                                                                                       |
-| API transactional | `emails/dist/transactional/<email>.fr.html` / `.en.html`       | Laboon API mails (api#99), `{{ params.* }}` only; subjects in `transactional/subjects.md`. Brevo IDs: confirm_signup 3/4, account_exists 5/6, password_reset 7/8, password_changed 9/10, sign_in_method_added 11/12, sign_in_method_removed 13/14 (FR/EN) |
-| App auth mails    | `public/emails/auth/{confirmation,recovery,email_change}.html` | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue)                                                                                                                                                               |
-| listmonk          | `emails/dist/listmonk/`                                        | The same e-mails for listmonk + the contact form message, see [Put it in listmonk](#put-it-in-listmonk)                                                                                                                                                   |
+| Template             | File                                                              | Used for                                                                                    |
+| -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Double opt-in        | `emails/dist/listmonk/subscriber-optin.html`                      | Confirmation of the newsletter signup, both languages in one file                           |
+| Campaign frame       | `emails/dist/listmonk/campaign.fr.html` / `.en.html`              | Newsletters (launch, beta invitation), with a starter body in `campaign-content.*.html`     |
+| API transactional    | `emails/dist/listmonk/transactional/<email>.fr.html` / `.en.html` | Laboon API mails (api#99), `{{ .Tx.Data.* }}` only; subjects in `transactional/subjects.md` |
+| Contact form message | `emails/dist/listmonk/contact-message.html`                       | Message from the contact form to the team                                                   |
+| App auth mails       | `public/emails/auth/{confirmation,recovery,email_change}.html`    | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue) |
+
+See [Put it in listmonk](#put-it-in-listmonk).
 
 ## Code
 
 - `emails/layout.ts` — shared frame, palette, button; `emails/templates.ts` — the texts.
-- `emails/syntax.ts` — the variables of each tool (Brevo, listmonk): the texts and the layout are written once.
-- `npm run emails` regenerates `emails/dist/*.html` (commit them). Never edit `dist` by hand.
+- `emails/syntax.ts` — the listmonk variables.
+- `npm run emails` regenerates `emails/dist/` (commit it). Never edit `dist` by hand.
 - The logo is `public/brand/email/wordmark-white.png`, loaded from
   `https://www.laboon-app.com/brand/email/…`: it only shows once deployed to production.
-  Same address for every e-mail, staging tests included. Loading the images from the sender's own
-  site (through a Brevo contact attribute) was tried and does not work: with double opt-in the
-  contact does not exist yet when Brevo builds the confirmation e-mail, so the attribute is empty.
+  Same address for every e-mail, staging tests included.
 - Social links come from `SOCIALS` in `lib/site.ts`: round blue buttons with a white icon
   (`public/brand/email/instagram.png`, `facebook.png`; a new network needs its own PNG).
 
@@ -33,13 +33,6 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 - **Phones**: container fluid under 600 px, 20 px side padding, 26 px title, 16 px+ text,
   full-width button (≥ 48 px tall).
 - Fonts: web fonts are not reliable in mail clients; titles fall back to Arial Black / system fonts.
-
-## Put it in Brevo
-
-1. Brevo → _Campaigns → Templates_ → open template **ID 1** → _Edit_ → choose the **HTML code**
-   editor → replace everything with the content of `emails/dist/double-optin.fr.html` → save.
-2. For a campaign: create a template from `campaign.fr.html` (or `.en.html`) and edit the text in the HTML.
-3. Send a **test e-mail** to yourself and check Gmail (web + app) and Apple Mail, light and dark.
 
 ## Put it in listmonk
 
@@ -60,8 +53,8 @@ The website's newsletter signup and contact form send through listmonk ([listmon
   The **subject** follows too: listmonk takes it from `<title data-i18n>` in the rendered template
   ([knadh/listmonk#1727](https://github.com/knadh/listmonk/issues/1727)), instead of its own subject, which exists in
   one language only (the instance's).
-- **Greeting**: `first_name` attribute, `musicien·ne` / `musician` when empty (the site collects no name, as with Brevo).
-- **No tracking pixel** (`{{ TrackView }}` left out): no open tracking, as with Brevo today.
+- **Greeting**: `first_name` attribute, `musicien·ne` / `musician` when empty (the site collects no name).
+- **No tracking pixel** (`{{ TrackView }}` left out): no open tracking.
 - A campaign template must hold `{{ template "content" . }}` exactly once: it is where the body of the campaign goes.
 
 ## Auth e-mails of the app (GoTrue)

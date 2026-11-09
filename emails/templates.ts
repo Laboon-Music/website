@@ -1,8 +1,8 @@
-// The e-mails, in French ("tu") and English, for Brevo and for listmonk: only the variables differ (syntax.ts).
+// The e-mails, in French ("tu") and English, for listmonk (variables in syntax.ts).
 
 import { LOCALES, type Locale } from "../lib/i18n.ts";
 import { COLORS, button, p, renderEmail, small, title } from "./layout.ts";
-import { BREVO, LISTMONK, LISTMONK_CONTENT, type Syntax } from "./syntax.ts";
+import { LISTMONK, LISTMONK_CONTENT } from "./syntax.ts";
 
 const TEXTS = {
   fr: {
@@ -59,7 +59,7 @@ const TEXTS = {
 } satisfies Record<Locale, unknown>;
 
 /** Double opt-in: sent right after the signup form (one template per language). */
-export function doubleOptin(locale: Locale, syntax: Syntax = BREVO): string {
+export function doubleOptin(locale: Locale): string {
   const t = TEXTS[locale].optin;
   return renderEmail(
     {
@@ -69,10 +69,10 @@ export function doubleOptin(locale: Locale, syntax: Syntax = BREVO): string {
         `<div style="height:20px;line-height:20px;">&nbsp;</div>`,
         p(t.intro),
         p(t.action),
-        button(t.button, syntax.optinUrl),
+        button(t.button, LISTMONK.optinUrl),
         `<div style="height:16px;line-height:16px;">&nbsp;</div>`,
         small(
-          `${t.fallback}<br><a class="lnk" href="${syntax.optinUrl}" style="color:${COLORS.blue};word-break:break-all;">${syntax.optinUrl}</a>`,
+          `${t.fallback}<br><a class="lnk" href="${LISTMONK.optinUrl}" style="color:${COLORS.blue};word-break:break-all;">${LISTMONK.optinUrl}</a>`,
         ),
         small(t.ignore),
       ].join("\n"),
@@ -82,12 +82,12 @@ export function doubleOptin(locale: Locale, syntax: Syntax = BREVO): string {
 }
 
 /** Body of a campaign (title, greeting, text, button, sign-off): the part edited for each send. */
-export function campaignContent(locale: Locale, syntax: Syntax = BREVO): string {
+export function campaignContent(locale: Locale): string {
   const t = TEXTS[locale].campaign;
   return [
     title(t.title),
     `<div style="height:20px;line-height:20px;">&nbsp;</div>`,
-    p(`${t.greeting} ${syntax.firstName(t.someone)},`),
+    p(`${t.greeting} ${LISTMONK.firstName(t.someone)},`),
     p(t.body),
     button(t.button, "https://www.laboon-app.com" + (locale === "en" ? "/en" : "")),
     p(t.signoff),
@@ -95,17 +95,17 @@ export function campaignContent(locale: Locale, syntax: Syntax = BREVO): string 
 }
 
 /**
- * Campaign frame (launch news, beta invitation…). Brevo: the body is in the template, edit the title and paragraphs
- * there. listmonk: the template holds the frame only and each campaign brings its body (`campaignContent`).
+ * Campaign frame (launch news, beta invitation…): the template holds the frame only and each campaign brings its body
+ * (`campaignContent`).
  */
-export function campaign(locale: Locale, syntax: Syntax = BREVO): string {
+export function campaign(locale: Locale): string {
   const t = TEXTS[locale].campaign;
   return renderEmail(
     {
       preheader: t.preheader,
-      topLine: `<a class="lnk" href="${syntax.mirrorUrl}" style="color:${COLORS.inkSoft};">${t.mirror}</a>`,
-      body: syntax === LISTMONK ? LISTMONK_CONTENT : campaignContent(locale, syntax),
-      footer: `<p class="soft" style="margin:12px 0 0;font-family:'Bricolage Grotesque',Arial,sans-serif;font-size:13px;color:${COLORS.inkSoft};">${t.why} <a class="lnk" href="${syntax.unsubscribeUrl}" style="color:${COLORS.inkSoft};">${t.unsubscribe}</a></p>`,
+      topLine: `<a class="lnk" href="${LISTMONK.mirrorUrl}" style="color:${COLORS.inkSoft};">${t.mirror}</a>`,
+      body: LISTMONK_CONTENT,
+      footer: `<p class="soft" style="margin:12px 0 0;font-family:'Bricolage Grotesque',Arial,sans-serif;font-size:13px;color:${COLORS.inkSoft};">${t.why} <a class="lnk" href="${LISTMONK.unsubscribeUrl}" style="color:${COLORS.inkSoft};">${t.unsubscribe}</a></p>`,
     },
     locale,
   );
@@ -119,7 +119,7 @@ export function campaign(locale: Locale, syntax: Syntax = BREVO): string {
  */
 export function listmonkOptin(): string {
   const branch = (locale: Locale) =>
-    doubleOptin(locale, LISTMONK).replace(
+    doubleOptin(locale).replace(
       "<title>Laboon</title>",
       `<title data-i18n>${TEXTS[locale].optin.subject}</title>`,
     );
@@ -129,18 +129,13 @@ ${branch("fr")}{{ end }}{{ end }}
 `;
 }
 
-export const ALL_EMAILS = LOCALES.flatMap((locale) => [
-  { file: `double-optin.${locale}.html`, html: doubleOptin(locale) },
-  { file: `campaign.${locale}.html`, html: campaign(locale) },
-]);
-
 /** emails/dist/listmonk/: campaign templates, a starter body per language, and the opt-in system template. */
 export const LISTMONK_EMAILS = [
   ...LOCALES.flatMap((locale) => [
-    { file: `campaign.${locale}.html`, html: campaign(locale, LISTMONK) },
+    { file: `campaign.${locale}.html`, html: campaign(locale) },
     {
       file: `campaign-content.${locale}.html`,
-      html: campaignContent(locale, LISTMONK) + "\n",
+      html: campaignContent(locale) + "\n",
     },
   ]),
   { file: "subscriber-optin.html", html: listmonkOptin() },
