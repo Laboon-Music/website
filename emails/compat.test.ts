@@ -6,8 +6,8 @@
 import { doIUseEmail } from "doiuse-email";
 import { describe, expect, it } from "vitest";
 import { AUTH_EMAILS } from "./auth";
-import { ALL_EMAILS, LISTMONK_EMAILS } from "./templates";
-import { LISTMONK_TRANSACTIONAL_EMAILS, TRANSACTIONAL_EMAILS } from "./transactional";
+import { LISTMONK_EMAILS } from "./templates";
+import { LISTMONK_TRANSACTIONAL_EMAILS } from "./transactional";
 
 const CLIENTS = ["gmail.*", "apple-mail.*", "outlook.*", "yahoo.*", "samsung-email.*"];
 
@@ -39,8 +39,6 @@ const SA_FONT_INVIS =
 const GMAIL_CLIP_BYTES = 102 * 1024;
 
 const EMAILS = [
-  ...ALL_EMAILS.map((e) => ({ name: e.file, html: e.html })),
-  ...TRANSACTIONAL_EMAILS.map((e) => ({ name: `transactional/${e.file}`, html: e.html })),
   ...LISTMONK_EMAILS.map((e) => ({ name: `listmonk/${e.file}`, html: e.html })),
   ...LISTMONK_TRANSACTIONAL_EMAILS.map((e) => ({
     name: `listmonk/transactional/${e.file}`,

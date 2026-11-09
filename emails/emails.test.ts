@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { LOCALES } from "../lib/i18n";
 import { SOCIALS } from "../lib/site";
-import { LISTMONK } from "./syntax";
 import {
-  ALL_EMAILS,
   LISTMONK_EMAILS,
   campaign,
   campaignContent,
@@ -19,18 +17,17 @@ describe.each(LOCALES)("e-mail templates (%s)", (locale) => {
     expect(optin).toContain(`<html lang="${locale}"`);
   });
 
-  it("double opt-in carries the Brevo confirmation link on the button and as a fallback", () => {
-    expect(optin.match(/\{\{ doubleoptin \}\}/g)?.length).toBeGreaterThanOrEqual(2);
-    expect(optin).toContain('href="{{ doubleoptin }}"');
+  it("double opt-in carries the confirmation link on the button and as a fallback", () => {
+    expect(optin.match(/href="\{\{ \.OptinURL \}\}"/g)).toHaveLength(2);
   });
 
-  it("campaign has the unsubscribe and view-in-browser links Brevo requires", () => {
-    expect(news).toContain("{{ unsubscribe }}");
-    expect(news).toContain("{{ mirror }}");
+  it("campaign has the unsubscribe and view-in-browser links", () => {
+    expect(news).toContain('href="{{ UnsubscribeURL }}"');
+    expect(news).toContain('href="{{ MessageURL }}"');
   });
 
-  it("campaign opens the home page of its language", () => {
-    expect(news).toContain(
+  it("campaign body opens the home page of its language", () => {
+    expect(campaignContent(locale)).toContain(
       locale === "en"
         ? 'href="https://www.laboon-app.com/en"'
         : 'href="https://www.laboon-app.com"',
@@ -73,23 +70,12 @@ describe.each(LOCALES)("e-mail templates (%s)", (locale) => {
   }
 });
 
-describe("e-mail files", () => {
-  it("writes one file per template and language", () => {
-    expect(ALL_EMAILS.map((e) => e.file).sort()).toEqual([
-      "campaign.en.html",
-      "campaign.fr.html",
-      "double-optin.en.html",
-      "double-optin.fr.html",
-    ]);
-  });
-
+describe("listmonk e-mails", () => {
   it("French and English say different things", () => {
     expect(doubleOptin("fr")).not.toBe(doubleOptin("en"));
     expect(doubleOptin("en")).toContain("Almost done!");
   });
-});
 
-describe("listmonk e-mails", () => {
   it("writes the campaign frame and starter body per language, and one opt-in template", () => {
     expect(LISTMONK_EMAILS.map((e) => e.file).sort()).toEqual([
       "campaign-content.en.html",
@@ -100,28 +86,16 @@ describe("listmonk e-mails", () => {
     ]);
   });
 
-  it("never keeps a Brevo variable", () => {
-    for (const { html } of LISTMONK_EMAILS)
-      expect(html).not.toMatch(
-        /doubleoptin|\{\{ (mirror|unsubscribe) \}\}|contact\.|params\./,
-      );
-  });
-
   describe.each(LOCALES)("campaign (%s)", (locale) => {
-    const frame = campaign(locale, LISTMONK);
+    const frame = campaign(locale);
 
     it("holds the content placeholder exactly once, instead of the body", () => {
       expect(frame.match(/\{\{ template "content" \. \}\}/g)).toHaveLength(1);
-      expect(frame).not.toContain(campaignContent(locale, LISTMONK));
-    });
-
-    it("has the unsubscribe and view-in-browser links", () => {
-      expect(frame).toContain('href="{{ UnsubscribeURL }}"');
-      expect(frame).toContain('href="{{ MessageURL }}"');
+      expect(frame).not.toContain(campaignContent(locale));
     });
 
     it("greets with the first name attribute, with a fallback", () => {
-      expect(campaignContent(locale, LISTMONK)).toContain(
+      expect(campaignContent(locale)).toContain(
         `{{ .Subscriber.Attribs.first_name | default "${locale === "en" ? "musician" : "musicien·ne"}" }}`,
       );
     });
