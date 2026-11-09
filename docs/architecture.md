@@ -52,6 +52,9 @@ components/
 ├── social/                  SocialLinks
 └── legal/                   Legal registry, page wrapper, shared blocks, content/<locale>/*
 
+listmonk/
+└── public.css               Theme of listmonk's public pages, pasted in its settings — see features/listmonk-theme.md
+
 hooks/
 └── useProtectedForm.ts      Client submit lifecycle + anti-bot fields for every form
 

@@ -61,7 +61,14 @@ const nextConfig: NextConfig = {
       process.env.NODE_ENV === "production"
         ? [{ key: "Content-Security-Policy-Report-Only", value: contentSecurityPolicy() }]
         : [];
-    return [{ source: "/:path*", headers: [...SECURITY_HEADERS, ...csp] }];
+    return [
+      { source: "/:path*", headers: [...SECURITY_HEADERS, ...csp] },
+      // Brand fonts loaded by listmonk's public pages (listmonk/public.css), another origin.
+      {
+        source: "/fonts/:path*",
+        headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
+      },
+    ];
   },
 };
 

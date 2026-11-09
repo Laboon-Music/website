@@ -185,3 +185,12 @@ changes the stack, the architecture or a convention.
   `--static-dir`, not in the uploads volume (served publicly) nor inline in the compose (13 KB of HTML in the YAML).
 - **The opt-in click ends on listmonk's page**: listmonk cannot redirect to `/inscription-confirmee`, so the
   `signup_confirmed` event no longer fires. Kept the page for now (follow-up: link to it from listmonk's page).
+
+## 2026-11-08 — Laboon theme for listmonk's public pages
+
+- **Custom CSS pasted in listmonk** (_Settings → Appearance → Public_), kept in `listmonk/public.css`: no change on the
+  server. Rejected for now: overriding listmonk's HTML templates (`--static-dir`), heavier to keep in sync with
+  listmonk updates for little gain.
+- **Fonts served by the site** (`public/fonts`, open to other origins) rather than Google Fonts: no visitor request
+  to Google, as on the site.
+- **Colours copied, not generated**: a hand-written file stays readable to paste; a test keeps it equal to the tokens.

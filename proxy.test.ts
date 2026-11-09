@@ -57,4 +57,8 @@ describe("proxy matcher", () => {
     expect(matches("/emails/auth/recovery.html")).toBe(false);
     expect(matches("/contact")).toBe(true);
   });
+
+  it("leaves the fonts loaded by listmonk alone", () => {
+    expect(matches("/fonts/sora-latin.woff2")).toBe(false);
+  });
 });
