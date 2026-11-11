@@ -9,6 +9,7 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 | Campaign frame       | `emails/dist/listmonk/campaign.fr.html` / `.en.html`              | Newsletters (launch, beta invitation), with a starter body in `campaign-content.*.html`     |
 | API transactional    | `emails/dist/listmonk/transactional/<email>.fr.html` / `.en.html` | Laboon API mails (api#99), `{{ .Tx.Data.* }}` only; subjects in `transactional/subjects.md` |
 | Contact form message | `emails/dist/listmonk/contact-message.html`                       | Message from the contact form to the team                                                   |
+| Report alert         | `emails/dist/listmonk/report-alert.html`                          | Laboon API alert to the team for each new report (api#334), French only                     |
 | App auth mails       | `public/emails/auth/{confirmation,recovery,email_change}.html`    | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue) |
 
 See [Put it in listmonk](#put-it-in-listmonk).
@@ -45,6 +46,7 @@ The website's newsletter signup and contact form send through listmonk ([listmon
 | `subscriber-optin.html`                      | Not in the interface: system template, volume + `--static-dir`, see [listmonk.md](../integrations/listmonk.md) step 3                                                      |
 | `contact-message.html`                       | _Campaigns → Templates_ → type **Transactional** `contact-message`, subject in [listmonk.md](../integrations/listmonk.md#setup-in-listmonk-one-time) (`emails/contact.ts`) |
 | `transactional/<email>.fr.html` / `.en.html` | _Campaigns → Templates_ → type **Transactional**, subject from `transactional/subjects.md`                                                                                 |
+| `report-alert.html`                          | _Campaigns → Templates_ → type **Transactional** `report_alert.fr`, subject in `emails/report-alert.ts`; its ID goes in the API (`LISTMONK_TEMPLATES`, `docs/emails.md`)   |
 
 - Variables: `{{ .OptinURL }}`, `{{ MessageURL }}`, `{{ UnsubscribeURL }}`, `{{ .Tx.Data.* }}` (the API's params, same
   names). listmonk escapes them (Go `html/template`), so a first name holding HTML shows as text.

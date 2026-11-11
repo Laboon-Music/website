@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="fr">
+<body style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#000873;">
+<p>Un nouveau signalement a été enregistré dans Laboon. À traiter sous 48 h.</p>
+<p><strong>Catégorie :</strong> {{ .Tx.Data.category }}</p>
+<p><strong>Identifiant :</strong> {{ .Tx.Data.reportId }}</p>
+<hr>
+<p>Le détail (description, personne ou annonce signalée) est dans la base, table <code>reports</code>, à partir de cet identifiant. Il n’est jamais envoyé par email.</p>
+</body>
+</html>

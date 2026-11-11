@@ -5,6 +5,7 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { AUTH_EMAILS } from "./auth.ts";
 import { CONTACT_MESSAGE_HTML } from "./contact.ts";
+import { REPORT_ALERT_HTML } from "./report-alert.ts";
 import { LISTMONK_EMAILS } from "./templates.ts";
 import { LISTMONK_TRANSACTIONAL_EMAILS } from "./transactional.ts";
 
@@ -31,11 +32,13 @@ writeFileSync(
 );
 for (const { file, html } of LISTMONK_EMAILS) writeFileSync(new URL(file, LM_OUT), html);
 writeFileSync(new URL("contact-message.html", LM_OUT), CONTACT_MESSAGE_HTML);
+writeFileSync(new URL("report-alert.html", LM_OUT), REPORT_ALERT_HTML);
 for (const { file, html } of AUTH_EMAILS) writeFileSync(new URL(file, AUTH_OUT), html);
 console.log(
   [
     ...LISTMONK_EMAILS.map((e) => `emails/dist/listmonk/${e.file}`),
     "emails/dist/listmonk/contact-message.html",
+    "emails/dist/listmonk/report-alert.html",
     ...LISTMONK_TRANSACTIONAL_EMAILS.map(
       (e) => `emails/dist/listmonk/transactional/${e.file}`,
     ),
