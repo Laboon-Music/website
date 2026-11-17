@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LEGAL_SLUGS } from "@/components/legal/registry";
+import { LEGAL_SLUGS } from "@/lib/legal-slugs";
 import sitemap from "./sitemap";
 
 describe("sitemap", () => {
@@ -14,6 +14,10 @@ describe("sitemap", () => {
     for (const slug of LEGAL_SLUGS) {
       expect(urls).toContain(`https://www.laboon-app.com/${slug}`);
     }
+  });
+
+  it("does not list the terms of sale (out of V1)", () => {
+    expect(urls.some((u) => u.includes("cgv"))).toBe(false);
   });
 
   it("lists every page in French and English, each pointing to the other (hreflang)", () => {

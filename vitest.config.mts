@@ -19,7 +19,6 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["app/**", "components/**", "hooks/**", "lib/**"],
-      exclude: ["components/legal/content/**"],
     },
   },
 });

@@ -23,7 +23,7 @@ preview stays empty until the site is released to production.
 
 ## sitemap.xml (`app/sitemap.ts`)
 
-`/`, `/contact` and every legal document (derived from the legal registry).
+`/`, `/contact` and every legal document (`LEGAL_SLUGS` in `lib/legal-slugs.ts`).
 **Add every new public page here.**
 
 ## Search Console

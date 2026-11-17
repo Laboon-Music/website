@@ -44,7 +44,8 @@ Rules:
 - `NODE_ENV` is `test` → API routes behave like local dev (dry run). Use
   `vi.stubEnv("NODE_ENV", "production")` to test production behaviour.
 - Query the DOM like a user: `getByRole`, `getByLabelText`, `getByText`.
-- Legal document _content_ is not unit-tested (text), the registry is.
+- Legal document _content_ is not in the repo (it comes from the API): tests mock the API and check the pages
+  render what it sends.
 
 ## Not covered (yet)
 

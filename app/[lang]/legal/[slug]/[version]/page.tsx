@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { DocHeader } from "@/components/legal/_shared";
-import { LegalMarkdown } from "@/components/legal/LegalMarkdown";
+import { LegalEmbedMain } from "@/components/legal/LegalPage";
 import { getContent } from "@/content";
 import { fetchLegalVersion } from "@/lib/legal-api";
 import { resolveLocale } from "@/lib/locale-params";
@@ -50,21 +49,5 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
 
 export default async function LegalVersionPage(props: Params) {
   const { locale, doc } = await loadDocument(props);
-  return (
-    <main
-      // The API may answer in another language than the one asked (fallback).
-      lang={doc.locale === locale ? undefined : doc.locale}
-      className="mx-auto max-w-3xl px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]"
-    >
-      <article className="space-y-8">
-        <DocHeader
-          title={doc.title}
-          version={String(doc.version)}
-          effectiveDate={doc.effectiveDate}
-          locale={doc.locale}
-        />
-        <LegalMarkdown markdown={doc.bodyMd} />
-      </article>
-    </main>
-  );
+  return <LegalEmbedMain locale={locale} doc={doc} />;
 }

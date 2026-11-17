@@ -13,6 +13,11 @@ async function load(
   return (await import("./legal-api")).fetchLegalVersion;
 }
 
+async function loadInForce() {
+  await load();
+  return (await import("./legal-api")).fetchLegalInForce;
+}
+
 afterEach(() => {
   vi.doUnmock("@/lib/env");
   vi.doUnmock("@/lib/monitoring");
@@ -144,5 +149,44 @@ describe("fetchLegalVersion", () => {
       await check(await load(""));
       expect(fetchMock).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("fetchLegalInForce", () => {
+  it("reads the version in force (no version parameter) and caches it 300 s", async () => {
+    const fetchMock = stubFetch(json(200, API_DOC));
+    const result = await (await loadInForce())("cgu", "en");
+
+    expect(result.kind).toBe("found");
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("https://api.example.com/v1/legal/documents/cgu?locale=en");
+    expect((init as { next?: unknown }).next).toEqual({ revalidate: 300 });
+  });
+
+  it("answers not_found when the slug is unknown or nothing is in force", async () => {
+    stubFetch(json(404, { error: { code: "not_found" } }));
+    expect(await (await loadInForce())("inconnu", "fr")).toEqual({ kind: "not_found" });
+    expect(reportError).not.toHaveBeenCalled();
+  });
+
+  it("throws a neutral error and reports only the slug and status when the API fails", async () => {
+    silenceConsole();
+    stubFetch(json(503, { error: "internal-detail" }));
+    const error = await (await loadInForce())("cgu", "fr").catch((e: Error) => e);
+
+    expect((error as Error).message).toBe("Legal document unavailable");
+    expect(reportError).toHaveBeenCalledTimes(1);
+    expect(reportError.mock.calls[0][2]).toEqual({ slug: "cgu", status: 503 });
+    expect(JSON.stringify(reportError.mock.calls)).not.toContain("api.example.com");
+  });
+
+  it("throws when the API is unreachable, without leaking the URL", async () => {
+    stubFetch(async () => {
+      throw new TypeError("fetch failed https://api.example.com/v1");
+    });
+    const error = await (await loadInForce())("cgu", "fr").catch((e: Error) => e);
+
+    expect((error as Error).message).not.toContain("api.example.com");
+    expect(reportError.mock.calls[0][2]).toEqual({ slug: "cgu" });
   });
 });

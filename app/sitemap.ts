@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { LEGAL_SLUGS } from "@/components/legal/registry";
+import { LEGAL_SLUGS } from "@/lib/legal-slugs";
 import { LOCALES, localePath } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
 
