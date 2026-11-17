@@ -103,14 +103,14 @@ const TEXTS = {
         ", vérifie les moyens de connexion de ton compte depuis l’application, change ton mot de passe et contacte-nous.",
     },
     legal_change: {
-      subject: `${v("subjectPrefix")}Nos ${v("documentTitle")} évoluent le ${v("effectiveDate")}`,
+      subject: `${v("subjectPrefix")}Mise à jour : ${v("documentTitle")}, à partir du ${v("effectiveDate")}`,
       preheader: "Découvre ce qui change et à partir de quand.",
-      title: `Nos ${v("documentTitle")} évoluent`,
-      body: `Nos ${v("documentTitle")} changent à partir du ${v("effectiveDate")}.`,
+      title: `Mise à jour : ${v("documentTitle")}`,
+      body: `Le document « ${v("documentTitle")} » change à partir du ${v("effectiveDate")}.`,
       summaryLabel: "Ce qui change :",
       button: "Lire la nouvelle version",
       notice:
-        "Si tu continues à utiliser Laboon après cette date, tu acceptes la nouvelle version. L’application te le demandera.",
+        "Ces changements s’appliquent à partir de cette date. Si une nouvelle acceptation est nécessaire, l’application te la demandera.",
     },
   },
   en: {
@@ -172,14 +172,14 @@ const TEXTS = {
         ", check the sign-in methods of your account from the app, change your password and contact us.",
     },
     legal_change: {
-      subject: `${v("subjectPrefix")}Our ${v("documentTitle")} are changing on ${v("effectiveDate")}`,
+      subject: `${v("subjectPrefix")}Update: ${v("documentTitle")}, from ${v("effectiveDate")}`,
       preheader: "See what changes and when.",
-      title: `Our ${v("documentTitle")} are changing`,
-      body: `Our ${v("documentTitle")} change on ${v("effectiveDate")}.`,
+      title: `Update: ${v("documentTitle")}`,
+      body: `Our document “${v("documentTitle")}” changes on ${v("effectiveDate")}.`,
       summaryLabel: "What changes:",
       button: "Read the new version",
       notice:
-        "If you keep using Laboon after that date, you accept the new version. The app will ask you for it.",
+        "These changes apply from that date. If you need to accept the new version, the app will ask you.",
     },
   },
 } satisfies Record<Locale, Record<string, Texts>>;
