@@ -12,7 +12,8 @@ touching the layout.
 
 Other texts: forms (`components/newsletter/SignupForm.tsx`,
 `components/contact/ContactForm.tsx`), contact subjects (`lib/contact.ts`),
-legal documents (`components/legal/content/fr/`).
+legal documents (not in the repo: they are published from the back office and read from the Laboon API, see
+[legal-documents.md](features/legal-documents.md)).
 
 Every text exists in **French** (`content/fr/`) and **English** (`content/en/`): change both, with the
 same structure (see [i18n.md](features/i18n.md)). Interface texts (header, footer, forms, error messages,

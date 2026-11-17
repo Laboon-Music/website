@@ -20,6 +20,19 @@ import Home from "./[lang]/page";
 vi.mock("@/components/home/scene", () => ({
   startHomeScene: vi.fn(() => ({ reveal: vi.fn(), destroy: vi.fn() })),
 }));
+vi.mock("@/lib/legal-api", async () => ({
+  fetchLegalInForce: async (slug: string, locale: string) => ({
+    kind: "found",
+    doc: {
+      slug,
+      title: locale === "en" ? "Privacy Policy" : "Politique de confidentialité",
+      version: 1,
+      effectiveDate: "2026-10-22",
+      locale,
+      bodyMd: "Intro\n\n## Un {#un}\n\nTexte avec [un lien](https://example.com).",
+    },
+  }),
+}));
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
   useRouter: () => ({ push: vi.fn() }),
@@ -72,7 +85,7 @@ describe.each(LOCALES)("accessibility (%s)", (locale) => {
   });
 
   it("legal document", async () => {
-    render(inLocale(locale, <LegalPage locale={locale} slug="confidentialite" />));
+    render(inLocale(locale, await LegalPage({ locale, slug: "confidentialite" })));
     expect(await axeViolations()).toEqual([]);
   });
 

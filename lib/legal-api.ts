@@ -1,7 +1,8 @@
-// Server-side read of a frozen legal document version from the Laboon API:
-// `GET /v1/legal/documents/{slug}?locale=&version=`. The mobile app shows the
-// URL of an exact version at its legal gate, so the text served here never
-// changes under the reader. See docs/features/legal-documents.md.
+// Server-side read of a legal document from the Laboon API:
+// `GET /v1/legal/documents/{slug}?locale=` (the version in force) and
+// `…&version=` (one frozen version: the mobile app shows its URL at its legal
+// gate, so that text never changes under the reader). The website keeps no copy
+// of the texts. See docs/features/legal-documents.md.
 //
 // Failures are reported with a fixed context (slug, version, status) and the
 // thrown errors carry no URL, key or response body: the message can reach logs
@@ -55,36 +56,28 @@ function parseDocument(data: unknown): LegalVersion | null {
   return { slug, title, version, effectiveDate: effective_date, locale, bodyMd: body_md };
 }
 
-/**
- * Reads one version of a legal document. An unknown slug, an unknown version, a
- * draft (the API answers the same 404) and a malformed version (422) are
- * `not_found`. Anything else (API down or not configured, 5xx, timeout, invalid
- * body) throws a `LegalApiError` after `reportError()`.
- */
-export async function fetchLegalVersion(
+async function fetchLegal(
   slug: string,
   locale: Locale,
-  version: number,
+  version: number | undefined,
 ): Promise<LegalVersionResult> {
-  const context = { slug, version };
+  const context = version === undefined ? { slug } : { slug, version };
   const base = apiBaseUrl();
   if (!base) {
     reportError("legal", "API not configured", context);
     throw new LegalApiError();
   }
 
+  const query = `locale=${locale}${version === undefined ? "" : `&version=${version}`}`;
   let res: Response;
   try {
-    res = await fetch(
-      `${base}/legal/documents/${encodeURIComponent(slug)}?locale=${locale}&version=${version}`,
-      {
-        headers: { Accept: "application/json", ...apiBaseHeaders() },
-        // A version in force or replaced never changes; a scheduled one may be
-        // cancelled. 300 s is the shortest `max-age` the API sends, safe for all.
-        next: { revalidate: LEGAL_REVALIDATE_SECONDS },
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      },
-    );
+    res = await fetch(`${base}/legal/documents/${encodeURIComponent(slug)}?${query}`, {
+      headers: { Accept: "application/json", ...apiBaseHeaders() },
+      // The version in force changes when a scheduled one takes effect, a frozen one
+      // may be cancelled: 300 s is the shortest `max-age` the API sends, safe for all.
+      next: { revalidate: LEGAL_REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
   } catch {
     // The original error can hold the request URL: it is not forwarded.
     reportError("legal", "API unreachable", context);
@@ -109,4 +102,26 @@ export async function fetchLegalVersion(
     throw new LegalApiError();
   }
   return { kind: "found", doc };
+}
+
+/**
+ * Reads one frozen version. An unknown slug, an unknown version, a draft (the API
+ * answers the same 404) and a malformed version (422) are `not_found`. Anything
+ * else (API down or not configured, 5xx, timeout, invalid body) throws a
+ * `LegalApiError` after `reportError()`.
+ */
+export function fetchLegalVersion(
+  slug: string,
+  locale: Locale,
+  version: number,
+): Promise<LegalVersionResult> {
+  return fetchLegal(slug, locale, version);
+}
+
+/** Reads the version in force (same contract). 404 = unknown slug or nothing in force. */
+export function fetchLegalInForce(
+  slug: string,
+  locale: Locale,
+): Promise<LegalVersionResult> {
+  return fetchLegal(slug, locale, undefined);
 }

@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { PageTitle } from "@/components/ui";
-import type { Locale } from "./registry";
+import type { Locale } from "@/lib/i18n";
 
 /**
  * Shared building blocks for legal document bodies. Each document component
- * (Cgu, Cgv, …) renders one <article> composed of these primitives so the same
+ * (rendered by `LegalMarkdown`) is one <article> composed of these primitives so the same
  * content can be served both as a public page (with site chrome) and as a bare
  * "embed" page loaded by the mobile app WebView.
  *
@@ -66,11 +66,6 @@ export function DocBody({ children }: { children: ReactNode }) {
       {children}
     </div>
   );
-}
-
-/** Editorial reminder for the "[à compléter]" placeholders still in the V1 text. */
-export function TodoNote({ children }: { children: ReactNode }) {
-  return <p className="border-2 border-white/40 p-4 text-sm">⚠️ {children}</p>;
 }
 
 export function Section({

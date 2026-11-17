@@ -3,7 +3,7 @@ import { TextLink } from "@/components/ui";
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
 
-const LEGAL_PATHS = ["/cgu", "/cgv", "/charte", "/confidentialite", "/mentions-legales"];
+const LEGAL_PATHS = ["/cgu", "/charte", "/confidentialite", "/mentions-legales"];
 
 /**
  * Address to use inside the mobile app WebView: stay on the bare "embed" pages

@@ -1,50 +1,38 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getLegalDoc, isLegalSlug, LEGAL_SLUGS } from "@/components/legal/registry";
-import { getContent } from "@/content";
-import { resolveLocale, type LangParams } from "@/lib/locale-params";
-import { NOINDEX } from "@/lib/page-metadata";
+import { LegalEmbed, legalEmbedMetadata } from "@/components/legal/LegalPage";
+import { resolveLocale } from "@/lib/locale-params";
 
 /**
- * Bare "embed" variant of each legal document, loaded by the mobile app in a
- * WebView at `/legal/<slug>?lang=<locale>` (the proxy turns `?lang=` into the
- * language of the route). No site chrome (no nav/footer/back link), tighter
- * padding, inherits the theme from the root layout. `noindex` so these
- * duplicates of the public `/<slug>` pages are not indexed.
+ * Bare "embed" variant of the version in force of a legal document, loaded by
+ * the mobile app in a WebView at `/legal/<slug>?lang=<locale>` (the proxy turns
+ * `?lang=` into the language of the route). No site chrome, `noindex` so these
+ * duplicates of the public pages are not indexed. Any slug the API knows works.
+ * Nothing is rendered at build (the build never needs the API): the first
+ * request renders the page, then it is cached 300 s (ISR).
+ * See docs/features/legal-documents.md.
  */
 
 export function generateStaticParams() {
-  return LEGAL_SLUGS.map((slug) => ({ slug }));
+  return [];
 }
 
-export const dynamicParams = false;
+// Next reads this literally (no constant); same value as the API read in `lib/legal-api.ts`.
+export const revalidate = 300;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ lang: string; slug: string }>;
-}): Promise<Metadata> {
+type Params = { params: Promise<{ lang: string; slug: string }> };
+
+async function resolve({ params }: Params) {
   const locale = await resolveLocale(params);
   const { slug } = await params;
-  if (!isLegalSlug(slug)) {
-    return { title: getContent(locale).ui.legal.fallbackTitle, robots: NOINDEX };
-  }
-  return { title: getLegalDoc(locale, slug).entry.metaTitle, robots: NOINDEX };
+  return { locale, slug };
 }
 
-export default async function LegalEmbedPage({
-  params,
-}: {
-  params: Promise<{ lang: string; slug: string }>;
-}) {
-  const locale = await resolveLocale(params);
-  const { slug } = await params;
-  if (!isLegalSlug(slug)) notFound();
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const { locale, slug } = await resolve(props);
+  return legalEmbedMetadata(locale, slug);
+}
 
-  const { Component } = getLegalDoc(locale, slug).entry;
-  return (
-    <main className="mx-auto max-w-3xl px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
-      <Component />
-    </main>
-  );
+export default async function LegalEmbedPage(props: Params) {
+  const { locale, slug } = await resolve(props);
+  return LegalEmbed({ locale, slug });
 }

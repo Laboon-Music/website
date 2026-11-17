@@ -184,8 +184,8 @@ Free plan is enough. Sentry emails you when a signup or contact message fails.
 
 ## GDPR / legal
 
-- [ ] Fill the `[à compléter]` placeholders of the legal documents before the
-      public launch ([legal-documents.md](features/legal-documents.md)).
+- [ ] Publish the legal documents from the back office before the public launch
+      ([legal-documents.md](features/legal-documents.md#publish-or-change-a-legal-text)).
 
 ## Local machine notes
 

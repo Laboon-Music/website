@@ -27,8 +27,8 @@ app/                         Routes (App Router). Pages are thin: they compose c
 ├── inscription-confirmee/   Double opt-in landing page (+ signup_confirmed event)
 ├── reset-password/          Password reset page (Laboon API)
 ├── confirm-email/           Sign-up confirmation page (Laboon API)
-├── cgu|cgv|charte|confidentialite|mentions-legales/   Public legal pages
-├── legal/[slug]/            Bare legal pages for the app WebView (noindex)
+├── [document]/              Public legal pages (cgu, charte, confidentialite, mentions-legales), read from the API (ISR)
+├── legal/[slug]/            Bare legal pages for the app WebView (noindex), version in force from the API (ISR)
 │   └── [version]/           Frozen version read from the API (ISR)
 ├── .well-known/             iOS / Android deep link association files
 ├── api/subscribe/           POST — newsletter signup (listmonk double opt-in)
@@ -51,7 +51,7 @@ components/
 ├── contact/                 ContactForm
 ├── antibot/                 Turnstile widget (lazy)
 ├── social/                  SocialLinks
-└── legal/                   Legal registry, page wrapper, shared blocks, content/<locale>/*
+└── legal/                   Legal pages (read from the API), Markdown renderer, shared blocks
 
 listmonk/
 └── public.css               Theme of listmonk's public pages, pasted in its settings — see features/listmonk-theme.md

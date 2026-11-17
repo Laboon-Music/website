@@ -212,3 +212,17 @@ changes the stack, the architecture or a convention.
   too, but the site does not rely on it.
 - **Rejected**: `marked` / `markdown-it` (produce an HTML string, which would need `dangerouslySetInnerHTML` and a
   sanitiser) and a hand-written parser (edge cases of the format).
+
+## 2026-11-17 — Legal pages read from the API, no copy in the repo
+
+- **The Laboon API is the only source of the legal texts.** `/cgu`, `/charte`, `/confidentialite`, `/mentions-legales` and
+  `/legal/<slug>` render the version in force; the TSX texts, the component registry and the hash procedure are gone. The
+  terms of sale (CGV) leave V1: no route, no sitemap entry, no footer link.
+- **Slug as a dynamic segment (`app/[lang]/[document]`)** instead of one folder per document: with an empty
+  `generateStaticParams`, Next renders nothing at build (the build never needs the API) and caches each page 300 s after
+  its first request. With static folders under `[lang]`, Next prerendered them at build, which failed when the API was
+  unreachable. Static routes win over the segment; any other slug is a 404 without calling the API.
+- **Failures throw, never render an error page**: a failed revalidation keeps the last valid page (ISR), a first request
+  with the API down is an HTTP 500 (not cached), never a blank 200.
+- **`revalidate = 300`** because it is the API's `Cache-Control: max-age`; the in-force version is computed by the API at
+  read time, so a scheduled version shows up at most 5 minutes after its date, with no deployment.

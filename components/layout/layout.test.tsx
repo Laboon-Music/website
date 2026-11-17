@@ -31,6 +31,12 @@ describe("PageShell", () => {
     );
   });
 
+  it("has no link to the terms of sale (out of V1)", () => {
+    render(<PageShell>x</PageShell>);
+    const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href"));
+    expect(hrefs.some((h) => h?.includes("cgv"))).toBe(false);
+  });
+
   it("links to every social network in a new tab, announced as such", () => {
     render(<PageShell>x</PageShell>);
     const instagram = screen.getByRole("link", { name: "Instagram (nouvel onglet)" });
