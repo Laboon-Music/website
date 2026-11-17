@@ -29,6 +29,7 @@ app/                         Routes (App Router). Pages are thin: they compose c
 ├── confirm-email/           Sign-up confirmation page (Laboon API)
 ├── cgu|cgv|charte|confidentialite|mentions-legales/   Public legal pages
 ├── legal/[slug]/            Bare legal pages for the app WebView (noindex)
+│   └── [version]/           Frozen version read from the API (ISR)
 ├── .well-known/             iOS / Android deep link association files
 ├── api/subscribe/           POST — newsletter signup (listmonk double opt-in)
 ├── api/contact/             POST — contact message (listmonk transactional email)

@@ -37,6 +37,7 @@ describe("language routing", () => {
     "/faq/embed",
     "/contact/embed",
     "/legal/cgu",
+    "/legal/cgu/1",
     "/reset-password",
     "/confirm-email",
   ])("picks the language of %s from ?lang=", (path) => {

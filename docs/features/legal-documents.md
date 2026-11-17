@@ -5,10 +5,11 @@ confidentialité, Mentions légales.
 
 ## Two ways to display the same content
 
-| Route                                                              | For                | Chrome                           | Indexed        |
-| ------------------------------------------------------------------ | ------------------ | -------------------------------- | -------------- |
-| `/cgu`, `/cgv`, `/charte`, `/confidentialite`, `/mentions-legales` | Website visitors   | `PageShell` + back link + footer | yes            |
-| `/legal/<slug>?lang=<locale>`                                      | Mobile app WebView | none (bare article)              | no (`noindex`) |
+| Route                                                              | For                   | Chrome                           | Indexed        |
+| ------------------------------------------------------------------ | --------------------- | -------------------------------- | -------------- |
+| `/cgu`, `/cgv`, `/charte`, `/confidentialite`, `/mentions-legales` | Website visitors      | `PageShell` + back link + footer | yes            |
+| `/legal/<slug>?lang=<locale>`                                      | Mobile app WebView    | none (bare article)              | no (`noindex`) |
+| `/legal/<slug>/<version>?lang=<locale>`                            | Mobile app legal gate | none (bare article)              | no (`noindex`) |
 
 ## Code
 
@@ -21,12 +22,38 @@ confidentialité, Mentions légales.
   by each public route (2-line page files).
 - `app/[lang]/legal/[slug]/page.tsx` — embed route, statically generated for every slug.
 
+## Frozen versions (from the API)
+
+`app/[lang]/legal/[slug]/[version]/page.tsx` serves one exact version of a document, read on the server from
+`GET /v1/legal/documents/{slug}?locale=&version=` (`lib/legal-api.ts`, `fetchLegalVersion`). The app shows this URL at its
+legal gate: the user accepts exactly the text they read, so the text of a version never changes under them.
+Same page as the embed (bare `<main>`, no chrome, `noindex`): `DocHeader` (title, version, ISO effective date written for the
+language) then `LegalMarkdown`. The language is the one asked (`?lang=`, rewritten to `/en/…` by `proxy.ts`, tested), else the
+one the API resolved (asked, then French, then the first available); the header and `<main lang>` follow the resolved one.
+
+- **Any slug the API knows works**, not only `LEGAL_SLUGS`. The parent `[slug]/page.tsx` keeps its own
+  `generateStaticParams` + `dynamicParams = false`: those settings belong to that page file and do not constrain the child page.
+- **ISR, no API call at build**: `generateStaticParams` returns `[]` (without it Next renders on every request), `revalidate = 300`,
+  and the API read uses `next: { revalidate: 300 }`. 300 s is the shortest `max-age` the API sends (scheduled version, which may
+  be cancelled); a version in force or replaced never changes. A 404 is cached the same time.
+- **Server-side**: `NEXT_PUBLIC_API_URL` and, on staging, `NEXT_PUBLIC_API_STAGING_KEY` (`X-Laboon-Staging`), through the helpers of
+  `lib/api.ts`. The key is never rendered nor put in an error.
+
+| Case                                                                                                                                   | Result                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Unknown slug, unknown version, **draft** (the API answers the same 404), malformed `version`/`slug` (checked before any call; API 422) | 404 (`notFound()`)                                      |
+| API down, not configured, 5xx, timeout (8 s), invalid body                                                                             | `reportError("legal", …)` then **HTTP 500**, not cached |
+
+The error carries a fixed message (no URL, key or response body); `reportError` only gets the slug, the version and the status.
+The app's viewer relies on an HTTP status >= 400 to show its error and "Réessayer": the page never answers 200 with an empty body.
+Tests: `lib/legal-api.test.ts`, `app/[lang]/legal/[slug]/[version]/page.test.tsx`, `proxy.test.ts`.
+
 ## Markdown rendering
 
 The legal texts are published as Markdown by the Laboon API. `components/legal/LegalMarkdown.tsx`
 renders one with the same blocks as the TSX documents (it is a server component, no client JS):
 `<LegalMarkdown markdown={bodyMd} />` returns the intro, then one `DocBody` with a `Section` per `##`.
-Reading the text from the API is a separate change; the TSX documents stay in use until then.
+The frozen-version route above reads it from the API; the public pages and the unversioned embed still use the TSX documents.
 
 | Markdown                      | Rendered as                                                                               |
 | ----------------------------- | ----------------------------------------------------------------------------------------- |
