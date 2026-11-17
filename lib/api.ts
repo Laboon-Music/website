@@ -8,6 +8,17 @@
 import { publicEnv } from "@/lib/env";
 import type { Locale } from "@/lib/i18n";
 
+/** API base URL without trailing slash (`…/v1`), or undefined when not configured. */
+export function apiBaseUrl(): string | undefined {
+  return publicEnv.apiUrl?.replace(/\/+$/, "");
+}
+
+/** Headers every API call carries: on staging, the Cloudflare `X-Laboon-Staging` key when configured. */
+export function apiBaseHeaders(): Record<string, string> {
+  // Staging only (the value ships in the bundle: it keeps robots and the curious out, it is not a secret).
+  return publicEnv.apiStagingKey ? { "X-Laboon-Staging": publicEnv.apiStagingKey } : {};
+}
+
 export type ApiResult =
   | { ok: true }
   | {
@@ -28,15 +39,14 @@ export async function apiPost(
   body: Record<string, string>,
   locale: Locale,
 ): Promise<ApiResult> {
-  const base = publicEnv.apiUrl?.replace(/\/+$/, "");
+  const base = apiBaseUrl();
   if (!base) return { ok: false, code: "not_configured", status: 0 };
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "Accept-Language": locale,
+    ...apiBaseHeaders(),
   };
-  // Staging only (the value ships in the bundle: it keeps robots and the curious out, it is not a secret).
-  if (publicEnv.apiStagingKey) headers["X-Laboon-Staging"] = publicEnv.apiStagingKey;
 
   let res: Response;
   try {
