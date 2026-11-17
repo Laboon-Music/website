@@ -11,7 +11,7 @@ describe("transactional templates", () => {
     expect(LISTMONK_TRANSACTIONAL_EMAILS).toHaveLength(
       TRANSACTIONAL_NAMES.length * LOCALES.length,
     );
-    expect(TRANSACTIONAL_NAMES).toHaveLength(6);
+    expect(TRANSACTIONAL_NAMES).toHaveLength(7);
   });
 
   describe.each(LISTMONK_TRANSACTIONAL_EMAILS)(
@@ -24,8 +24,9 @@ describe("transactional templates", () => {
       });
 
       it("uses exactly its params, nothing else from listmonk", () => {
+        // The subject is rendered by listmonk as a template too (`subjectPrefix`).
         const used = new Set(
-          [...html.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)].map((m) => m[1]),
+          [...`${subject}${html}`.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)].map((m) => m[1]),
         );
         expect([...used].sort()).toEqual(params.map((x) => `.Tx.Data.${x}`).sort());
       });
@@ -56,4 +57,23 @@ describe("transactional templates", () => {
       }
     },
   );
+
+  describe("legal_change", () => {
+    const [fr, en] = ["fr", "en"].map((l) =>
+      LISTMONK_TRANSACTIONAL_EMAILS.find(
+        (e) => e.name === "legal_change" && e.locale === l,
+      )!,
+    );
+
+    it("starts its subject with the prefix the API sends", () => {
+      expect(fr.subject.startsWith("{{ .Tx.Data.subjectPrefix }}")).toBe(true);
+      expect(en.subject.startsWith("{{ .Tx.Data.subjectPrefix }}")).toBe(true);
+    });
+
+    it("shows the summary as escaped text that keeps its line breaks", () => {
+      for (const { html } of [fr, en]) {
+        expect(html).toMatch(/white-space:pre-line;">\{\{ \.Tx\.Data\.summary \}\}<\/p>/);
+      }
+    });
+  });
 });

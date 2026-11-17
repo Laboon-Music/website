@@ -26,6 +26,8 @@ const ACCEPTED: Record<string, string> = {
     "hidden preheader: also hidden by max-height:0, opacity:0 and mso-hide:all",
   overflow: "hidden preheader, see display:none",
   opacity: "hidden preheader, see display:none",
+  "white-space":
+    "legal_change summary: without it the line breaks of the text collapse into spaces, the text stays complete",
 };
 
 /**
