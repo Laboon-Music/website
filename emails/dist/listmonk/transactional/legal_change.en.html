@@ -41,10 +41,10 @@ a{text-decoration:underline}
 <a href="https://www.laboon-app.com" target="_blank"><img class="logo" src="https://www.laboon-app.com/brand/email/wordmark-white.png" width="190" height="49" alt="Laboon" style="display:block;width:190px;height:auto;color:#FFFFFF;font-family:'Sora','Arial Black',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:24px;"></a>
 </td></tr>
 <tr><td class="card px" bgcolor="#FFFFFF" style="background:#FFFFFF;padding:40px 40px 32px;">
-<h1 class="tx" style="margin:0;font-family:'Sora','Arial Black',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:30px;line-height:1.15;letter-spacing:-0.03em;color:#000873;">Our {{ .Tx.Data.documentTitle }} are changing</h1>
+<h1 class="tx" style="margin:0;font-family:'Sora','Arial Black',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:30px;line-height:1.15;letter-spacing:-0.03em;color:#000873;">Update: {{ .Tx.Data.documentTitle }}</h1>
 <div style="height:20px;line-height:20px;">&nbsp;</div>
 <p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;">Hi {{ .Tx.Data.firstName }},</p>
-<p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;">Our {{ .Tx.Data.documentTitle }} change on {{ .Tx.Data.effectiveDate }}.</p>
+<p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;">Our document “{{ .Tx.Data.documentTitle }}” changes on {{ .Tx.Data.effectiveDate }}.</p>
 <p class="tx" style="margin:0 0 4px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;"><strong>What changes:</strong></p>
 <p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;white-space:pre-line;">{{ .Tx.Data.summary }}</p>
 <table role="presentation" class="btn-wrap" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 8px;"><tr>
@@ -53,7 +53,7 @@ a{text-decoration:underline}
 </td></tr></table>
 <div style="height:20px;line-height:20px;">&nbsp;</div>
 <p class="soft" style="margin:0 0 12px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#3D449E;">If the button does not work, copy this link into your browser:<br><a class="lnk" href="{{ .Tx.Data.link }}" style="color:#4753FF;word-break:break-all;">{{ .Tx.Data.link }}</a></p>
-<p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;">If you keep using Laboon after that date, you accept the new version. The app will ask you for it.</p>
+<p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;">These changes apply from that date. If you need to accept the new version, the app will ask you.</p>
 <p class="tx" style="margin:0 0 16px;font-family:'Bricolage Grotesque',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;color:#000873;">— The Laboon team 🐳</p>
 </td></tr>
 <tr><td class="card px" bgcolor="#FFFFFF" style="background:#FFFFFF;padding:0 40px 32px;">
