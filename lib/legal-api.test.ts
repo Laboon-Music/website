@@ -190,3 +190,90 @@ describe("fetchLegalInForce", () => {
     expect(reportError.mock.calls[0][2]).toEqual({ slug: "cgu" });
   });
 });
+
+describe("fetchLegalVersions", () => {
+  const ROW = {
+    version: 2,
+    effective_date: "2026-12-01",
+    title: "Conditions générales d’utilisation",
+    locale: "fr",
+    change_summary: "Nouvelle clause",
+    in_force: true,
+    url: "https://laboon-app.com/legal/cgu/2?lang=fr",
+  };
+  const OLD = {
+    ...ROW,
+    version: 1,
+    effective_date: "2026-10-22",
+    change_summary: null,
+    in_force: false,
+  };
+
+  async function loadVersions() {
+    await load();
+    return (await import("./legal-api")).fetchLegalVersions;
+  }
+
+  it("reads the versions in the API order, caches them 300 s and ignores the url field", async () => {
+    const fetchMock = stubFetch(json(200, { data: [ROW, OLD] }));
+    const result = await (await loadVersions())("cgu", "en");
+
+    expect(result).toEqual({
+      kind: "found",
+      versions: [
+        {
+          version: 2,
+          effectiveDate: "2026-12-01",
+          title: ROW.title,
+          locale: "fr",
+          changeSummary: "Nouvelle clause",
+          inForce: true,
+        },
+        {
+          version: 1,
+          effectiveDate: "2026-10-22",
+          title: ROW.title,
+          locale: "fr",
+          changeSummary: null,
+          inForce: false,
+        },
+      ],
+    });
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("https://api.example.com/v1/legal/documents/cgu/versions?locale=en");
+    expect((init as { next?: unknown }).next).toEqual({ revalidate: 300 });
+  });
+
+  it.each([404, 422])("answers not_found for a %s", async (status) => {
+    stubFetch(json(status, { error: { code: "not_found" } }));
+    expect(await (await loadVersions())("inconnu", "fr")).toEqual({ kind: "not_found" });
+    expect(reportError).not.toHaveBeenCalled();
+  });
+
+  it("throws a neutral error when a row is invalid", async () => {
+    silenceConsole();
+    stubFetch(json(200, { data: [ROW, { ...OLD, in_force: "no" }] }));
+    const error = await (await loadVersions())("cgu", "fr").catch((e: Error) => e);
+
+    expect((error as Error).message).toBe("Legal document unavailable");
+    expect(reportError.mock.calls[0][2]).toEqual({ slug: "cgu", status: 200 });
+  });
+
+  it("throws when the body is not a list", async () => {
+    silenceConsole();
+    stubFetch(json(200, { data: "x" }));
+    await expect((await loadVersions())("cgu", "fr")).rejects.toThrow(
+      "Legal document unavailable",
+    );
+  });
+
+  it("throws and reports only the slug and status on a 5xx", async () => {
+    silenceConsole();
+    stubFetch(json(503, { error: "internal-detail" }));
+    const error = await (await loadVersions())("cgu", "fr").catch((e: Error) => e);
+
+    expect((error as Error).message).toBe("Legal document unavailable");
+    expect(reportError.mock.calls[0][2]).toEqual({ slug: "cgu", status: 503 });
+    expect(JSON.stringify(reportError.mock.calls)).not.toContain("api.example.com");
+  });
+});
