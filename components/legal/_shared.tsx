@@ -12,6 +12,28 @@ import type { Locale } from "./registry";
  * in one blue panel (`DocBody`), separated by hairlines.
  */
 
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/**
+ * An ISO date (`YYYY-MM-DD`, as the API sends it) written for the language
+ * ("22 octobre 2026" / "October 22, 2026"). Any other string is already
+ * written for display (the TSX documents) and is returned unchanged.
+ */
+export function formatEffectiveDate(date: string, locale: Locale): string {
+  const match = ISO_DATE.exec(date);
+  if (!match) return date;
+  const [, year, month, day] = match;
+  // UTC on both sides: the calendar day never shifts with the server's time zone.
+  return new Date(
+    Date.UTC(Number(year), Number(month) - 1, Number(day)),
+  ).toLocaleDateString(locale === "en" ? "en-US" : "fr-FR", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export function DocHeader({
   title,
   version,
@@ -20,16 +42,18 @@ export function DocHeader({
 }: {
   title: string;
   version: string;
+  /** ISO date (`YYYY-MM-DD`) or an already formatted text. */
   effectiveDate: string;
   locale?: Locale;
 }) {
+  const date = formatEffectiveDate(effectiveDate, locale);
   return (
     <header>
       <PageTitle>{title}</PageTitle>
       <p className="mt-3.5 text-sm font-semibold text-[#b6bbfe]">
         {locale === "en"
-          ? `Version ${version} — effective from ${effectiveDate}`
-          : `Version ${version} — en vigueur à compter du ${effectiveDate}`}
+          ? `Version ${version} — effective from ${date}`
+          : `Version ${version} — en vigueur à compter du ${date}`}
       </p>
     </header>
   );
@@ -73,7 +97,12 @@ export function Subheading({ children }: { children: ReactNode }) {
   return <h3 className="pt-3 font-title text-[1.05rem] font-semibold">{children}</h3>;
 }
 
-export function List({ children }: { children: ReactNode }) {
+export function List({ children, ordered }: { children: ReactNode; ordered?: boolean }) {
+  if (ordered) {
+    return (
+      <ol className="list-decimal space-y-2 pl-6 marker:font-semibold">{children}</ol>
+    );
+  }
   return (
     <ul className="space-y-2 [&>li]:relative [&>li]:pl-[22px] [&>li]:before:absolute [&>li]:before:top-[0.68em] [&>li]:before:left-0.5 [&>li]:before:size-2 [&>li]:before:rounded-full [&>li]:before:bg-white [&>li]:before:content-['']">
       {children}

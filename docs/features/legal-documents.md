@@ -21,6 +21,37 @@ confidentialité, Mentions légales.
   by each public route (2-line page files).
 - `app/[lang]/legal/[slug]/page.tsx` — embed route, statically generated for every slug.
 
+## Markdown rendering
+
+The legal texts are published as Markdown by the Laboon API. `components/legal/LegalMarkdown.tsx`
+renders one with the same blocks as the TSX documents (it is a server component, no client JS):
+`<LegalMarkdown markdown={bodyMd} />` returns the intro, then one `DocBody` with a `Section` per `##`.
+Reading the text from the API is a separate change; the TSX documents stay in use until then.
+
+| Markdown                      | Rendered as                                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| text before the first `##`    | intro paragraphs (same style as the TSX documents)                                        |
+| `## Title {#id}`              | `Section` (`<section id="id"><h2>`); the id is reduced to `[a-z0-9-]`, no id when absent  |
+| `### Title`                   | `Subheading`                                                                              |
+| `-` / `1.` lists              | `List` (bullets) / `List ordered` (numbers)                                               |
+| `**bold**`, `*italic*`        | `strong`, `em`                                                                            |
+| `[text](https://…)`           | `TextLink`, new tab with `rel="noopener noreferrer"`                                      |
+| `[text](mailto:…)`, `[t](#a)` | `TextLink`, same tab                                                                      |
+| anything else                 | degrades to plain text: raw HTML and images are dropped, other links keep only their text |
+
+The allowed syntax is enforced at publication by the API
+(`app/legal/markdown_rules.ts` in the `api` repo); the renderer does not trust it and is safe on its own:
+the Markdown is parsed to an mdast tree and every node is rendered by a whitelist, so nothing is ever
+injected as HTML (no `dangerouslySetInnerHTML`). Forbidden cases are tested: HTML and `<script>` are dropped,
+`javascript:`, `data:`, `http:` and reference-style links are not clickable.
+
+`DocHeader` takes the version and the effective date as props. The date can be an ISO date (`YYYY-MM-DD`, as the API
+sends it), written for the language (`22 octobre 2026` / `October 22, 2026`), or an already formatted text
+(the TSX documents), shown as is.
+
+Test fixtures: `components/legal/fixtures/*.md` are copies of real texts from the API repo, kept verbatim
+(excluded from Prettier).
+
 ## Contact address
 
 All documents show the official contact address `CONTACT_EMAIL`
@@ -57,4 +88,4 @@ unfinished passages in a future draft.
 
 ## Tests
 
-`components/legal/registry.test.ts`, `app/sitemap.test.ts`.
+`components/legal/registry.test.ts`, `components/legal/LegalMarkdown.test.tsx`, `components/legal/_shared.test.tsx`, `app/sitemap.test.ts`.
