@@ -4,7 +4,7 @@
 // from `{{ .Tx.Data.link }}`. Wording from the API's resources/lang/{fr,en}/emails.json. See docs/features/emails.md.
 
 import { LOCALES, type Locale } from "../lib/i18n.ts";
-import { COLORS, button, p, renderEmail, small, title } from "./layout.ts";
+import { COLORS, STYLE, button, p, renderEmail, small, title } from "./layout.ts";
 import { LISTMONK } from "./syntax.ts";
 
 const v = LISTMONK.param;
@@ -18,7 +18,11 @@ type Texts = {
   forgot?: string;
   button?: string;
   expiry?: string;
-  ignore: string;
+  /** Label of the summary block, which shows `summary` (admin text, line breaks kept, escaped by listmonk). */
+  summaryLabel?: string;
+  /** Line after the button, for an e-mail that needs no "ignore it" line. */
+  notice?: string;
+  ignore?: string;
   warningLead?: string;
   warning?: string;
 };
@@ -98,6 +102,16 @@ const TEXTS = {
       warning:
         ", vérifie les moyens de connexion de ton compte depuis l’application, change ton mot de passe et contacte-nous.",
     },
+    legal_change: {
+      subject: `${v("subjectPrefix")}Nos ${v("documentTitle")} évoluent le ${v("effectiveDate")}`,
+      preheader: "Découvre ce qui change et à partir de quand.",
+      title: `Nos ${v("documentTitle")} évoluent`,
+      body: `Nos ${v("documentTitle")} changent à partir du ${v("effectiveDate")}.`,
+      summaryLabel: "Ce qui change :",
+      button: "Lire la nouvelle version",
+      notice:
+        "Si tu continues à utiliser Laboon après cette date, tu acceptes la nouvelle version. L’application te le demandera.",
+    },
   },
   en: {
     confirm_signup: {
@@ -157,6 +171,16 @@ const TEXTS = {
       warning:
         ", check the sign-in methods of your account from the app, change your password and contact us.",
     },
+    legal_change: {
+      subject: `${v("subjectPrefix")}Our ${v("documentTitle")} are changing on ${v("effectiveDate")}`,
+      preheader: "See what changes and when.",
+      title: `Our ${v("documentTitle")} are changing`,
+      body: `Our ${v("documentTitle")} change on ${v("effectiveDate")}.`,
+      summaryLabel: "What changes:",
+      button: "Read the new version",
+      notice:
+        "If you keep using Laboon after that date, you accept the new version. The app will ask you for it.",
+    },
   },
 } satisfies Record<Locale, Record<string, Texts>>;
 
@@ -170,6 +194,15 @@ export const TRANSACTIONAL_PARAMS: Record<TransactionalName, string[]> = {
   password_changed: ["firstName"],
   sign_in_method_added: ["firstName", "providerName", "date"],
   sign_in_method_removed: ["firstName", "providerName", "date"],
+  // `subjectPrefix` is in the subject (listmonk renders it as a template), the others in the body.
+  legal_change: [
+    "subjectPrefix",
+    "firstName",
+    "documentTitle",
+    "summary",
+    "effectiveDate",
+    "link",
+  ],
 };
 
 export function transactional(name: TransactionalName, locale: Locale): string {
@@ -187,6 +220,15 @@ export function transactional(name: TransactionalName, locale: Locale): string {
         ),
       ]
     : [];
+  const summary = t.summaryLabel
+    ? [
+        p(`<strong>${t.summaryLabel}</strong>`).replace(
+          "margin:0 0 16px",
+          "margin:0 0 4px",
+        ),
+        `<p class="tx" style="${STYLE.text}white-space:pre-line;">${v("summary")}</p>`,
+      ]
+    : [];
   const warning = t.warningLead
     ? [p(`<strong>${t.warningLead}</strong>${t.warning}`)]
     : [];
@@ -198,8 +240,10 @@ export function transactional(name: TransactionalName, locale: Locale): string {
         gap,
         p(c.greeting),
         p(t.body),
+        ...summary,
         ...action,
-        small(t.ignore),
+        ...(t.notice ? [p(t.notice)] : []),
+        ...(t.ignore ? [small(t.ignore)] : []),
         ...warning,
         p(c.signature),
       ].join("\n"),
