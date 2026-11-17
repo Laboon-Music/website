@@ -138,7 +138,17 @@ export const UI = {
 
   faq: { metaTitle: "Questions fréquentes — Laboon" },
 
-  legal: { backHome: "Retour à l’accueil", fallbackTitle: "Document légal — Laboon" },
+  legal: {
+    backHome: "Retour à l’accueil",
+    fallbackTitle: "Document légal — Laboon",
+    versionsLink: "Voir les versions précédentes",
+    versionsTitle: "{title} — historique des versions",
+    versionsMetaTitle: "{title} — historique des versions — {site}",
+    versionLabel: "Version {version}",
+    effectiveFrom: "En vigueur à compter du {date}",
+    inForce: "En vigueur",
+    viewVersion: "Lire la version {version}",
+  },
 
   account: {
     resetMetaTitle: "Mot de passe — Laboon",

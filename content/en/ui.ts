@@ -135,7 +135,17 @@ export const UI: typeof FrUI = {
 
   faq: { metaTitle: "Frequently asked questions — Laboon" },
 
-  legal: { backHome: "Back to home", fallbackTitle: "Legal document — Laboon" },
+  legal: {
+    backHome: "Back to home",
+    fallbackTitle: "Legal document — Laboon",
+    versionsLink: "See previous versions",
+    versionsTitle: "{title} — version history",
+    versionsMetaTitle: "{title} — version history — {site}",
+    versionLabel: "Version {version}",
+    effectiveFrom: "Effective from {date}",
+    inForce: "In force",
+    viewVersion: "Read version {version}",
+  },
 
   account: {
     resetMetaTitle: "Password — Laboon",

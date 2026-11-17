@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
 import { LEGAL_SLUGS } from "@/lib/legal-slugs";
 import type { LegalVersion, LegalVersionResult } from "@/lib/legal-api";
 import { NOINDEX } from "@/lib/page-metadata";
@@ -66,7 +67,7 @@ describe.each(LEGAL_SLUGS)("public page /%s", (slug) => {
   it.each(["fr", "en"] as const)(
     "renders the API text and header in %s",
     async (locale) => {
-      render(await Page(lang(locale)));
+      render(<LocaleProvider locale={locale}>{await Page(lang(locale))}</LocaleProvider>);
 
       expect(fetchLegalInForce).toHaveBeenCalledWith(slug, locale);
       expect(
@@ -81,6 +82,15 @@ describe.each(LEGAL_SLUGS)("public page /%s", (slug) => {
       ).toBeTruthy();
       // Site chrome is present.
       expect(screen.getByRole("contentinfo")).toBeTruthy();
+      // Link to the history of versions.
+      expect(
+        screen
+          .getByRole("link", {
+            name:
+              locale === "en" ? "See previous versions" : "Voir les versions précédentes",
+          })
+          .getAttribute("href"),
+      ).toBe(`${locale === "en" ? "/en" : ""}/${slug}/versions`);
     },
   );
 
@@ -120,6 +130,7 @@ describe("embed /legal/<slug>", () => {
     ).toBeTruthy();
     expect(screen.queryByRole("navigation")).toBeNull();
     expect(screen.queryByRole("contentinfo")).toBeNull();
+    expect(screen.queryByRole("link", { name: /versions/ })).toBeNull();
     const meta = await embed.generateMetadata(embedProps("fr", "cgu"));
     expect(meta.robots).toEqual(NOINDEX);
     expect(embed.revalidate).toBe(300);

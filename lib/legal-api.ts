@@ -30,6 +30,21 @@ export type LegalVersion = {
 export type LegalVersionResult =
   { kind: "found"; doc: LegalVersion } | { kind: "not_found" };
 
+/** One row of the history of a document: a version in force or replaced. */
+export type LegalVersionSummary = {
+  version: number;
+  /** `YYYY-MM-DD` */
+  effectiveDate: string;
+  title: string;
+  locale: Locale;
+  changeSummary: string | null;
+  /** True for the version currently in force. */
+  inForce: boolean;
+};
+
+export type LegalVersionsResult =
+  { kind: "found"; versions: LegalVersionSummary[] } | { kind: "not_found" };
+
 /** Error with a fixed, neutral message (never the URL, the key or the API's body). */
 export class LegalApiError extends Error {
   constructor() {
@@ -56,22 +71,28 @@ function parseDocument(data: unknown): LegalVersion | null {
   return { slug, title, version, effectiveDate: effective_date, locale, bodyMd: body_md };
 }
 
-async function fetchLegal(
-  slug: string,
-  locale: Locale,
-  version: number | undefined,
-): Promise<LegalVersionResult> {
-  const context = version === undefined ? { slug } : { slug, version };
+type ApiRead<T> = { kind: "found"; value: T } | { kind: "not_found" };
+
+/**
+ * One GET on the legal API, shared by every read: configuration check, timeout,
+ * ISR cache, neutral errors and fixed report context. `parse` returns `null` for
+ * an invalid body. 404 and 422 are `not_found`; anything else throws.
+ */
+async function readApi<T>(
+  path: string,
+  query: string,
+  context: Record<string, string | number>,
+  parse: (data: unknown) => T | null,
+): Promise<ApiRead<T>> {
   const base = apiBaseUrl();
   if (!base) {
     reportError("legal", "API not configured", context);
     throw new LegalApiError();
   }
 
-  const query = `locale=${locale}${version === undefined ? "" : `&version=${version}`}`;
   let res: Response;
   try {
-    res = await fetch(`${base}/legal/documents/${encodeURIComponent(slug)}?${query}`, {
+    res = await fetch(`${base}/legal/documents/${path}?${query}`, {
       headers: { Accept: "application/json", ...apiBaseHeaders() },
       // The version in force changes when a scheduled one takes effect, a frozen one
       // may be cancelled: 300 s is the shortest `max-age` the API sends, safe for all.
@@ -90,18 +111,68 @@ async function fetchLegal(
     throw new LegalApiError();
   }
 
-  const doc = await res
+  const value = await res
     .json()
-    .then(parseDocument)
+    .then(parse)
     .catch(() => null);
-  if (!doc) {
+  if (value === null) {
     reportError("legal", "API answered an invalid document", {
       ...context,
       status: res.status,
     });
     throw new LegalApiError();
   }
-  return { kind: "found", doc };
+  return { kind: "found", value };
+}
+
+function parseSummary(row: unknown): LegalVersionSummary | null {
+  if (typeof row !== "object" || row === null) return null;
+  const { version, effective_date, title, locale, change_summary, in_force } =
+    row as Record<string, unknown>;
+  if (
+    typeof version !== "number" ||
+    !Number.isInteger(version) ||
+    typeof effective_date !== "string" ||
+    typeof title !== "string" ||
+    typeof in_force !== "boolean" ||
+    (locale !== "fr" && locale !== "en") ||
+    (change_summary !== null &&
+      change_summary !== undefined &&
+      typeof change_summary !== "string")
+  ) {
+    return null;
+  }
+  return {
+    version,
+    effectiveDate: effective_date,
+    title,
+    locale,
+    changeSummary: change_summary ?? null,
+    inForce: in_force,
+  };
+}
+
+/** The list of versions, or `null` when the body or any row is invalid. */
+function parseVersions(data: unknown): LegalVersionSummary[] | null {
+  if (typeof data !== "object" || data === null) return null;
+  const rows = (data as Record<string, unknown>).data;
+  if (!Array.isArray(rows)) return null;
+  const versions = rows.map(parseSummary);
+  return versions.every((v) => v !== null) ? versions : null;
+}
+
+async function fetchLegal(
+  slug: string,
+  locale: Locale,
+  version: number | undefined,
+): Promise<LegalVersionResult> {
+  const result = await readApi(
+    encodeURIComponent(slug),
+    `locale=${locale}${version === undefined ? "" : `&version=${version}`}`,
+    version === undefined ? { slug } : { slug, version },
+    (data) => parseDocument(data),
+  );
+  return result.kind === "found" ? { kind: "found", doc: result.value } : result;
 }
 
 /**
@@ -124,4 +195,23 @@ export function fetchLegalInForce(
   locale: Locale,
 ): Promise<LegalVersionResult> {
   return fetchLegal(slug, locale, undefined);
+}
+
+/**
+ * Reads the versions in force or replaced of a document, newest first (the API
+ * never lists drafts, cancelled or scheduled versions; the page shows the list
+ * as received). Same contract as the other reads. The API's own `url` field is
+ * ignored: the page links to the site's own frozen pages.
+ */
+export async function fetchLegalVersions(
+  slug: string,
+  locale: Locale,
+): Promise<LegalVersionsResult> {
+  const result = await readApi(
+    `${encodeURIComponent(slug)}/versions`,
+    `locale=${locale}`,
+    { slug },
+    parseVersions,
+  );
+  return result.kind === "found" ? { kind: "found", versions: result.value } : result;
 }

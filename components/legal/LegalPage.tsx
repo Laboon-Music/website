@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { PageShell } from "@/components/layout";
-import { BackLink } from "@/components/ui";
+import { BackLink, TextLink } from "@/components/ui";
 import { getContent } from "@/content";
 import type { Locale } from "@/lib/i18n";
 import { fetchLegalInForce, type LegalVersion } from "@/lib/legal-api";
@@ -59,6 +59,12 @@ export async function LegalPage({ locale, slug }: { locale: Locale; slug: string
       <div lang={doc.locale === locale ? undefined : doc.locale}>
         <LegalArticle doc={doc} />
       </div>
+      {/* Public page only: the app WebView embeds do not have it. */}
+      <p className="mt-8">
+        <TextLink href={`/${slug}/versions`}>
+          {getContent(locale).ui.legal.versionsLink}
+        </TextLink>
+      </p>
     </LegalPageShell>
   );
 }

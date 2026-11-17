@@ -9,6 +9,7 @@ CGV, are out of V1).
 | Route                                                      | For                   | Chrome                           | Indexed        |
 | ---------------------------------------------------------- | --------------------- | -------------------------------- | -------------- |
 | `/cgu`, `/charte`, `/confidentialite`, `/mentions-legales` | Website visitors      | `PageShell` + back link + footer | yes            |
+| `/cgu/versions`, `/charte/versions`, … (`/en/…`)           | Website visitors      | `PageShell` + back link + footer | yes            |
 | `/legal/<slug>?lang=<locale>` (any slug the API knows)     | Mobile app WebView    | none (bare article)              | no (`noindex`) |
 | `/legal/<slug>/<version>?lang=<locale>`                    | Mobile app legal gate | none (bare article)              | no (`noindex`) |
 
@@ -17,11 +18,25 @@ All render `DocHeader` (title, version, ISO effective date written for the langu
 is the one asked (`/en/…`, or `?lang=` rewritten by `proxy.ts`), else the one the API resolved (asked, then French, then
 the first available); the header and `lang` follow the resolved one. The title of the browser tab is the API's title.
 
+## Version history
+
+Each public page ends with a link "Voir les versions précédentes" / "See previous versions" to
+`/<slug>/versions`: the versions **in force or replaced**, newest first, each with its number, its effective date, an
+"in force" mark on the current one, the change summary when there is one, and a link to its frozen page
+`/legal/<slug>/<version>?lang=<locale>` (`/en/legal/…` in English). The list comes from
+`GET /v1/legal/documents/{slug}/versions?locale=` (`fetchLegalVersions`); **the API never lists a draft, a cancelled or
+a scheduled version, and the page shows exactly what it receives** (tested). Links are built from the slug and the
+number, never from the API's `url` field, so a link never leaves the site. Unknown slug (outside `LEGAL_SLUGS`, checked
+before any call) or nothing to list: 404; API failure: HTTP 500, like the other pages. The embeds used by the app
+WebView have no such link. The history pages are not in the sitemap (secondary pages, reached from the document).
+
 ## Code
 
-- `lib/legal-api.ts` — `fetchLegalInForce(slug, locale)` and `fetchLegalVersion(slug, locale, version)` (same contract).
+- `lib/legal-api.ts` — `fetchLegalInForce(slug, locale)`, `fetchLegalVersion(slug, locale, version)` and
+  `fetchLegalVersions(slug, locale)` (same contract: 404/422 = `not_found`, anything else throws).
 - `lib/legal-slugs.ts` — `LEGAL_SLUGS`, the four public pages (sitemap).
 - `app/[lang]/[document]/page.tsx` — public pages (the slug is a dynamic segment, see below).
+- `app/[lang]/[document]/versions/page.tsx` — history page; `components/legal/LegalVersionHistory.tsx` — its list.
 - `app/[lang]/legal/[slug]/page.tsx`, `…/[version]/page.tsx` — embeds.
 - `components/legal/LegalPage.tsx` — loading, metadata, page and embed wrappers; `LegalArticle.tsx` — header + text;
   `LegalMarkdown.tsx`, `_shared.tsx` — rendering blocks.
@@ -50,7 +65,7 @@ the first available); the header and `lang` follow the resolved one. The title o
 | API down, not configured, 5xx, timeout (8 s), invalid body                                                                      | `reportError("legal", …)` then **HTTP 500**, not cached |
 
 The error carries a fixed message (no URL, key or response body); `reportError` only gets the slug, the version and the
-status. Tests: `lib/legal-api.test.ts`, `app/[lang]/legal-pages.test.tsx`, `app/[lang]/legal/[slug]/[version]/page.test.tsx`,
+status. Tests: `lib/legal-api.test.ts`, `app/[lang]/legal-pages.test.tsx`, `app/[lang]/legal/[slug]/[version]/page.test.tsx`, `app/[lang]/[document]/versions/page.test.tsx`,
 `proxy.test.ts`, `app/sitemap.test.ts`.
 
 ## Publish or change a legal text
