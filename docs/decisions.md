@@ -201,3 +201,14 @@ changes the stack, the architecture or a convention.
   Brevo files and the `Syntax` switch of 2026-10-26 are gone. `emails/dist/listmonk/` keeps its address and its content.
   The migration steps stay until the contacts are imported and Brevo is cancelled
   ([Leaving Brevo](integrations/listmonk.md#leaving-brevo)).
+
+## 2026-11-17 — Legal texts rendered from Markdown with remark
+
+- **`remark-parse` + `unified` (regular dependencies), our own renderer** instead of `react-markdown`: the text must be
+  grouped into `Section`s by `##` heading, which is natural on the mdast tree and awkward through `react-markdown`'s
+  per-element components. `react-markdown` is built on the same parser, so the safety is the same.
+- **Safe by construction**: every mdast node is rendered by a whitelist, raw HTML nodes are dropped, links are limited to
+  `https:`, `mailto:` and `#anchor`, nothing uses `dangerouslySetInnerHTML`. The API validates the text at publication
+  too, but the site does not rely on it.
+- **Rejected**: `marked` / `markdown-it` (produce an HTML string, which would need `dangerouslySetInnerHTML` and a
+  sanitiser) and a hand-written parser (edge cases of the format).
