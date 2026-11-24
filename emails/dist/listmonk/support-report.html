@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="fr">
+<body style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#000873;">
+<p>Un utilisateur a envoyé un message depuis l’app (Profil &gt; Aide &gt; Signaler un problème).</p>
+<p><strong>Catégorie :</strong> {{ .Tx.Data.category }}</p>
+<p><strong>Message :</strong></p>
+<div style="white-space:pre-wrap;border-left:3px solid #000873;padding:4px 12px;">{{ .Tx.Data.message }}</div>
+<p><strong>Informations techniques</strong></p>
+<table style="font-size:14px;border-collapse:collapse;">
+<tr><td style="padding:2px 12px 2px 0;"><strong>Version de l’app</strong></td><td>{{ .Tx.Data.appVersion }}</td></tr>
+<tr><td style="padding:2px 12px 2px 0;"><strong>Plateforme</strong></td><td>{{ .Tx.Data.platform }}</td></tr>
+<tr><td style="padding:2px 12px 2px 0;"><strong>Version de l’OS</strong></td><td>{{ .Tx.Data.osVersion }}</td></tr>
+<tr><td style="padding:2px 12px 2px 0;"><strong>Appareil</strong></td><td>{{ .Tx.Data.deviceModel }}</td></tr>
+<tr><td style="padding:2px 12px 2px 0;"><strong>Langue</strong></td><td>{{ .Tx.Data.locale }}</td></tr>
+<tr><td style="padding:2px 12px 2px 0;"><strong>Environnement</strong></td><td>{{ .Tx.Data.environment }}</td></tr>
+<tr><td style="padding:2px 12px 2px 0;"><strong>Compte</strong></td><td>{{ .Tx.Data.accountId }}</td></tr>
+</table>
+<hr>
+<p>L’adresse e-mail de l’utilisateur n’est jamais envoyée : pour lui répondre, retrouve le compte à partir de son identifiant. Les liens du message sont désactivés (<code>[:]//</code>, <code>[.]</code>).</p>
+</body>
+</html>

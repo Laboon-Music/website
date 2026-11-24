@@ -12,6 +12,7 @@ readable in **light and dark mode** and on **phones**. French (informal "tu") an
 | Moderation sanctions | `emails/dist/listmonk/transactional/moderation_{warning,suspension,suspension_lifted,ban}.fr.html` / `.en.html` | Laboon API, when a moderator warns, suspends (with end date), lifts the suspension of, or bans an account (api#143); variables below                                   |
 | Contact form message | `emails/dist/listmonk/contact-message.html`                                                                     | Message from the contact form to the team                                                                                                                              |
 | Report alert         | `emails/dist/listmonk/report-alert.html`                                                                        | Laboon API alert to the team for each new report (api#334), French only                                                                                                |
+| Support report       | `emails/dist/listmonk/support-report.html`                                                                      | Laboon API: message a user sends to the team from the app, "Signaler un problème" (api#362), French only                                                               |
 | App auth mails       | `public/emails/auth/{confirmation,recovery,email_change}.html`                                                  | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue)                                                                            |
 
 See [Put it in listmonk](#put-it-in-listmonk).
@@ -41,14 +42,15 @@ See [Put it in listmonk](#put-it-in-listmonk).
 
 The website's newsletter signup and contact form send through listmonk ([listmonk.md](../integrations/listmonk.md)). Files in `emails/dist/listmonk/`:
 
-| File                                         | Where in listmonk                                                                                                                                                          |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `campaign.fr.html` / `.en.html`              | _Campaigns → Templates_ → new template, type **Campaign**                                                                                                                  |
-| `campaign-content.fr.html` / `.en.html`      | Starter body: paste it in a new campaign, format **Raw HTML**, then write the message                                                                                      |
-| `subscriber-optin.html`                      | Not in the interface: system template, volume + `--static-dir`, see [listmonk.md](../integrations/listmonk.md) step 3                                                      |
-| `contact-message.html`                       | _Campaigns → Templates_ → type **Transactional** `contact-message`, subject in [listmonk.md](../integrations/listmonk.md#setup-in-listmonk-one-time) (`emails/contact.ts`) |
-| `transactional/<email>.fr.html` / `.en.html` | _Campaigns → Templates_ → type **Transactional**, subject from `transactional/subjects.md`                                                                                 |
-| `report-alert.html`                          | _Campaigns → Templates_ → type **Transactional** `report_alert.fr`, subject in `emails/report-alert.ts`; its ID goes in the API (`LISTMONK_TEMPLATES`, `docs/emails.md`)   |
+| File                                         | Where in listmonk                                                                                                                                                            |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `campaign.fr.html` / `.en.html`              | _Campaigns → Templates_ → new template, type **Campaign**                                                                                                                    |
+| `campaign-content.fr.html` / `.en.html`      | Starter body: paste it in a new campaign, format **Raw HTML**, then write the message                                                                                        |
+| `subscriber-optin.html`                      | Not in the interface: system template, volume + `--static-dir`, see [listmonk.md](../integrations/listmonk.md) step 3                                                        |
+| `contact-message.html`                       | _Campaigns → Templates_ → type **Transactional** `contact-message`, subject in [listmonk.md](../integrations/listmonk.md#setup-in-listmonk-one-time) (`emails/contact.ts`)   |
+| `transactional/<email>.fr.html` / `.en.html` | _Campaigns → Templates_ → type **Transactional**, subject from `transactional/subjects.md`                                                                                   |
+| `report-alert.html`                          | _Campaigns → Templates_ → type **Transactional** `report_alert.fr`, subject in `emails/report-alert.ts`; its ID goes in the API (`LISTMONK_TEMPLATES`, `docs/emails.md`)     |
+| `support-report.html`                        | _Campaigns → Templates_ → type **Transactional** `support_report.fr`, subject in `emails/support-report.ts`; its ID goes in the API (`LISTMONK_TEMPLATES`, `docs/emails.md`) |
 
 - **`legal_change` variables** (exactly these, all in `TRANSACTIONAL_PARAMS`): `subjectPrefix` (first thing of the subject,
   e.g. the environment tag), `firstName`, `documentTitle`, `summary` (admin text, shown as escaped text with its line breaks,

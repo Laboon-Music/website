@@ -78,6 +78,10 @@ Labels in English, then French (the admin follows the instance language).
      - Body: the content of `emails/dist/listmonk/report-alert.html`.
      - Its ID goes in the API repository (`LISTMONK_TEMPLATES` in `app/outbox/listmonk.ts`, table in
        `docs/emails.md`), not on Vercel.
+   - Same for the API's support report (api#362, French only), name `support_report.fr`:
+     - Subject: `{{ .Tx.Data.subjectPrefix }}[Support Laboon] Nouveau message : {{ .Tx.Data.category }}`
+     - Body: the content of `emails/dist/listmonk/support-report.html`.
+     - Its ID goes in the API repository too (`support_report` in `LISTMONK_TEMPLATES`).
 5. **Users → User roles → New** `website`: permissions `subscribers:manage` and `tx:send`. **List roles → New**
    `website-lists`: the four lists above, with **Get** and **Manage**.
 6. **Users → New**, type **API**, name `laboon-website`, roles `website` + `website-lists`. Copy the token now (it
