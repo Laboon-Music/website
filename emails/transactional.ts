@@ -20,6 +20,12 @@ type Texts = {
   expiry?: string;
   /** Label of the summary block, which shows `summary` (admin text, line breaks kept, escaped by listmonk). */
   summaryLabel?: string;
+  /** Moderation: label of the line showing `reason` (label and value on one line, line breaks kept). */
+  reasonLabel?: string;
+  /** Moderation: label of the line showing `content`, which may be empty (no linked report). */
+  contentLabel?: string;
+  /** Moderation: closing paragraph, with the appeal address shown as text only (never in an href). */
+  appeal?: string;
   /** Line after the button, for an e-mail that needs no "ignore it" line. */
   notice?: string;
   ignore?: string;
@@ -112,6 +118,41 @@ const TEXTS = {
       notice:
         "Ces changements s’appliquent à partir de cette date. Si une nouvelle acceptation est nécessaire, l’application te la demandera.",
     },
+    moderation_warning: {
+      subject: `${v("subjectPrefix")}Avertissement concernant ton compte Laboon`,
+      preheader: "Notre équipe de modération t’a envoyé un avertissement.",
+      title: "Avertissement",
+      body: "Notre équipe de modération a examiné un contenu de ton compte qui ne respecte pas la charte Laboon. Ceci est un avertissement : ton compte reste actif. Des manquements répétés peuvent entraîner une suspension ou une fermeture de ton compte.",
+      reasonLabel: "Motif :",
+      contentLabel: "Contenu concerné :",
+      appeal: `Tu peux contester cette décision en écrivant à ${v("appealEmail")}.`,
+    },
+    moderation_suspension: {
+      subject: `${v("subjectPrefix")}Ton compte Laboon est suspendu`,
+      preheader: "Ton compte est suspendu temporairement.",
+      title: "Compte suspendu",
+      body: `Après une décision de notre équipe de modération, ton compte Laboon est suspendu jusqu’au ${v("untilDate")} (heure UTC). Pendant la suspension, tu ne peux plus te connecter, et ton profil et tes annonces sont masqués. Ton compte revient automatiquement à la date de fin.`,
+      reasonLabel: "Motif :",
+      contentLabel: "Contenu concerné :",
+      appeal: `Tu peux contester cette décision en écrivant à ${v("appealEmail")}.`,
+    },
+    moderation_suspension_lifted: {
+      subject: `${v("subjectPrefix")}La suspension de ton compte Laboon est levée`,
+      preheader: "Tu peux te reconnecter à ton compte.",
+      title: "Suspension levée",
+      body: "La suspension de ton compte Laboon est levée. Tu peux te reconnecter, et ton profil et tes annonces sont de nouveau visibles.",
+      reasonLabel: "Motif de la suspension :",
+      appeal: `Une question sur cette décision ? Écris-nous à ${v("appealEmail")}.`,
+    },
+    moderation_ban: {
+      subject: `${v("subjectPrefix")}Ton compte Laboon a été fermé`,
+      preheader: "Ton compte a été fermé définitivement.",
+      title: "Compte fermé",
+      body: "Après une décision de notre équipe de modération, ton compte Laboon a été fermé définitivement. Tu ne peux plus te connecter ni créer un nouveau compte.",
+      reasonLabel: "Motif :",
+      contentLabel: "Contenu concerné :",
+      appeal: `Tu peux contester cette décision en écrivant à ${v("appealEmail")}.`,
+    },
   },
   en: {
     confirm_signup: {
@@ -181,6 +222,41 @@ const TEXTS = {
       notice:
         "These changes apply from that date. If you need to accept the new version, the app will ask you.",
     },
+    moderation_warning: {
+      subject: `${v("subjectPrefix")}A warning about your Laboon account`,
+      preheader: "Our moderation team sent you a warning.",
+      title: "Warning",
+      body: "Our moderation team reviewed content on your account that breaks the Laboon charter. This is a warning: your account stays active. Repeated breaches may lead to a suspension or to your account being closed.",
+      reasonLabel: "Reason:",
+      contentLabel: "Content concerned:",
+      appeal: `You can contest this decision by writing to ${v("appealEmail")}.`,
+    },
+    moderation_suspension: {
+      subject: `${v("subjectPrefix")}Your Laboon account is suspended`,
+      preheader: "Your account is temporarily suspended.",
+      title: "Account suspended",
+      body: `Following a decision by our moderation team, your Laboon account is suspended until ${v("untilDate")} (UTC). During the suspension you cannot sign in, and your profile and ads are hidden. Your account comes back automatically on the end date.`,
+      reasonLabel: "Reason:",
+      contentLabel: "Content concerned:",
+      appeal: `You can contest this decision by writing to ${v("appealEmail")}.`,
+    },
+    moderation_suspension_lifted: {
+      subject: `${v("subjectPrefix")}The suspension of your Laboon account is lifted`,
+      preheader: "You can sign in to your account again.",
+      title: "Suspension lifted",
+      body: "The suspension of your Laboon account is lifted. You can sign in again, and your profile and ads are visible again.",
+      reasonLabel: "Reason for the suspension:",
+      appeal: `Questions about this decision? Write to us at ${v("appealEmail")}.`,
+    },
+    moderation_ban: {
+      subject: `${v("subjectPrefix")}Your Laboon account has been closed`,
+      preheader: "Your account has been closed permanently.",
+      title: "Account closed",
+      body: "Following a decision by our moderation team, your Laboon account has been closed permanently. You can no longer sign in or create a new account.",
+      reasonLabel: "Reason:",
+      contentLabel: "Content concerned:",
+      appeal: `You can contest this decision by writing to ${v("appealEmail")}.`,
+    },
   },
 } satisfies Record<Locale, Record<string, Texts>>;
 
@@ -203,6 +279,19 @@ export const TRANSACTIONAL_PARAMS: Record<TransactionalName, string[]> = {
     "effectiveDate",
     "link",
   ],
+  // Moderation (api#143): `subjectPrefix` in the subject; `reason` and `content` are admin text, `appealEmail` is shown
+  // as text only (a variable is never an attribute but `link`).
+  moderation_warning: ["subjectPrefix", "firstName", "reason", "content", "appealEmail"],
+  moderation_suspension: [
+    "subjectPrefix",
+    "firstName",
+    "reason",
+    "content",
+    "untilDate",
+    "appealEmail",
+  ],
+  moderation_suspension_lifted: ["subjectPrefix", "firstName", "reason", "appealEmail"],
+  moderation_ban: ["subjectPrefix", "firstName", "reason", "content", "appealEmail"],
 };
 
 export function transactional(name: TransactionalName, locale: Locale): string {
@@ -229,6 +318,16 @@ export function transactional(name: TransactionalName, locale: Locale): string {
         `<p class="tx" style="${STYLE.text}white-space:pre-line;">${v("summary")}</p>`,
       ]
     : [];
+  const line = (label: string, value: string) =>
+    `<p class="tx" style="${STYLE.text}white-space:pre-line;"><strong>${label}</strong> ${value}</p>`;
+  const moderation = [
+    ...(t.reasonLabel ? [line(t.reasonLabel, v("reason"))] : []),
+    // Without a linked report the API sends an empty `content`: the line is left out (Go template condition).
+    ...(t.contentLabel
+      ? [`{{ if .Tx.Data.content }}${line(t.contentLabel, v("content"))}{{ end }}`]
+      : []),
+    ...(t.appeal ? [p(t.appeal)] : []),
+  ];
   const warning = t.warningLead
     ? [p(`<strong>${t.warningLead}</strong>${t.warning}`)]
     : [];
@@ -241,6 +340,7 @@ export function transactional(name: TransactionalName, locale: Locale): string {
         p(c.greeting),
         p(t.body),
         ...summary,
+        ...moderation,
         ...action,
         ...(t.notice ? [p(t.notice)] : []),
         ...(t.ignore ? [small(t.ignore)] : []),

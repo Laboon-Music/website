@@ -11,7 +11,7 @@ describe("transactional templates", () => {
     expect(LISTMONK_TRANSACTIONAL_EMAILS).toHaveLength(
       TRANSACTIONAL_NAMES.length * LOCALES.length,
     );
-    expect(TRANSACTIONAL_NAMES).toHaveLength(7);
+    expect(TRANSACTIONAL_NAMES).toHaveLength(11);
   });
 
   describe.each(LISTMONK_TRANSACTIONAL_EMAILS)(
@@ -26,7 +26,11 @@ describe("transactional templates", () => {
       it("uses exactly its params, nothing else from listmonk", () => {
         // The subject is rendered by listmonk as a template too (`subjectPrefix`).
         const used = new Set(
-          [...`${subject}${html}`.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)].map((m) => m[1]),
+          [...`${subject}${html}`.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)]
+            .map((m) => m[1])
+            // The only control actions allowed: `if` on one of its params, and its `end`.
+            .filter((action) => action !== "end")
+            .map((action) => action.replace(/^if /, "")),
         );
         expect([...used].sort()).toEqual(params.map((x) => `.Tx.Data.${x}`).sort());
       });
@@ -57,6 +61,41 @@ describe("transactional templates", () => {
       }
     },
   );
+
+  describe("moderation", () => {
+    const moderation = LISTMONK_TRANSACTIONAL_EMAILS.filter((e) =>
+      e.name.startsWith("moderation_"),
+    );
+
+    it("covers the four sanction e-mails in both languages", () => {
+      expect(moderation).toHaveLength(8);
+    });
+
+    it.each(moderation)(
+      "$name ($locale) starts its subject with the prefix and shows the appeal address as text only",
+      ({ subject, html }) => {
+        expect(subject.startsWith("{{ .Tx.Data.subjectPrefix }}")).toBe(true);
+        expect(html).toContain("{{ .Tx.Data.appealEmail }}");
+        expect(html).not.toMatch(/="[^"]*\{\{[^"]*"/);
+      },
+    );
+
+    it.each(moderation.filter((e) => e.locale === "fr"))(
+      "$name (fr) speaks to the user with tu, never vous",
+      ({ html }) => {
+        expect(html).not.toMatch(/\b(vous|votre|vos)\b/i);
+        expect(html).toContain("ton compte");
+      },
+    );
+
+    it("shows the end date of a suspension and no content for a lifted one", () => {
+      for (const e of moderation) {
+        const has = (x: string) => e.html.includes(`{{ .Tx.Data.${x} }}`);
+        expect(has("untilDate")).toBe(e.name === "moderation_suspension");
+        expect(has("content")).toBe(e.name !== "moderation_suspension_lifted");
+      }
+    });
+  });
 
   describe("legal_change", () => {
     const [fr, en] = ["fr", "en"].map((l) =>
