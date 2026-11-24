@@ -3,15 +3,16 @@
 Branded HTML e-mails (blue header with the wordmark, card, social links),
 readable in **light and dark mode** and on **phones**. French (informal "tu") and English, one file per language.
 
-| Template             | File                                                                   | Used for                                                                                                                                                               |
-| -------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Double opt-in        | `emails/dist/listmonk/subscriber-optin.html`                           | Confirmation of the newsletter signup, both languages in one file                                                                                                      |
-| Campaign frame       | `emails/dist/listmonk/campaign.fr.html` / `.en.html`                   | Newsletters (launch, beta invitation), with a starter body in `campaign-content.*.html`                                                                                |
-| API transactional    | `emails/dist/listmonk/transactional/<email>.fr.html` / `.en.html`      | Laboon API mails (api#99), `{{ .Tx.Data.* }}` only; subjects in `transactional/subjects.md`                                                                            |
-| Legal change notice  | `emails/dist/listmonk/transactional/legal_change.fr.html` / `.en.html` | Laboon API, to every confirmed account when a substantial change of any legal document is published, ideally 30 days before it takes effect (api#286); variables below |
-| Contact form message | `emails/dist/listmonk/contact-message.html`                            | Message from the contact form to the team                                                                                                                              |
-| Report alert         | `emails/dist/listmonk/report-alert.html`                               | Laboon API alert to the team for each new report (api#334), French only                                                                                                |
-| App auth mails       | `public/emails/auth/{confirmation,recovery,email_change}.html`         | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue)                                                                            |
+| Template             | File                                                                                                            | Used for                                                                                                                                                               |
+| -------------------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Double opt-in        | `emails/dist/listmonk/subscriber-optin.html`                                                                    | Confirmation of the newsletter signup, both languages in one file                                                                                                      |
+| Campaign frame       | `emails/dist/listmonk/campaign.fr.html` / `.en.html`                                                            | Newsletters (launch, beta invitation), with a starter body in `campaign-content.*.html`                                                                                |
+| API transactional    | `emails/dist/listmonk/transactional/<email>.fr.html` / `.en.html`                                               | Laboon API mails (api#99), `{{ .Tx.Data.* }}` only; subjects in `transactional/subjects.md`                                                                            |
+| Legal change notice  | `emails/dist/listmonk/transactional/legal_change.fr.html` / `.en.html`                                          | Laboon API, to every confirmed account when a substantial change of any legal document is published, ideally 30 days before it takes effect (api#286); variables below |
+| Moderation sanctions | `emails/dist/listmonk/transactional/moderation_{warning,suspension,suspension_lifted,ban}.fr.html` / `.en.html` | Laboon API, when a moderator warns, suspends (with end date), lifts the suspension of, or bans an account (api#143); variables below                                   |
+| Contact form message | `emails/dist/listmonk/contact-message.html`                                                                     | Message from the contact form to the team                                                                                                                              |
+| Report alert         | `emails/dist/listmonk/report-alert.html`                                                                        | Laboon API alert to the team for each new report (api#334), French only                                                                                                |
+| App auth mails       | `public/emails/auth/{confirmation,recovery,email_change}.html`                                                  | Sign-up confirmation, password reset, e-mail change, sent by the app's auth server (GoTrue)                                                                            |
 
 See [Put it in listmonk](#put-it-in-listmonk).
 
@@ -53,6 +54,10 @@ The website's newsletter signup and contact form send through listmonk ([listmon
   e.g. the environment tag), `firstName`, `documentTitle`, `summary` (admin text, shown as escaped text with its line breaks,
   never HTML), `effectiveDate` (already written in the language of the e-mail), `link` (https URL of the new version).
   Subjects (`transactional/subjects.md`) hold `{{ .Tx.Data.… }}` for this template.
+- **`moderation_*` variables** (exactly those in `TRANSACTIONAL_PARAMS`): `subjectPrefix`, `firstName`, `reason`, `content` (not
+  in `moderation_suspension_lifted`; may be empty, the line then shows only its label), `untilDate` (`moderation_suspension`
+  only, written in the language of the e-mail, UTC), `appealEmail`. Admin text is shown escaped, line breaks kept. The appeal
+  address is text only, never in an attribute. No button, no `link`.
 - Variables: `{{ .OptinURL }}`, `{{ MessageURL }}`, `{{ UnsubscribeURL }}`, `{{ .Tx.Data.* }}` (the API's params, same
   names). listmonk escapes them (Go `html/template`), so a first name holding HTML shows as text.
 - **One opt-in template for both languages**: listmonk has a single system opt-in e-mail. It sends English when the
